@@ -4,10 +4,13 @@
 namespace SwoftTest\Consul\Unit;
 
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use Swoft\Bean\BeanFactory;
 use Swoft\Bean\Exception\ContainerException;
+use Swoft\Consul\Exception\ClientException;
+use Swoft\Consul\Exception\ServerException;
 use Swoft\Consul\KV;
 use Swoft\Consul\Response;
 
@@ -19,13 +22,15 @@ class KVTest extends TestCase
     private $kv;
 
     /**
-     * @throws ReflectionException
      * @throws ContainerException
+     * @throws ReflectionException
+     * @throws ClientException
+     * @throws ServerException
      */
     protected function setUp()
     {
         $this->kv = BeanFactory::getBean(KV::class);
-        $this->kv->delete('test', array('recurse' => true));
+//        $this->kv->delete('test', array('recurse' => true));
     }
 
     protected function tearDown()
@@ -36,9 +41,9 @@ class KVTest extends TestCase
     public function testSetGetWithDefaultOptions()
     {
         $value = date('r');
-        $this->kv->put('test/my/key', $value);
+        $this->kv->put('/test/my/key', $value);
 
-        $response = $this->kv->get('test/my/key');
+        $response = $this->kv->get('/test/my/key');
         $this->assertInstanceOf(Response::class, $response);
 
         $json = $response->json();
@@ -91,7 +96,7 @@ class KVTest extends TestCase
         try {
             $this->kv->get('test/my/key');
             $this->fail('fail because the key does not exist anymore.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertInstanceOf('SensioLabs\Consul\Exception\ClientException', $e);
             $this->assertContains('404 - Not Found', $e->getMessage());
         }
@@ -113,7 +118,7 @@ class KVTest extends TestCase
             try {
                 $this->kv->get('test/my/key' . $i);
                 $this->fail('fail because the key does not exist anymore.');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->assertInstanceOf('SensioLabs\Consul\Exception\ClientException', $e);
                 $this->assertContains('404 - Not Found', $e->getMessage());
             }

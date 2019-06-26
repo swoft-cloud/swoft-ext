@@ -4,8 +4,10 @@
 namespace Swoft\Consul;
 
 
+use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
+use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Contract\CatalogInterface;
 use Swoft\Consul\Helper\OptionsResolver;
 
@@ -29,6 +31,10 @@ class Catalog implements CatalogInterface
      * @param string $node
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function register(string $node): Response
     {
@@ -43,6 +49,10 @@ class Catalog implements CatalogInterface
      * @param string $node
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function deregister(string $node): Response
     {
@@ -55,6 +65,10 @@ class Catalog implements CatalogInterface
 
     /**
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function datacenters(): Response
     {
@@ -65,6 +79,10 @@ class Catalog implements CatalogInterface
      * @param array $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function nodes(array $options = []): Response
     {
@@ -80,6 +98,10 @@ class Catalog implements CatalogInterface
      * @param array  $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function node(string $node, array $options = []): Response
     {
@@ -94,6 +116,10 @@ class Catalog implements CatalogInterface
      * @param array $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function services(array $options = []): Response
     {
@@ -109,6 +135,10 @@ class Catalog implements CatalogInterface
      * @param array  $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function service(string $service, array $options = []): Response
     {

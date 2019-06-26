@@ -4,8 +4,10 @@
 namespace Swoft\Consul;
 
 
+use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
+use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Contract\SessionInterface;
 use Swoft\Consul\Helper\OptionsResolver;
 
@@ -30,6 +32,10 @@ class Session implements SessionInterface
      * @param array       $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function create(string $body = null, array $options = []): Response
     {
@@ -46,6 +52,10 @@ class Session implements SessionInterface
      * @param array  $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function destroy(string $sessionId, array $options = []): Response
     {
@@ -61,6 +71,10 @@ class Session implements SessionInterface
      * @param array  $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function info(string $sessionId, array $options = []): Response
     {
@@ -76,6 +90,10 @@ class Session implements SessionInterface
      * @param array  $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function node(string $node, array $options = []): Response
     {
@@ -90,6 +108,10 @@ class Session implements SessionInterface
      * @param array $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function all(array $options = []): Response
     {
@@ -105,6 +127,10 @@ class Session implements SessionInterface
      * @param array  $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function renew(string $sessionId, array $options = []): Response
     {

@@ -4,8 +4,10 @@
 namespace Swoft\Consul;
 
 
+use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
+use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Contract\AgentInterface;
 use Swoft\Consul\Helper\OptionsResolver;
 
@@ -27,6 +29,10 @@ class Agent implements AgentInterface
 
     /**
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function checks(): Response
     {
@@ -35,6 +41,10 @@ class Agent implements AgentInterface
 
     /**
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function services(): Response
     {
@@ -45,6 +55,10 @@ class Agent implements AgentInterface
      * @param array $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function members(array $options = []): Response
     {
@@ -57,6 +71,10 @@ class Agent implements AgentInterface
 
     /**
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function self(): Response
     {
@@ -68,6 +86,10 @@ class Agent implements AgentInterface
      * @param array  $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function join(string $address, array $options = []): Response
     {
@@ -79,9 +101,13 @@ class Agent implements AgentInterface
     }
 
     /**
-     * @param $node
+     * @param string $node
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function forceLeave(string $node): Response
     {
@@ -89,9 +115,13 @@ class Agent implements AgentInterface
     }
 
     /**
-     * @param $check
+     * @param string $check
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function registerCheck(string $check): Response
     {
@@ -106,6 +136,10 @@ class Agent implements AgentInterface
      * @param string $checkId
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function deregisterCheck(string $checkId): Response
     {
@@ -117,6 +151,10 @@ class Agent implements AgentInterface
      * @param array  $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function passCheck(string $checkId, array $options = []): Response
     {
@@ -132,6 +170,10 @@ class Agent implements AgentInterface
      * @param array  $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function warnCheck(string $checkId, array $options = []): Response
     {
@@ -147,6 +189,10 @@ class Agent implements AgentInterface
      * @param array  $options
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function failCheck(string $checkId, array $options = []): Response
     {
@@ -161,6 +207,10 @@ class Agent implements AgentInterface
      * @param string $service
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function registerService(string $service): Response
     {
@@ -175,6 +225,10 @@ class Agent implements AgentInterface
      * @param string $serviceId
      *
      * @return Response
+     * @throws Exception\ClientException
+     * @throws Exception\ServerException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function deregisterService(string $serviceId): Response
     {

@@ -41,16 +41,18 @@ class Response
      * @param string $body
      * @param int    $status
      *
+     * @return Response
      * @throws ReflectionException
      * @throws ContainerException
      */
-    public static function new(array $headers, string $body, int $status = 200): void
+    public static function new(array $headers, string $body, int $status = 200): self
     {
         $self = self::__instance();
 
         $self->body    = $body;
         $self->status  = $status;
         $self->headers = $headers;
+        return $self;
     }
 
     /**
