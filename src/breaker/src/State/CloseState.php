@@ -25,6 +25,14 @@ class CloseState extends AbstractState
     }
 
     /**
+     * Success
+     */
+    public function success(): void
+    {
+        return;
+    }
+
+    /**
      * @throws ReflectionException
      * @throws ContainerException
      */

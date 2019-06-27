@@ -3,7 +3,11 @@
 
 namespace Swoft\Breaker;
 
+use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
+use Swoft\Bean\Exception\ContainerException;
+use Swoft\Breaker\Annotation\Mapping\Breaker as BreakerAnnotation;
+use Swoft\Breaker\Exception\BreakerException;
 
 /**
  * Class BreakerManager
@@ -24,4 +28,48 @@ class BreakerManager
      * ]
      */
     private $breakers = [];
+
+    /**
+     * @param array $breakers
+     *
+     * @throws ReflectionException
+     * @throws ContainerException
+     */
+    public function initBreaker(array $breakers): void
+    {
+        foreach ($breakers as $className => $methodBreakers) {
+            /* @var BreakerAnnotation $breaker */
+            foreach ($methodBreakers as $methodName => $breaker) {
+                $config = [
+                    'fallback'      => $breaker->getFallback(),
+                    'timeout'       => $breaker->getTimeout(),
+                    'failThreshold' => $breaker->getFailThreshold(),
+                    'sucThreshold'  => $breaker->getSucThreshold(),
+                    'forceOpen'     => $breaker->isForceOpen(),
+                    'forceClose'    => $breaker->isForceClose(),
+                ];
+
+                $this->breakers[$className][$methodName] = Breaker::new($config);
+            }
+        }
+    }
+
+    /**
+     * @param string $className
+     * @param string $methodName
+     *
+     * @return Breaker
+     * @throws BreakerException
+     */
+    public function getBreaker(string $className, string $methodName): Breaker
+    {
+        $breaker = $this->breakers[$className][$methodName] ?? null;
+        if (empty($breaker)) {
+            throw new BreakerException(
+                sprintf('Breaker(%s->%s) is not exist!', $className, $methodName)
+            );
+        }
+
+        return $breaker;
+    }
 }

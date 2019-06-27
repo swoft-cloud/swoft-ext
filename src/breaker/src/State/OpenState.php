@@ -21,7 +21,7 @@ class OpenState extends AbstractState
      */
     public function reset(): void
     {
-        Timer::after(12, function () {
+        Timer::after(600, function () {
             $this->breaker->moveToHalfOpen();
         });
     }

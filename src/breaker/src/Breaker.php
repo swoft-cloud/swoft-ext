@@ -12,7 +12,7 @@ use Swoft\Breaker\Exception\BreakerException;
 use Swoft\Breaker\State\CloseState;
 use Swoft\Breaker\State\HalfOpenState;
 use Swoft\Breaker\State\OpenState;
-use Swoft\Stdlib\Helper\JsonHelper;
+use Swoft\Log\Helper\Log;
 use Swoft\Stdlib\Helper\PhpHelper;
 use Swoole\Coroutine\Channel;
 use Throwable;
@@ -54,6 +54,26 @@ class Breaker
     private $fallback;
 
     /**
+     * @var int
+     */
+    private $failThreshold = 3;
+
+    /**
+     * @var int
+     */
+    private $sucThreshold = 3;
+
+    /**
+     * @var bool
+     */
+    private $forceOpen = false;
+
+    /**
+     * @var bool
+     */
+    private $forceClose = false;
+
+    /**
      * @param array $config
      *
      * @return Breaker
@@ -64,7 +84,16 @@ class Breaker
     {
         $self = new self();
 
+        $self->timeout       = $config['timeout'];
+        $self->fallback      = $config['fallback'];
+        $self->failThreshold = $config['failThreshold'];
+        $self->sucThreshold  = $config['sucThreshold'];
+        $self->forceOpen     = $config['forceOpen'];
+        $self->forceClose    = $config['forceClose'];
+
+        // Move to close by init
         $self->moveToClose();
+
         return $self;
     }
 
@@ -107,7 +136,7 @@ class Breaker
      */
     public function moveToClose(): void
     {
-        $this->state = OpenState::new($this);
+        $this->state = CloseState::new($this);
     }
 
     /**
@@ -116,7 +145,7 @@ class Breaker
      */
     public function moveToHalfOpen(): void
     {
-        $this->state = OpenState::new($this);
+        $this->state = HalfOpenState::new($this);
     }
 
     /**
@@ -141,7 +170,7 @@ class Breaker
      */
     public function isReachSucCount(): bool
     {
-        return true;
+        return $this->sucCount > $this->sucThreshold;
     }
 
     /**
@@ -166,51 +195,70 @@ class Breaker
      */
     public function isReachFailThreshold(): bool
     {
-        return true;
+        return $this->failCount > $this->failThreshold;
     }
 
     /**
+     * @param object         $target
+     * @param string         $className
+     * @param string         $method
      * @param callable|array $callback
      * @param array          $params
      *
      * @return mixed
+     * @throws ContainerException
+     * @throws ReflectionException
      * @throws Throwable
      */
-    public function run($callback, $params = [])
+    public function run($target, string $className, string $method, $callback, $params = [])
     {
         try {
             if ($this->timeout === 0) {
-                $result = PhpHelper::call($callback, ...$params);
+                $result = PhpHelper::call($callback);
                 $this->state->success();
 
                 return $result;
             }
 
             $channel = new Channel(1);
-            sgo(function () use ($callback, $params, $channel) {
-                $result = PhpHelper::call($callback, ...$params);
-                $channel->push([$result]);
+            sgo(function () use ($callback, $channel) {
+                try {
+                    $result = PhpHelper::call($callback);
+                    $channel->push([true, $result]);
+                } catch (\Throwable $e) {
+                    $message = sprintf('%s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine());
+                    $channel->push([false, $message]);
+                }
             });
 
-            $result = $channel->pop($this->timeout);
-            if ($result === false) {
+            $data = $channel->pop($this->timeout);
+            if ($data === false) {
                 throw new BreakerException(
-                    sprintf(
-                        'Breaker(callback=%s params=%s) call timeout(%f)',
-                        JsonHelper::encode($callback),
-                        JsonHelper::encode($params),
-                        (float)$this->timeout
-                    )
+                    sprintf('Breaker call timeout(%f)', $this->timeout)
                 );
             }
 
+            [$status, $result] = $data;
+            if ($status == false) {
+                throw new BreakerException($result);
+            }
+
             $this->state->success();
-            return $result;
+            return $result[0];
         } catch (Throwable $e) {
+            $message = sprintf(
+                'Breaker(%s->%s %s) call fail!(%s)',
+                $className,
+                $method,
+                json_encode($params),
+                $e->getMessage()
+            );
+
+            Log::error($message);
             $this->state->exception();
 
             if (!empty($this->fallback)) {
-                return PhpHelper::call($this->fallback, ...$params);
+                return PhpHelper::call([$target, $this->fallback], ...$params);
             }
 
             throw $e;

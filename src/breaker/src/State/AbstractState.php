@@ -56,6 +56,9 @@ abstract class AbstractState implements StateInterface
     public function success(): void
     {
         $this->breaker->incSucCount();
+
+        // Reset failCount
+        $this->breaker->resetFailCount();
     }
 
     /**
