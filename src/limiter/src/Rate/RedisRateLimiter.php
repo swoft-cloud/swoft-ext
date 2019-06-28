@@ -3,7 +3,6 @@
 
 namespace Swoft\Limiter\Rate;
 
-use Redis as RedisPool;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Redis\Redis;
 
@@ -35,26 +34,61 @@ class RedisRateLimiter extends AbstractRateLimiter
         $default = $config['default'];
 
         $isPermited = true;
-        Redis::transaction(function (RedisPool $redis) use ($now, $sKey, $nKey, $rate, $max, $default, &$isPermited) {
-            $nextTime      = (int)$redis->get($nKey);
-            $storedPermits = (int)$redis->get($sKey);// Init
-            if ($nextTime == 0) {
-                $storedPermits = $default;
-            }
-            $nextTime = ($nextTime == 0) ? $now : $nextTime;
-            if ($nextTime != 0 && $now > $nextTime) {
-                $newPermits    = ($now - $nextTime) * $rate;
-                $storedPermits = min($newPermits + $storedPermits, $max);
-            }
-            if ($storedPermits > 0) {
-                $storedPermits = $storedPermits - 1;
-                $isPermited    = true;
-            }
-            $redis->set($nKey, $now);
-            $redis->set($sKey, $storedPermits);
-        });
 
-        return $isPermited;
+        $lua = <<<LUA
+        local now = tonumber(KEYS[1]);
+        local sKey = KEYS[2];
+        local nKey = KEYS[3];
+        local rate = tonumber(KEYS[4]);
+        local max = tonumber(KEYS[5]);
+        local default = tonumber(KEYS[6]);
+        
+        local sNum = redis.call('get', sKey);
+        sNum = tonumber(sNum);
+        if(sNum == nil)
+        then
+            sNum = 0
+        end
+        
+        local nNum = redis.call('get', nKey);
+        nNum = tonumber(nNum);
+        if(nNum == nil)
+        then
+            nNum = now
+            sNum = default
+        end
+        
+        local newPermits = 0;
+        if(now > nNum)
+        then
+              newPermits = (now-nNum)*rate+sNum;
+              sNum = math.min(newPermits, max)
+        end
+        
+        local isPermited = 0;
+        if(sNum > 0)
+        then
+            sNum = sNum -1;
+            isPermited = 1;
+        end
+        
+        redis.call('set', sKey, sNum);
+        redis.call('set', nKey, now);
+        
+        return isPermited;
+LUA;
+
+        $args = [
+            $now,
+            $sKey,
+            $nKey,
+            $rate,
+            $max,
+            $default,
+        ];
+
+        $result = Redis::eval($lua, $args, count($args));
+        return (bool)$result;
     }
 
     /**

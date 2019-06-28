@@ -81,12 +81,13 @@ class RateLimter
 
         // Default Key
         if (empty($key)) {
-            $key = sprintf('%s:%s', $className, $method);
+            $key = md5(sprintf('%s:%s', $className, $method));
         }
 
         $config['key'] = $key;
 
         $config   = Arr::merge($commonConfig, $config);
+        var_dump($config);
         $fallback = $config['fallback'] ?? '';
         $ticket   = $this->rateLimter->getTicket($config);
 

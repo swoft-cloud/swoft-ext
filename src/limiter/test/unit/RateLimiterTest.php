@@ -15,5 +15,9 @@ class RateLimiterTest extends TestCase
         /* @var RateLimiterBean $rateLimiterBean */
         $rateLimiterBean = BeanFactory::getBean(RateLimiterBean::class);
         var_dump($rateLimiterBean->method());
+        var_dump($rateLimiterBean->method());
+        var_dump($rateLimiterBean->method());
+        var_dump($rateLimiterBean->method());
+        var_dump($rateLimiterBean->method());
     }
 }
