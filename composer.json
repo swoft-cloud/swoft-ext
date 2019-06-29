@@ -26,7 +26,14 @@
     "psr-4": {
       "Swoft\\Breaker\\": "src/breaker/src/",
       "Swoft\\Consul\\": "src/consul/src/",
-      "Swoft\\Limiter\\": "src/limiter/src/"
+      "Swoft\\Limiter\\": "src/limiter/src/",
+      "Swoft\\Amqp\\": "src/amqp/src/",
+      "Swoft\\Apollo\\": "src/apollo/src/",
+      "Swoft\\Elasticsearch\\": "src/elasticsearch/src/",
+      "Swoft\\Grpc\\": "src/grpc/src/",
+      "Swoft\\Kafka\\": "src/kafka/src/",
+      "Swoft\\Swagger\\": "src/swagger/src/",
+      "Swoft\\Zipkin\\": "src/zipkin/src/"
     },
     "files": [
     ]
@@ -38,7 +45,21 @@
       "SwoftTest\\Consul\\Testing\\": "src/consul/test/testing/",
       "SwoftTest\\Consul\\Unit\\": "src/consul/test/unit/",
       "SwoftTest\\Limiter\\Unit\\": "src/limiter/test/unit/",
-      "SwoftTest\\Limiter\\Testing\\": "src/limiter/test/testing/"
+      "SwoftTest\\Limiter\\Testing\\": "src/limiter/test/testing/",
+      "SwoftTest\\Amqp\\Testing\\": "src/amqp/test/testing/",
+      "SwoftTest\\Amqp\\Unit\\": "src/amqp/test/unit/",
+      "SwoftTest\\Apollo\\Testing\\": "src/apollo/test/testing/",
+      "SwoftTest\\Apollo\\Unit\\": "src/apollo/test/unit/",
+      "SwoftTest\\Elasticsearch\\Testing\\": "src/elasticsearch/test/testing/",
+      "SwoftTest\\Elasticsearch\\Unit\\": "src/elasticsearch/test/unit/",
+      "SwoftTest\\Grpc\\Testing\\": "src/grpc/test/testing/",
+      "SwoftTest\\Grpc\\Unit\\": "src/grpc/test/unit/",
+      "SwoftTest\\Kafka\\Testing\\": "src/kafka/test/testing/",
+      "SwoftTest\\Kafka\\Unit\\": "src/kafka/test/unit/",
+      "SwoftTest\\Swagger\\Testing\\": "src/swagger/test/testing/",
+      "SwoftTest\\Swagger\\Unit\\": "src/swagger/test/unit/",
+      "SwoftTest\\Zipkin\\Testing\\": "src/zipkin/test/testing/",
+      "SwoftTest\\Zipkin\\Unit\\": "src/zipkin/test/unit/"
     }
   },
   "extra": {
