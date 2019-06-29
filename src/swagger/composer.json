@@ -1,5 +1,5 @@
 {
-  "name": "swoft/amqp",
+  "name": "swoft/swagger",
   "type": "library",
   "keywords": [
     "php",
@@ -14,7 +14,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Swoft\\Amqp\\": "src/"
+      "Swoft\\Swagger\\": "src/"
     }
   },
   "require-dev": {
@@ -22,8 +22,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "SwoftTest\\Amqp\\Unit\\": "test/unit/",
-      "SwoftTest\\Amqp\\Testing\\": "test/testing/"
+      "SwoftTest\\Swagger\\Unit\\": "test/unit/",
+      "SwoftTest\\Swagger\\Testing\\": "test/testing/"
     }
   },
   "repositories": {

@@ -1,5 +1,5 @@
 {
-  "name": "swoft/amqp",
+  "name": "swoft/elasticsearch",
   "type": "library",
   "keywords": [
     "php",
@@ -14,7 +14,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Swoft\\Amqp\\": "src/"
+      "Swoft\\Elasticsearch\\": "src/"
     }
   },
   "require-dev": {
@@ -22,8 +22,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "SwoftTest\\Amqp\\Unit\\": "test/unit/",
-      "SwoftTest\\Amqp\\Testing\\": "test/testing/"
+      "SwoftTest\\Elasticsearch\\Unit\\": "test/unit/",
+      "SwoftTest\\Elasticsearch\\Testing\\": "test/testing/"
     }
   },
   "repositories": {

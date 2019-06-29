@@ -1,5 +1,5 @@
 {
-  "name": "swoft/amqp",
+  "name": "swoft/kafka",
   "type": "library",
   "keywords": [
     "php",
@@ -14,7 +14,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Swoft\\Amqp\\": "src/"
+      "Swoft\\Kafka\\": "src/"
     }
   },
   "require-dev": {
@@ -22,8 +22,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "SwoftTest\\Amqp\\Unit\\": "test/unit/",
-      "SwoftTest\\Amqp\\Testing\\": "test/testing/"
+      "SwoftTest\\Kafka\\Unit\\": "test/unit/",
+      "SwoftTest\\Kafka\\Testing\\": "test/testing/"
     }
   },
   "repositories": {
