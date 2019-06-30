@@ -35,8 +35,8 @@ class Consul
     private $port = 8500;
 
     /**
-     * @param string|null $url
-     * @param array       $options
+     * @param string $url
+     * @param array  $options
      *
      * @return Response
      * @throws ClientException

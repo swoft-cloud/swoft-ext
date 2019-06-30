@@ -32,10 +32,10 @@ class Health implements HealthInterface
      * @param array  $options
      *
      * @return Response
+     * @throws ContainerException
      * @throws Exception\ClientException
      * @throws Exception\ServerException
      * @throws ReflectionException
-     * @throws ContainerException
      */
     public function node(string $node, array $options = []): Response
     {
