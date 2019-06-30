@@ -7,6 +7,7 @@ namespace SwoftTest\Apollo\Unit;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use Swoft\Apollo\Config;
+use Swoft\Apollo\Exception\ApolloException;
 use Swoft\Bean\BeanFactory;
 use Swoft\Bean\Exception\ContainerException;
 use Swoft\Context\Context;
@@ -27,14 +28,50 @@ class ApolloTest extends TestCase
         Context::getWaitGroup()->wait();
     }
 
-    public function testIndex()
+    /**
+     * @throws ContainerException
+     * @throws ReflectionException
+     * @throws ApolloException
+     */
+    public function testPullWithCache()
     {
-        /* @var Config $config*/
+        /* @var Config $config */
         $config = BeanFactory::getBean(Config::class);
-        $data = $config->listen(function ($configs){
-            var_dump($configs);
-        }, ['application']);
+        $data   = $config->pullWithCache('application');
+        $this->assertNotEmpty($data);
+        $this->assertIsArray($data);
+    }
 
-        var_dump($data);
+    /**
+     * @throws ContainerException
+     * @throws ReflectionException
+     * @throws ApolloException
+     */
+    public function testPull()
+    {
+        /* @var Config $config */
+        $config = BeanFactory::getBean(Config::class);
+        $data   = $config->pull('application');
+
+        $this->assertNotEmpty($data);
+        $this->assertIsArray($data);
+
+        $releaseKey = $data['releaseKey'];
+
+        $data = $config->pull('application', $releaseKey);
+        $this->assertEmpty($data);
+    }
+
+    /**
+     * @throws ContainerException
+     * @throws ReflectionException
+     */
+    public function testBatchPull()
+    {
+        /* @var Config $config */
+        $config = BeanFactory::getBean(Config::class);
+        $data   = $config->batchPull(['application']);
+        $this->assertTrue(isset($data['application']));
+        $this->assertNotEmpty($data['application']);
     }
 }

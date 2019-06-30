@@ -63,10 +63,12 @@ class Config implements ConfigInterface
      * @param string $namespace
      * @param string $releaseKey
      *
+     * @param string $clientIp
+     *
      * @return array
      * @throws ApolloException
      */
-    public function pull(string $namespace, string $releaseKey = ''): array
+    public function pull(string $namespace, string $releaseKey = '', string $clientIp = ''): array
     {
         $appid       = $this->apollo->getAppId();
         $clusterName = $this->apollo->getClusterName();
@@ -103,14 +105,24 @@ class Config implements ConfigInterface
         $requests = [];
         foreach ($namespaces as $namespace) {
             $requests[$namespace] = function () use ($namespace, $clientIp) {
-                return $this->pull($namespace, $clientIp);
+                return $this->pull($namespace, '', $clientIp);
             };
         }
 
         return Co::multi($requests, $this->apollo->getTimeout());
     }
 
-    public function listen($callback, array $namespaces, array $notifications = [], string $clientIp = ''): void
+    /**
+     * @param array          $namespaces
+     * @param callable|array $callback
+     * @param array          $notifications
+     * @param string         $clientIp
+     *
+     * @throws ApolloException
+     * @throws ContainerException
+     * @throws ReflectionException
+     */
+    public function listen(array $namespaces, $callback, array $notifications = [], string $clientIp = ''): void
     {
         $appid       = $this->apollo->getAppId();
         $clusterName = $this->apollo->getClusterName();
@@ -155,7 +167,6 @@ class Config implements ConfigInterface
 
                 $updateNamespaceNames[] = $namespaceName;
             }
-
 
             $updateConfigs = $this->batchPull($updateNamespaceNames, $clientIp);
             PhpHelper::call($callback, $updateConfigs);

@@ -26,7 +26,7 @@ class Apollo
     /**
      * Not update config
      */
-    public const NOT_UPDATE = 304;
+    public const NOT_MODIFIED = 304;
 
     /**
      * @var string
@@ -53,7 +53,7 @@ class Apollo
      *
      * @var int
      */
-    private $timeout = 3;
+    private $timeout = 6;
 
     /**
      * @param string $uri
@@ -72,15 +72,25 @@ class Apollo
                 $query = http_build_query($query);
                 $uri   = sprintf('%s?%s', $uri, $query);
             }
+
+            // Request
             $client = new Client($this->host, $this->port);
             $client->set(['timeout' => $timeout]);
             $client->get($uri);
             $body   = $client->body;
             $status = $client->statusCode;
             $client->close();
-            $body = JsonHelper::decode($body, true);
 
-            if ($status != self::SUCCESS && $status != self::NOT_UPDATE) {
+            // Not update empty body
+            if (!empty($body)) {
+                $body = JsonHelper::decode($body, true);
+            }
+
+            if ($status == -1 || $status == -2 || $status == -3) {
+                throw new ApolloException(sprintf('Apollo request timeout(%s)', $this->timeout));
+            }
+
+            if ($status != self::SUCCESS && $status != self::NOT_MODIFIED) {
                 $message = $body['message'] ?? '';
                 throw new ApolloException(sprintf('Apollo server error is %s', $message));
             }
@@ -89,7 +99,7 @@ class Apollo
         }
 
         // Not update return empty
-        if ($status == self::NOT_UPDATE) {
+        if ($status == self::NOT_MODIFIED) {
             return [];
         }
 

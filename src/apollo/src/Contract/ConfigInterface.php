@@ -3,6 +3,10 @@
 
 namespace Swoft\Apollo\Contract;
 
+use ReflectionException;
+use Swoft\Apollo\Exception\ApolloException;
+use Swoft\Bean\Exception\ContainerException;
+
 /**
  * Class ConfigInterface
  *
@@ -10,9 +14,46 @@ namespace Swoft\Apollo\Contract;
  */
 interface ConfigInterface
 {
+    /**
+     * Pull config with cache
+     *
+     * @param string $namespace
+     * @param string $clientIp
+     *
+     * @return array
+     * @throws ApolloException
+     */
     public function pullWithCache(string $namespace, string $clientIp = ''): array;
 
-    public function pull(string $namespace, string $releaseKey = ''): array;
+    /**
+     * @param string $namespace
+     * @param string $releaseKey
+     *
+     * @param string $clientIp
+     *
+     * @return array
+     */
+    public function pull(string $namespace, string $releaseKey = '', string $clientIp = ''): array;
 
-    public function listen($callback, array $namespaces, array $notifications = [], string $clientIp = ''): void;
+    /**
+     * @param array  $namespaces
+     * @param string $clientIp
+     *
+     * @return array
+     * @throws ReflectionException
+     * @throws ContainerException
+     */
+    public function batchPull(array $namespaces, string $clientIp = ''): array;
+
+    /**
+     * @param array          $namespaces
+     * @param callable|array $callback
+     * @param array          $notifications
+     * @param string         $clientIp
+     *
+     * @throws ApolloException
+     * @throws ContainerException
+     * @throws ReflectionException
+     */
+    public function listen(array $namespaces, $callback, array $notifications = [], string $clientIp = ''): void;
 }

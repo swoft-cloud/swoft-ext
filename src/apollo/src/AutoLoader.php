@@ -40,8 +40,8 @@ class AutoLoader extends SwoftComponent
     {
         return [
             'apollo' => [
-                'class' => Apollo::class,
-                'appId' => 'swoft',
+                'class'       => Apollo::class,
+                'appId'       => 'swoft',
                 'clusterName' => 'default',
             ]
         ];
