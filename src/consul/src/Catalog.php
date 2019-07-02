@@ -9,6 +9,8 @@ use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Contract\CatalogInterface;
+use Swoft\Consul\Exception\ClientException;
+use Swoft\Consul\Exception\ServerException;
 use Swoft\Consul\Helper\OptionsResolver;
 
 /**
@@ -28,33 +30,34 @@ class Catalog implements CatalogInterface
     private $consul;
 
     /**
-     * @param string $node
+     * @param array $node
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
-     * @throws ReflectionException
+     *
+     * @throws ClientException
      * @throws ContainerException
+     * @throws ReflectionException
+     * @throws ServerException
      */
-    public function register(string $node): Response
+    public function register(array $node): Response
     {
         $params = [
             'body' => $node,
         ];
 
-        return $this->consul->get('/v1/catalog/register', $params);
+        return $this->consul->put('/v1/catalog/register', $params);
     }
 
     /**
-     * @param string $node
+     * @param array $node
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
-     * @throws ReflectionException
+     * @throws ClientException
      * @throws ContainerException
+     * @throws ReflectionException
+     * @throws ServerException
      */
-    public function deregister(string $node): Response
+    public function deregister(array $node): Response
     {
         $params = [
             'body' => $node,
@@ -65,8 +68,8 @@ class Catalog implements CatalogInterface
 
     /**
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -79,8 +82,8 @@ class Catalog implements CatalogInterface
      * @param array $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -98,8 +101,8 @@ class Catalog implements CatalogInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -116,10 +119,10 @@ class Catalog implements CatalogInterface
      * @param array $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
-     * @throws ReflectionException
+     * @throws ClientException
      * @throws ContainerException
+     * @throws ReflectionException
+     * @throws ServerException
      */
     public function services(array $options = []): Response
     {
@@ -135,8 +138,8 @@ class Catalog implements CatalogInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */

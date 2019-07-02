@@ -50,11 +50,11 @@ interface AgentInterface
     public function forceLeave(string $node): Response;
 
     /**
-     * @param string $check
+     * @param array $check
      *
      * @return Response
      */
-    public function registerCheck(string $check): Response;
+    public function registerCheck(array $check): Response;
 
     /**
      * @param string $checkId
@@ -88,11 +88,11 @@ interface AgentInterface
     public function failCheck(string $checkId, array $options = []): Response;
 
     /**
-     * @param string $service
+     * @param array $service
      *
      * @return Response
      */
-    public function registerService(string $service): Response;
+    public function registerService(array $service): Response;
 
     /**
      * @param string $serviceId

@@ -9,6 +9,8 @@ use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Contract\SessionInterface;
+use Swoft\Consul\Exception\ClientException;
+use Swoft\Consul\Exception\ServerException;
 use Swoft\Consul\Helper\OptionsResolver;
 
 /**
@@ -28,16 +30,16 @@ class Session implements SessionInterface
     private $consul;
 
     /**
-     * @param string|null $body
-     * @param array       $options
+     * @param array $body
+     * @param array $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
-     * @throws ReflectionException
+     * @throws ClientException
      * @throws ContainerException
+     * @throws ReflectionException
+     * @throws ServerException
      */
-    public function create(string $body = null, array $options = []): Response
+    public function create(array $body = null, array $options = []): Response
     {
         $params = array(
             'body'  => $body,
@@ -52,8 +54,8 @@ class Session implements SessionInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -71,8 +73,8 @@ class Session implements SessionInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -90,8 +92,8 @@ class Session implements SessionInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -108,8 +110,8 @@ class Session implements SessionInterface
      * @param array $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -127,8 +129,8 @@ class Session implements SessionInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */

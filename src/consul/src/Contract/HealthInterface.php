@@ -4,21 +4,44 @@
 namespace Swoft\Consul\Contract;
 
 use Swoft\Bean\Annotation\Mapping\Bean;
+use Swoft\Consul\Response;
 
 /**
  * Class HealthInterface
  *
  * @since 2.0
- *
- * @Bean()
  */
 interface HealthInterface
 {
-    public function node(string $node, array $options = array());
+    /**
+     * @param string $node
+     * @param array  $options
+     *
+     * @return Response
+     */
+    public function node(string $node, array $options = array()): Response;
 
-    public function checks(string $service, array $options = array());
+    /**
+     * @param string $service
+     * @param array  $options
+     *
+     * @return Response
+     */
+    public function checks(string $service, array $options = array()): Response;
 
-    public function service(string $service, array $options = array());
+    /**
+     * @param string $service
+     * @param array  $options
+     *
+     * @return Response
+     */
+    public function service(string $service, array $options = array()): Response;
 
-    public function state(string $state, array $options = array());
+    /**
+     * @param string $state
+     * @param array  $options
+     *
+     * @return Response
+     */
+    public function state(string $state, array $options = array()): Response;
 }

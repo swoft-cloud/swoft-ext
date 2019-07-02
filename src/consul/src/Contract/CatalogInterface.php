@@ -14,18 +14,18 @@ use Swoft\Consul\Response;
 interface CatalogInterface
 {
     /**
-     * @param string $node
+     * @param array $node
      *
      * @return Response
      */
-    public function register(string $node): Response;
+    public function register(array $node): Response;
 
     /**
-     * @param string $node
+     * @param array $node
      *
      * @return Response
      */
-    public function deregister(string $node): Response;
+    public function deregister(array $node): Response;
 
     /**
      * @return Response

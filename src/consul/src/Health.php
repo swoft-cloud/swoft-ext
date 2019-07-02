@@ -9,6 +9,8 @@ use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Contract\HealthInterface;
+use Swoft\Consul\Exception\ClientException;
+use Swoft\Consul\Exception\ServerException;
 use Swoft\Consul\Helper\OptionsResolver;
 
 /**
@@ -33,8 +35,8 @@ class Health implements HealthInterface
      *
      * @return Response
      * @throws ContainerException
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      */
     public function node(string $node, array $options = []): Response
@@ -51,8 +53,8 @@ class Health implements HealthInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -70,8 +72,8 @@ class Health implements HealthInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -89,8 +91,8 @@ class Health implements HealthInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */

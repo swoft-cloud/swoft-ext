@@ -4,7 +4,6 @@
 namespace SwoftTest\Consul\Unit;
 
 
-use Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use Swoft\Bean\BeanFactory;
@@ -49,16 +48,23 @@ class KVTest extends TestCase
      */
     public function testSetGetWithDefaultOptions()
     {
-        $value = date('r');
-        $this->kv->put('/test/my/key', $value);
+        $value    = date('r');
+        $response = $this->kv->put('/test/my/key', $value);
+        $this->assertTrue($response->getResult());
 
         $response = $this->kv->get('/test/my/key');
         $this->assertInstanceOf(Response::class, $response);
 
-        $json = $response->json();
+        $json = $response->getResult();
         $this->assertSame($value, base64_decode($json[0]['Value']));
     }
 
+    /**
+     * @throws ClientException
+     * @throws ContainerException
+     * @throws ReflectionException
+     * @throws ServerException
+     */
     public function testSetGetWithRawOption()
     {
         $value = date('r');
@@ -71,6 +77,12 @@ class KVTest extends TestCase
         $this->assertSame($value, $body);
     }
 
+    /**
+     * @throws ClientException
+     * @throws ContainerException
+     * @throws ReflectionException
+     * @throws ServerException
+     */
     public function testSetGetWithFlagsOption()
     {
         $flags = mt_rand();
@@ -79,10 +91,16 @@ class KVTest extends TestCase
         $response = $this->kv->get('/test/my/key');
         $this->assertInstanceOf(Response::class, $response);
 
-        $json = $response->json();
+        $json = $response->getResult();
         $this->assertSame($flags, $json[0]['Flags']);
     }
 
+    /**
+     * @throws ClientException
+     * @throws ContainerException
+     * @throws ReflectionException
+     * @throws ServerException
+     */
     public function testSetGetWithKeysOption()
     {
         $this->kv->put('/test/my/key1', 'hello 1');
@@ -92,7 +110,7 @@ class KVTest extends TestCase
         $response = $this->kv->get('/test/my', ['keys' => true]);
         $this->assertInstanceOf(Response::class, $response);
 
-        $json = $response->json();
+        $json = $response->getResult();
 
         $this->assertSame(array('test/my/key1', 'test/my/key2', 'test/my/key3'), $json);
     }
@@ -115,6 +133,12 @@ class KVTest extends TestCase
         $this->kv->get('/test/my/key');
     }
 
+    /**
+     * @throws ClientException
+     * @throws ContainerException
+     * @throws ReflectionException
+     * @throws ServerException
+     */
     public function testDeleteWithRecurseOption()
     {
         $this->kv->put('/test/my/key1', 'hello 1');

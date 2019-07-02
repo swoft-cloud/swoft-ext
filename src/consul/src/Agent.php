@@ -9,6 +9,8 @@ use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Contract\AgentInterface;
+use Swoft\Consul\Exception\ClientException;
+use Swoft\Consul\Exception\ServerException;
 use Swoft\Consul\Helper\OptionsResolver;
 
 /**
@@ -29,8 +31,8 @@ class Agent implements AgentInterface
 
     /**
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -41,8 +43,8 @@ class Agent implements AgentInterface
 
     /**
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -55,8 +57,8 @@ class Agent implements AgentInterface
      * @param array $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -71,8 +73,8 @@ class Agent implements AgentInterface
 
     /**
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -86,8 +88,8 @@ class Agent implements AgentInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -115,15 +117,15 @@ class Agent implements AgentInterface
     }
 
     /**
-     * @param string $check
+     * @param array $check
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
-     * @throws ReflectionException
+     * @throws ClientException
      * @throws ContainerException
+     * @throws ReflectionException
+     * @throws ServerException
      */
-    public function registerCheck(string $check): Response
+    public function registerCheck(array $check): Response
     {
         $params = [
             'body' => $check,
@@ -136,8 +138,8 @@ class Agent implements AgentInterface
      * @param string $checkId
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -151,8 +153,8 @@ class Agent implements AgentInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -170,8 +172,8 @@ class Agent implements AgentInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -189,8 +191,8 @@ class Agent implements AgentInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -207,12 +209,12 @@ class Agent implements AgentInterface
      * @param string $service
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
-    public function registerService(string $service): Response
+    public function registerService(array $service): Response
     {
         $params = [
             'body' => $service,
@@ -225,8 +227,8 @@ class Agent implements AgentInterface
      * @param string $serviceId
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */

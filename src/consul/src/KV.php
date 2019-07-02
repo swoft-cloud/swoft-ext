@@ -9,6 +9,8 @@ use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Contract\KVInterface;
+use Swoft\Consul\Exception\ClientException;
+use Swoft\Consul\Exception\ServerException;
 use Swoft\Consul\Helper\OptionsResolver;
 
 /**
@@ -39,8 +41,8 @@ class KV implements KVInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -70,8 +72,8 @@ class KV implements KVInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -90,8 +92,8 @@ class KV implements KVInterface
      * @param array  $options
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
+     * @throws ClientException
+     * @throws ServerException
      * @throws ReflectionException
      * @throws ContainerException
      */

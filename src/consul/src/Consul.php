@@ -9,7 +9,6 @@ use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Exception\ClientException;
 use Swoft\Consul\Exception\ServerException;
 use Swoft\Log\Helper\Log;
-use Swoft\Stdlib\Helper\ArrayHelper;
 use Swoft\Stdlib\Helper\JsonHelper;
 use Swoole\Coroutine\Http\Client;
 use Throwable;
@@ -153,7 +152,7 @@ class Consul
     {
         $body = $options['body'] ?? '';
         if (is_array($body)) {
-            $body = JsonHelper::encode($body);
+            $body = JsonHelper::encode($body, JSON_UNESCAPED_UNICODE);
         }
 
         $query = $options['query'] ?? [];
@@ -188,13 +187,13 @@ class Consul
 
             Log::profileStart($uri);
         } catch (Throwable $e) {
-            $message = sprintf('Consul call is fail (uri=%s status=%s).', $uri, $e->getMessage());
+            $message = sprintf('Consul is fail! (uri=%s status=%s body=%s).', $uri, $e->getMessage(), $body);
             Log::error($message);
             throw new ServerException($message);
         }
 
         if (400 <= $statusCode) {
-            $message = sprintf('Consul call is fail (uri=%s status=%s).', $uri, $statusCode);
+            $message = sprintf('Consul is fail! (uri=%s status=%s  body=%s)', $uri, $statusCode, $body);
             if (500 <= $statusCode) {
                 Log::error($message);
                 throw new ServerException($message, $statusCode);

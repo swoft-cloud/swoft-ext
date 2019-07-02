@@ -14,12 +14,12 @@ use Swoft\Consul\Response;
 interface SessionInterface
 {
     /**
-     * @param string|null $body
-     * @param array       $options
+     * @param array $body
+     * @param array $options
      *
      * @return Response
      */
-    public function create(string $body = null, array $options = []): Response;
+    public function create(array $body, array $options = []): Response;
 
     /**
      * @param string $sessionId

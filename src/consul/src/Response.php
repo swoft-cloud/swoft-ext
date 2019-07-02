@@ -52,6 +52,7 @@ class Response
         $self->body    = $body;
         $self->status  = $status;
         $self->headers = $headers;
+
         return $self;
     }
 
@@ -80,9 +81,9 @@ class Response
     }
 
     /**
-     * @return array
+     * @return array|mixed
      */
-    public function json(): array
+    public function getResult()
     {
         return JsonHelper::decode($this->body, true);
     }
