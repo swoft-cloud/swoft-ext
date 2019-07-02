@@ -4,7 +4,6 @@
 namespace Swoft\Consul;
 
 use ReflectionException;
-use Swlib\SaberGM;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Exception\ClientException;
@@ -12,22 +11,22 @@ use Swoft\Consul\Exception\ServerException;
 use Swoft\Log\Helper\Log;
 use Swoft\Stdlib\Helper\ArrayHelper;
 use Swoft\Stdlib\Helper\JsonHelper;
+use Swoole\Coroutine\Http\Client;
 use Throwable;
-use Swlib\Saber\Response as SaberResponse;
 
 /**
  * Class Consul
  *
  * @since 2.0
  *
- * @Bean()
+ * @Bean("consul")
  */
 class Consul
 {
     /**
      * @var string
      */
-    private $host = 'http://127.0.0.1';
+    private $host = '127.0.0.1';
 
     /**
      * @var int
@@ -152,8 +151,15 @@ class Consul
      */
     private function request($method, $uri, $options): Response
     {
-        if (isset($options['body']) && is_array($options['body'])) {
-            $options['body'] = json_encode($options['body']);
+        $body = $options['body'] ?? '';
+        if (is_array($body)) {
+            $body = JsonHelper::encode($body);
+        }
+
+        $query = $options['query'] ?? [];
+        if (!empty($query)) {
+            $query = http_build_query($query);
+            $uri   = sprintf('%s?%s', $uri, $query);
         }
 
         Log::debug('Requesting %s %s %s', $method, $uri, JsonHelper::encode($options));
@@ -161,55 +167,43 @@ class Consul
         try {
             Log::profileStart($uri);
 
-            $baseOption = [
-                'base_uri' => sprintf('%s:%d', $this->host, $this->port),
-                'method'   => $method,
-                'uri'      => $uri
-            ];
+            // Http request
+            $client = new Client($this->host, $this->port);
+            $client->setMethod($method);
 
-            $options  = ArrayHelper::merge($baseOption, $options);
-            $response = SaberGM::request($options);
+            // Set body
+            if (!empty($body)) {
+                $client->setData($body);
+            }
+
+            $client->execute($uri);
+
+            // Response
+            $headers    = $client->headers;
+            $statusCode = $client->statusCode;
+            $body       = $client->body;
+
+            // Close
+            $client->close();
+
             Log::profileStart($uri);
         } catch (Throwable $e) {
-            $message = sprintf('Something went wrong when calling consul (%s).', $e->getMessage());
+            $message = sprintf('Consul call is fail (uri=%s status=%s).', $uri, $e->getMessage());
             Log::error($message);
             throw new ServerException($message);
         }
 
-        Log::debug("Response:\n%s", $this->formatResponse($response));
-
-        if (400 <= $response->getStatusCode()) {
-            $message = sprintf('Something went wrong when calling consul (%s - %s).', $response->getStatusCode(),
-                $response->getReasonPhrase());
+        if (400 <= $statusCode) {
+            $message = sprintf('Consul call is fail (uri=%s status=%s).', $uri, $statusCode);
+            if (500 <= $statusCode) {
+                Log::error($message);
+                throw new ServerException($message, $statusCode);
+            }
 
             Log::error($message);
-
-            $message .= "\n" . (string)$response->getBody();
-            if (500 <= $response->getStatusCode()) {
-                throw new ServerException($message, $response->getStatusCode());
-            }
-
-            throw new ClientException($message, $response->getStatusCode());
+            throw new ClientException($message, $statusCode);
         }
 
-        return Response::new($response->getHeaders(), (string)$response->getBody(), $response->getStatusCode());
-    }
-
-    /**
-     * @param SaberResponse $response
-     *
-     * @return string
-     */
-    private function formatResponse(SaberResponse $response): string
-    {
-        $headers = [];
-
-        foreach ($response->getHeaders() as $key => $values) {
-            foreach ($values as $value) {
-                $headers[] = sprintf('%s: %s', $key, $value);
-            }
-        }
-
-        return sprintf("%s\n\n%s", implode("\n", $headers), $response->getBody());
+        return Response::new($headers, $body, $statusCode);
     }
 }

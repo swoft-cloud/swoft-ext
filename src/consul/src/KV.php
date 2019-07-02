@@ -28,6 +28,13 @@ class KV implements KVInterface
     private $consul;
 
     /**
+     * Uri prefix
+     *
+     * @var string
+     */
+    private $prefix = '/v1/kv';
+
+    /**
      * @param string $key
      * @param array  $options
      *
@@ -39,7 +46,7 @@ class KV implements KVInterface
      */
     public function get(string $key, array $options = []): Response
     {
-        $options = [
+        $availableOptions = [
             'dc',
             'recurse',
             'keys',
@@ -51,10 +58,10 @@ class KV implements KVInterface
         ];
 
         $params = array(
-            'query' => OptionsResolver::resolve($options, $options),
+            'query' => OptionsResolver::resolve($options, $availableOptions),
         );
 
-        return $this->consul->get('v1/kv/' . $key, $params);
+        return $this->consul->get($this->prefix . $key, $params);
     }
 
     /**
@@ -75,7 +82,7 @@ class KV implements KVInterface
             'query' => OptionsResolver::resolve($options, ['dc', 'flags', 'cas', 'acquire', 'release']),
         );
 
-        return $this->consul->put('v1/kv/' . $key, $params);
+        return $this->consul->put($this->prefix . $key, $params);
     }
 
     /**
@@ -94,6 +101,6 @@ class KV implements KVInterface
             'query' => OptionsResolver::resolve($options, ['dc', 'recurse']),
         );
 
-        return $this->consul->delete('v1/kv/' . $key, $params);
+        return $this->consul->delete($this->prefix . $key, $params);
     }
 }
