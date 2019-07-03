@@ -7,6 +7,7 @@ use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Exception\ClientException;
+use Swoft\Consul\Exception\ConsulException;
 use Swoft\Consul\Exception\ServerException;
 use Swoft\Log\Helper\Log;
 use Swoft\Stdlib\Helper\JsonHelper;
@@ -194,6 +195,18 @@ class Consul
             $client->close();
 
             Log::profileStart($uri);
+
+            if ($statusCode == -1 || $statusCode == -2 || $statusCode == -3) {
+                throw new ConsulException(
+                    sprintf(
+                        'Request timeout!(host=%s, port=%d timeout=%d)',
+                        $this->host,
+                        $this->port,
+                        $this->timeout
+                    )
+                );
+            }
+
         } catch (Throwable $e) {
             $message = sprintf('Consul is fail! (uri=%s status=%s body=%s).', $uri, $e->getMessage(), $body);
             Log::error($message);

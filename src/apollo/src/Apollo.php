@@ -87,7 +87,14 @@ class Apollo
             }
 
             if ($status == -1 || $status == -2 || $status == -3) {
-                throw new ApolloException(sprintf('Apollo request timeout(%s)', $this->timeout));
+                throw new ApolloException(
+                    sprintf(
+                        'Request timeout!(host=%s, port=%d timeout=%d)',
+                        $this->host,
+                        $this->port,
+                        $this->timeout
+                    )
+                );
             }
 
             if ($status != self::SUCCESS && $status != self::NOT_MODIFIED) {
