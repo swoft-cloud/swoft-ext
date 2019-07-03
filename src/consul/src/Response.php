@@ -85,6 +85,10 @@ class Response
      */
     public function getResult()
     {
+        if (empty($this->body)) {
+            return $this->body;
+        }
+        
         return JsonHelper::decode($this->body, true);
     }
 }
