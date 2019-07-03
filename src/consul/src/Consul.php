@@ -33,6 +33,13 @@ class Consul
     private $port = 8500;
 
     /**
+     * Seconds
+     *
+     * @var int
+     */
+    private $timeout = 3;
+
+    /**
      * @param string $url
      * @param array  $options
      *
@@ -169,6 +176,7 @@ class Consul
             // Http request
             $client = new Client($this->host, $this->port);
             $client->setMethod($method);
+            $client->set(['timeout' => $this->timeout]);
 
             // Set body
             if (!empty($body)) {
