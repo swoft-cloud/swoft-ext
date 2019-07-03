@@ -33,6 +33,8 @@
       "Swoft\\Grpc\\": "src/grpc/src/",
       "Swoft\\Kafka\\": "src/kafka/src/",
       "Swoft\\Swagger\\": "src/swagger/src/",
+      "Swoft\\Devtool\\": "src/devtool/src/",
+      "Swoft\\View\\": "src/view/src/",
       "Swoft\\Zipkin\\": "src/zipkin/src/"
     },
     "files": [
@@ -59,7 +61,11 @@
       "SwoftTest\\Swagger\\Testing\\": "src/swagger/test/testing/",
       "SwoftTest\\Swagger\\Unit\\": "src/swagger/test/unit/",
       "SwoftTest\\Zipkin\\Testing\\": "src/zipkin/test/testing/",
-      "SwoftTest\\Zipkin\\Unit\\": "src/zipkin/test/unit/"
+      "SwoftTest\\Zipkin\\Unit\\": "src/zipkin/test/unit/",
+      "SwoftTest\\Devtool\\Testing\\": "src/devtool/test/testing/",
+      "SwoftTest\\Devtool\\Unit\\": "src/devtool/test/unit/",
+      "SwoftTest\\View\\Testing\\": "src/view/test/testing/",
+      "SwoftTest\\View\\Unit\\": "src/view/test/unit/"
     }
   },
   "extra": {
