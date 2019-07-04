@@ -3,7 +3,6 @@
 
 namespace Swoft\Breaker\State;
 
-use function foo\func;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Breaker\Exception\BreakerException;
 use Swoole\Timer;
@@ -18,7 +17,7 @@ use Swoole\Timer;
 class OpenState extends AbstractState
 {
     /**
-     * Check status
+     * @throws BreakerException
      */
     public function check(): void
     {

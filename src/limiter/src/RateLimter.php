@@ -5,7 +5,6 @@ namespace Swoft\Limiter;
 
 use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
-use Swoft\Limiter\Annotation\Mapping\RateLimiter;
 use Swoft\Limiter\Contract\RateLimiterInterface;
 use Swoft\Limiter\Exception\RateLImiterException;
 use Swoft\Stdlib\Helper\Arr;

@@ -30,14 +30,15 @@ class HalfOpenState extends AbstractState
     public function check(): void
     {
         if ($this->channel->isEmpty()) {
-            throw new BreakerException(sprintf('Out of half open limit!(%s)', $this->breaker->getSucCount()));
+            throw new BreakerException(sprintf('Out of half open limit!(%s)', $this->breaker->getSucThreshold()));
         }
 
         $this->channel->pop();
     }
 
     /**
-     * Success
+     * @throws ContainerException
+     * @throws ReflectionException
      */
     public function success(): void
     {

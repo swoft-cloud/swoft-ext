@@ -249,7 +249,7 @@ class Breaker
                 try {
                     $result = PhpHelper::call($callback);
                     $channel->push([true, $result]);
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     $message = sprintf('%s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine());
                     $channel->push([false, $message]);
                 }
