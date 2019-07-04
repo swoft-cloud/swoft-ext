@@ -5,6 +5,7 @@ namespace Swoft\Breaker\State;
 
 use function foo\func;
 use Swoft\Bean\Annotation\Mapping\Bean;
+use Swoft\Breaker\Exception\BreakerException;
 use Swoole\Timer;
 
 /**
@@ -17,11 +18,30 @@ use Swoole\Timer;
 class OpenState extends AbstractState
 {
     /**
+     * Check status
+     */
+    public function check(): void
+    {
+        if ($this->breaker->isOpen()) {
+            throw new BreakerException('Breaker is opened!');
+        }
+    }
+
+    /**
+     * Exception
+     */
+    public function exception(): void
+    {
+        return;
+    }
+
+    /**
      * Reset
      */
     public function reset(): void
     {
-        Timer::after(600, function () {
+        $retryTime = $this->breaker->getRetryTime();
+        Timer::after($retryTime * 1000, function () {
             $this->breaker->moveToHalfOpen();
         });
     }

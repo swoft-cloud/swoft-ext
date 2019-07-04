@@ -6,6 +6,8 @@ namespace Swoft\Breaker\State;
 use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Exception\ContainerException;
+use Swoft\Breaker\Exception\BreakerException;
+use Swoole\Coroutine\Channel;
 
 /**
  * Class HalfOpenState
@@ -16,8 +18,48 @@ use Swoft\Bean\Exception\ContainerException;
  */
 class HalfOpenState extends AbstractState
 {
+    /**
+     * @var Channel
+     */
+    private $channel;
+
+    /**
+     * Check status
+     * @throws BreakerException
+     */
+    public function check(): void
+    {
+        if ($this->channel->isEmpty()) {
+            throw new BreakerException(sprintf('Out of half open limit!(%s)', $this->breaker->getSucCount()));
+        }
+
+        $this->channel->pop();
+    }
+
+    /**
+     * Success
+     */
+    public function success(): void
+    {
+        parent::success();
+        if ($this->breaker->isReachSucCount()) {
+            $this->breaker->moveToClose();
+        }
+    }
+
+    /**
+     * Reset
+     */
     public function reset(): void
     {
+        $times         = $this->breaker->getSucThreshold();
+        $this->channel = new Channel($times);
+
+        while ($times > 0) {
+            $this->channel->push($times);
+            $times--;
+        }
+
         $this->breaker->resetSucCount();
     }
 

@@ -22,7 +22,7 @@ use Throwable;
  *
  * @since 2.0
  *
- * @Bean(scope=Bean::PROTOTYPE)
+ * @Bean(name="breaker", scope=Bean::PROTOTYPE)
  */
 class Breaker
 {
@@ -74,6 +74,13 @@ class Breaker
     private $forceClose = false;
 
     /**
+     * Seconds
+     *
+     * @var int
+     */
+    private $retryTime = 3;
+
+    /**
      * @param array $config
      *
      * @return Breaker
@@ -84,12 +91,9 @@ class Breaker
     {
         $self = new self();
 
-        $self->timeout       = $config['timeout'];
-        $self->fallback      = $config['fallback'];
-        $self->failThreshold = $config['failThreshold'];
-        $self->sucThreshold  = $config['sucThreshold'];
-        $self->forceOpen     = $config['forceOpen'];
-        $self->forceClose    = $config['forceClose'];
+        foreach ($config as $name => $value) {
+            $self->{$name} = $value;
+        }
 
         // Move to close by init
         $self->moveToClose();
@@ -170,7 +174,7 @@ class Breaker
      */
     public function isReachSucCount(): bool
     {
-        return $this->sucCount > $this->sucThreshold;
+        return $this->sucCount >= $this->sucThreshold;
     }
 
     /**
@@ -195,7 +199,23 @@ class Breaker
      */
     public function isReachFailThreshold(): bool
     {
-        return $this->failCount > $this->failThreshold;
+        return $this->failCount >= $this->failThreshold;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSucThreshold(): int
+    {
+        return $this->sucThreshold;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRetryTime(): int
+    {
+        return $this->retryTime;
     }
 
     /**
@@ -213,7 +233,11 @@ class Breaker
     public function run($target, string $className, string $method, $callback, $params = [])
     {
         try {
-            if ($this->timeout === 0) {
+
+            // Check state
+            $this->state->check();
+
+            if ($this->timeout == 0) {
                 $result = PhpHelper::call($callback);
                 $this->state->success();
 
@@ -229,7 +253,7 @@ class Breaker
                     $message = sprintf('%s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine());
                     $channel->push([false, $message]);
                 }
-            });
+            }, false);
 
             $data = $channel->pop($this->timeout);
             if ($data === false) {

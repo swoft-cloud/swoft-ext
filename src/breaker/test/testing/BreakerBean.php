@@ -22,11 +22,15 @@ class BreakerBean
      * @param string $name
      * @param int    $count
      *
-     * @return bool
+     * @return string
      * @throws Exception
      */
-    public function method(string $name, int $count): bool
+    public function method(string $name, int $count): string
     {
+        if ($count < 100) {
+            return sprintf('method-%d', $count);
+        }
+
         throw new Exception('Breaker test');
     }
 
@@ -34,12 +38,10 @@ class BreakerBean
      * @param string $name
      * @param int    $count
      *
-     * @return bool
+     * @return string
      */
-    public function fallMethod(string $name, int $count): bool
+    public function fallMethod(string $name, int $count): string
     {
-        var_dump($name, $count);
-
-        return false;
+        return sprintf('fallback-%s-%d', $name, $count);
     }
 }
