@@ -4,12 +4,13 @@
 namespace SwoftTest\Breaker\Unit;
 
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use Swoft\Bean\Exception\ContainerException;
 use Swoft\Breaker\Breaker;
 use Swoft\Breaker\BreakerManager;
-use Swoft\Co;
+use Swoft\Breaker\Exception\BreakerException;
 use SwoftTest\Breaker\Testing\BreakerBean;
 use Swoole\Coroutine;
 
@@ -21,10 +22,12 @@ use Swoole\Coroutine;
 class BreakerTest extends TestCase
 {
     /**
+     * @throws BreakerException
      * @throws ContainerException
      * @throws ReflectionException
+     * @throws Exception
      */
-    public function testFallback()
+    public function testBreaker()
     {
         $breaker = $this->getBreaker(BreakerBean::class, 'method');
 
@@ -62,6 +65,59 @@ class BreakerTest extends TestCase
         $this->assertEquals($fallback, 'fallback-swoft-100');
     }
 
+    public function testOutOfHalfOpen()
+    {
+        $breaker = $this->getBreaker(BreakerBean::class, 'method2');
+
+        $fallback = $this->getBreakerBean()->method2('swoft', 100);
+        $this->assertTrue($breaker->isClose());
+
+        $this->getBreakerBean()->method2('swoft', 100);
+        $this->getBreakerBean()->method2('swoft', 100);
+
+        $this->assertTrue($breaker->isOpen());
+
+        $result = $this->getBreakerBean()->method2('swoft', 1);
+        $this->assertEquals('fallback-swoft-1', $result);
+        $this->assertTrue($breaker->isOpen());
+
+        // Sleep
+        Coroutine::sleep($breaker->getRetryTime()+1);
+        $this->getBreakerBean()->method2('swoft', 1);
+        $this->getBreakerBean()->method2('swoft', 1);
+        $this->getBreakerBean()->method2('swoft', 1);
+        $this->getBreakerBean()->method2('swoft', 1);
+
+        $this->assertTrue($breaker->isClose());
+    }
+
+    /**
+     * @expectedException Swoft\Breaker\Exception\BreakerException
+     *
+     * @throws BreakerException
+     * @throws ContainerException
+     * @throws ReflectionException
+     */
+    public function testOutTimeout()
+    {
+        $this->getBreaker(BreakerBean::class, 'timeout');
+
+        $this->getBreakerBean()->timeout(100);
+    }
+
+    /**
+     * @throws BreakerException
+     * @throws ContainerException
+     * @throws ReflectionException
+     */
+    public function testTimeoutFallback()
+    {
+        $this->getBreaker(BreakerBean::class, 'timeoutFall');
+
+        $result = $this->getBreakerBean()->timeoutFall(100);
+        $this->assertEquals('timeout-fallback', $result);
+    }
+
     /**
      * @return BreakerBean
      * @throws ReflectionException
@@ -72,6 +128,15 @@ class BreakerTest extends TestCase
         return bean(BreakerBean::class);
     }
 
+    /**
+     * @param string $className
+     * @param string $method
+     *
+     * @return Breaker
+     * @throws ContainerException
+     * @throws ReflectionException
+     * @throws BreakerException
+     */
     private function getBreaker(string $className, string $method): Breaker
     {
         return $this->getBreakerManager()->getBreaker($className, $method);

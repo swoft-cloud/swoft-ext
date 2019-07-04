@@ -89,7 +89,7 @@ class Breaker
      */
     public static function new(array $config): self
     {
-        $self = new self();
+        $self = self::__instance();
 
         foreach ($config as $name => $value) {
             $self->{$name} = $value;
@@ -268,7 +268,7 @@ class Breaker
             }
 
             $this->state->success();
-            return $result[0];
+            return $result;
         } catch (Throwable $e) {
             $message = sprintf(
                 'Breaker(%s->%s %s) call fail!(%s)',
