@@ -16,12 +16,39 @@ use Swoft\Limiter\Annotation\Mapping\RateLimiter;
 class RateLimiterBean
 {
     /**
-     * @RateLimiter(rate=10)
+     * @RateLimiter(rate=3, default=3, max=3)
      *
      * @return string
      */
-    public function method(): string
+    public function limitByCount(): string
     {
-        return 'method';
+        return 'limitByCount';
+    }
+
+    /**
+     * @RateLimiter(rate=1, default=1, max=1, key="name~':'~uid")
+     *
+     * @param string $name
+     * @param int    $uid
+     *
+     * @return string
+     */
+    public function limitByEl(string $name, int $uid): string
+    {
+        return sprintf('%s-%d', $name, $uid);
+    }
+
+    /**
+     * @RateLimiter(key="name~':'~key.getKey(id, 'kname')")
+     *
+     * @param KeyHelper $key
+     * @param int       $id
+     * @param string    $name
+     *
+     * @return string
+     */
+    public function limitByElObj(KeyHelper $key, int $id, string $name): string
+    {
+        return sprintf('limitByElObj-%d', $id);
     }
 }

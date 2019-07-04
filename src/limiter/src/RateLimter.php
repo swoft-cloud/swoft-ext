@@ -71,7 +71,6 @@ class RateLimter
             $key = $this->evaluateKey($key, $className, $method, $params);
         }
 
-
         $commonConfig = [
             'name'    => $this->name,
             'rate'    => $this->rate,
@@ -87,7 +86,6 @@ class RateLimter
         $config['key'] = $key;
 
         $config   = Arr::merge($commonConfig, $config);
-        var_dump($config);
         $fallback = $config['fallback'] ?? '';
         $ticket   = $this->rateLimter->getTicket($config);
 

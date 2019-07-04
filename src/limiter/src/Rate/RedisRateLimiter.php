@@ -33,8 +33,6 @@ class RedisRateLimiter extends AbstractRateLimiter
         $max     = $config['max'];
         $default = $config['default'];
 
-        $isPermited = true;
-
         $lua = <<<LUA
         local now = tonumber(KEYS[1]);
         local sKey = KEYS[2];
