@@ -29,6 +29,8 @@ class CloseState extends AbstractState
      */
     public function success(): void
     {
+        // Reset failCount
+        $this->breaker->resetFailCount();
         return;
     }
 
