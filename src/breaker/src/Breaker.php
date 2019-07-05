@@ -232,6 +232,10 @@ class Breaker
      */
     public function run($target, string $className, string $method, $callback, $params = [])
     {
+        if ($method == $this->fallback) {
+            throw new BreakerException(sprintf('Method(%s) and fallback must be different', $method));
+        }
+
         try {
 
             // Check state
