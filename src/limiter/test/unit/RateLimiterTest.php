@@ -81,6 +81,38 @@ class RateLimiterTest extends TestCase
      * @throws ContainerException
      * @throws ReflectionException
      */
+    public function testLimitFall()
+    {
+        /* @var RateLimiterBean $rateLimiterBean */
+        $rateLimiterBean = BeanFactory::getBean(RateLimiterBean::class);
+
+        $result = $rateLimiterBean->limitByFall();
+        $this->assertEquals($result, 'limitByFall');
+
+        $result = $rateLimiterBean->limitByFall();
+        $this->assertEquals($result, 'limitByFallback');
+
+        $result = $rateLimiterBean->limitByFall();
+        $this->assertEquals($result, 'limitByFallback');
+    }
+
+    /**
+     * @throws ContainerException
+     * @throws ReflectionException
+     */
+    public function testLimtInnerVars()
+    {
+        /* @var RateLimiterBean $rateLimiterBean */
+        $rateLimiterBean = BeanFactory::getBean(RateLimiterBean::class);
+
+        $result = $rateLimiterBean->limitInnerVars();
+        $this->assertEquals($result, 'limitInnerVars');
+    }
+
+    /**
+     * @throws ContainerException
+     * @throws ReflectionException
+     */
     public function testLimitByElObj()
     {
         /* @var RateLimiterBean $rateLimiterBean */

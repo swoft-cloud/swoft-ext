@@ -75,6 +75,10 @@ class RateLimiter
             unset($values['value']);
         }
 
+        if (isset($values['name'])) {
+            $this->name = $values['name'];
+        }
+
         if (isset($values['key'])) {
             $this->key = $values['key'];
         }

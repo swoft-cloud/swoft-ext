@@ -51,4 +51,32 @@ class RateLimiterBean
     {
         return sprintf('limitByElObj-%d', $id);
     }
+
+    /**
+     * @RateLimiter(rate=1, default=1, max=1, fallback="limitByFallback")
+     *
+     * @return string
+     */
+    public function limitByFall(): string
+    {
+        return 'limitByFall';
+    }
+
+    /**
+     * @return string
+     */
+    public function limitByFallback(): string
+    {
+        return 'limitByFallback';
+    }
+
+    /**
+     * @RateLimiter(key="CLASS~':'~METHOD")
+     *
+     * @return string
+     */
+    public function limitInnerVars(): string
+    {
+        return 'limitInnerVars';
+    }
 }

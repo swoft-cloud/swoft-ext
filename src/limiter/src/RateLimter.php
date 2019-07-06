@@ -86,7 +86,12 @@ class RateLimter
 
         $config   = Arr::merge($commonConfig, $config);
         $fallback = $config['fallback'] ?? '';
-        $ticket   = $this->rateLimter->getTicket($config);
+
+        if ($method == $fallback) {
+            throw new RateLImiterException(sprintf('Method(%s) and fallback must be different', $method));
+        }
+
+        $ticket = $this->rateLimter->getTicket($config);
 
         if ($ticket) {
             return PhpHelper::call($callback);
@@ -122,6 +127,10 @@ class RateLimter
             $values[$pName] = $params[$index];
             $index++;
         }
+
+        // Inner vars
+        $values['CLASS']  = $className;
+        $values['METHOD'] = $method;
 
         // Parse express language
         $el = new ExpressionLanguage();
