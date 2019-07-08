@@ -19,14 +19,13 @@ use Swoft\Db\Query\Builder;
  */
 class MigrateDao
 {
-
     /**
      * Migration rollback status control
      *
      * @var int
      */
-    public const IS_ROLLBACK  = 1;
-    public const NOT_ROLLBACK = 2;
+    public const IS_ROLLBACK  = 1; // use flag record is rollback status
+    public const NOT_ROLLBACK = 2; // use flag record is not rollback status
 
     /**
      * @return string
@@ -48,7 +47,7 @@ class MigrateDao
      * @throws DbException
      * @throws ReflectionException
      */
-    public function listMigrate(int $limit, string $pool, string $db)
+    public function listMigrate(int $limit, string $pool, string $db): array
     {
         return $this->table($pool, $db)
             ->latest('id')
@@ -103,24 +102,28 @@ class MigrateDao
     }
 
     /**
-     * Get effective migrate last log
+     * Get effective migrates last log
      *
      * @param string $pool
      * @param string $db
+     * @param int    $step
      *
-     * @return mixed
+     * @return array
      * @throws ContainerException
      * @throws DbException
      * @throws ReflectionException
      */
-    public function lastMigrationName(string $pool, string $db)
+    public function lastMigrationNames(string $pool, string $db, int $step = 1): array
     {
-        $last = $this->table($pool, $db)
+        $lasts = $this->table($pool, $db)
+            ->select('name')
             ->where('is_rollback', static::NOT_ROLLBACK)
             ->latest('id')
-            ->value('name');
+            ->limit($step)
+            ->pluck('name')
+            ->toArray();
 
-        return (string)$last;
+        return $lasts;
     }
 
     /**
