@@ -40,16 +40,15 @@ class BreakerManager
         foreach ($breakers as $className => $methodBreakers) {
             /* @var BreakerAnnotation $breaker */
             foreach ($methodBreakers as $methodName => $breaker) {
-                $config = [
-                    'fallback'      => $breaker->getFallback(),
-                    'timeout'       => $breaker->getTimeout(),
-                    'failThreshold' => $breaker->getFailThreshold(),
-                    'sucThreshold'  => $breaker->getSucThreshold(),
-                    'forceOpen'     => $breaker->isForceOpen(),
-                    'forceClose'    => $breaker->isForceClose(),
-                ];
 
-                $this->breakers[$className][$methodName] = Breaker::new($config);
+                $bConfig = [];
+                $config  = $breaker->getConfig();
+                foreach ($config as $key) {
+                    $configMethod  = sprintf('get%s', ucfirst($key));
+                    $bConfig[$key] = $breaker->{$configMethod}();
+                }
+
+                $this->breakers[$className][$methodName] = Breaker::new($bConfig);
             }
         }
     }

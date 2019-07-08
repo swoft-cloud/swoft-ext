@@ -5,7 +5,6 @@ namespace Swoft\Limiter;
 
 use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
-use Swoft\Limiter\Annotation\Mapping\RateLimiter;
 use Swoft\Limiter\Contract\RateLimiterInterface;
 use Swoft\Limiter\Exception\RateLImiterException;
 use Swoft\Stdlib\Helper\Arr;
@@ -71,7 +70,6 @@ class RateLimter
             $key = $this->evaluateKey($key, $className, $method, $params);
         }
 
-
         $commonConfig = [
             'name'    => $this->name,
             'rate'    => $this->rate,
@@ -87,9 +85,13 @@ class RateLimter
         $config['key'] = $key;
 
         $config   = Arr::merge($commonConfig, $config);
-        var_dump($config);
         $fallback = $config['fallback'] ?? '';
-        $ticket   = $this->rateLimter->getTicket($config);
+
+        if ($method == $fallback) {
+            throw new RateLImiterException(sprintf('Method(%s) and fallback must be different', $method));
+        }
+
+        $ticket = $this->rateLimter->getTicket($config);
 
         if ($ticket) {
             return PhpHelper::call($callback);
@@ -125,6 +127,10 @@ class RateLimter
             $values[$pName] = $params[$index];
             $index++;
         }
+
+        // Inner vars
+        $values['CLASS']  = $className;
+        $values['METHOD'] = $method;
 
         // Parse express language
         $el = new ExpressionLanguage();

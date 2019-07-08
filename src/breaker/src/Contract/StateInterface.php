@@ -11,6 +11,11 @@ namespace Swoft\Breaker\Contract;
 interface StateInterface
 {
     /**
+     * Check status
+     */
+    public function check(): void;
+
+    /**
      * Reset
      */
     public function reset(): void;

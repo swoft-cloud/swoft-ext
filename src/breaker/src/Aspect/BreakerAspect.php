@@ -6,7 +6,6 @@ namespace Swoft\Breaker\Aspect;
 use Swoft\Aop\Annotation\Mapping\Around;
 use Swoft\Aop\Annotation\Mapping\Aspect;
 use Swoft\Aop\Annotation\Mapping\PointAnnotation;
-use Swoft\Aop\Aop;
 use Swoft\Aop\Point\ProceedingJoinPoint;
 use Swoft\Aop\Proxy;
 use Swoft\Bean\Annotation\Mapping\Inject;

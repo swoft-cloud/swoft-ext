@@ -21,6 +21,7 @@ use Doctrine\Common\Annotations\Annotation\Target;
  *     @Attribute("timeout", type="float"),
  *     @Attribute("forceOpen", type="bool"),
  *     @Attribute("forceClose", type="bool"),
+ *     @Attribute("retryTime", type="int"),
  * })
  */
 class Breaker
@@ -56,6 +57,20 @@ class Breaker
     private $forceClose = false;
 
     /**
+     * Seconds
+     *
+     * @var int
+     */
+    private $retryTime = 3;
+
+    /**
+     * Config items
+     *
+     * @var array
+     */
+    private $config = [];
+
+    /**
      * Breaker constructor.
      *
      * @param array $values
@@ -64,6 +79,7 @@ class Breaker
     {
         if (isset($values['value'])) {
             $this->fallback = $values['value'];
+            unset($values['value']);
         }
 
         if (isset($values['fallback'])) {
@@ -89,6 +105,12 @@ class Breaker
         if (isset($values['forceClose'])) {
             $this->forceClose = $values['forceClose'];
         }
+
+        if (isset($values['retryTime'])) {
+            $this->retryTime = $values['retryTime'];
+        }
+
+        $this->config = array_keys($values);
     }
 
     /**
@@ -137,5 +159,21 @@ class Breaker
     public function isForceClose(): bool
     {
         return $this->forceClose;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRetryTime(): int
+    {
+        return $this->retryTime;
     }
 }
