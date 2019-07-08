@@ -17,7 +17,7 @@ for lbName in ${REPOS} ; do
     echo ""
     echo "======> Push the project:【${lbName}】"
     echo "> git subtree pull --prefix=src/${lbName} git@github.com:swoft-cloud/swoft-${lbName}.git ${TARGET_BRANCH} --squash"
-    git subtree push --prefix=src/${lbName} git@github.com:swoft-cloud/swoft-${lbName}.git ${TARGET_BRANCH} --squash
+    git subtree pull --prefix=src/${lbName} git@github.com:swoft-cloud/swoft-${lbName}.git ${TARGET_BRANCH} --squash
 done
 
 echo ""
