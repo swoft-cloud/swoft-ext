@@ -46,8 +46,7 @@ class AutoLoader extends SwoftComponent
         return [
             'rateLimiter' => [
                 'class'      => RateLimter::class,
-                'rateLimter' => bean(RedisRateLimiter::class),
-                'default' => 3,
+                'rateLimter' => bean('redisRateLimiter'),
             ]
         ];
     }

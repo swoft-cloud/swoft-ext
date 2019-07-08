@@ -4,6 +4,8 @@
 namespace Swoft\Limiter\Rate;
 
 use Swoft\Bean\Annotation\Mapping\Bean;
+use Swoft\Redis\Exception\RedisException;
+use Swoft\Redis\Pool;
 use Swoft\Redis\Redis;
 
 /**
@@ -11,14 +13,20 @@ use Swoft\Redis\Redis;
  *
  * @since 2.0
  *
- * @Bean()
+ * @Bean("redisRateLimiter")
  */
 class RedisRateLimiter extends AbstractRateLimiter
 {
     /**
+     * @var string
+     */
+    private $pool = Pool::DEFAULT_POOL;
+
+    /**
      * @param array $config
      *
      * @return bool
+     * @throws RedisException
      */
     public function getTicket(array $config): bool
     {
@@ -32,8 +40,6 @@ class RedisRateLimiter extends AbstractRateLimiter
         $rate    = $config['rate'];
         $max     = $config['max'];
         $default = $config['default'];
-
-        $isPermited = true;
 
         $lua = <<<LUA
         local now = tonumber(KEYS[1]);
@@ -87,7 +93,7 @@ LUA;
             $default,
         ];
 
-        $result = Redis::eval($lua, $args, count($args));
+        $result = Redis::connection($this->pool)->eval($lua, $args, count($args));
         return (bool)$result;
     }
 
