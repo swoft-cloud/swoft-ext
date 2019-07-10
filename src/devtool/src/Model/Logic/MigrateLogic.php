@@ -460,7 +460,7 @@ class MigrateLogic
             if (stripos($message, MigrateDao::tableName()) === false) {
                 output()->warning($message);
             }
-            return null;
+            return [];
         }
         return $data;
     }
@@ -567,16 +567,15 @@ class MigrateLogic
             $migration->{$method}();
             if (method_exists($migration, 'getWaitExecuteSql')) {
                 foreach ($migration->getWaitExecuteSql() as $statement) {
-                    $schema->getConnection()->statement($statement);
+                    $schema->getConnection()->unprepared($statement);
                 }
             }
         };
 
-        $schema->grammar->supportsSchemaTransactions()
-            ?
-            $schema->getConnection()->transaction($callback)
-            :
+        $schema->grammar->supportsSchemaTransactions() ?
+            $schema->getConnection()->transaction($callback) :
             $callback();
+        
         return true;
     }
 
