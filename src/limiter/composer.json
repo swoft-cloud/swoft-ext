@@ -10,9 +10,8 @@
   "license": "Apache-2.0",
   "require": {
     "php": ">7.1",
-    "doctrine/annotations": "^1.4",
-    "php-di/phpdoc-reader": "^2.0",
-    "swoft/stdlib": "~2.0.0"
+    "swoft/stdlib": "~2.0.0",
+    "symfony/expression-language": "~4.3"
   },
   "autoload": {
     "psr-4": {
