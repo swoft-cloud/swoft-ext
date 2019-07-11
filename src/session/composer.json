@@ -21,23 +21,15 @@
     "autoload": {
         "psr-4": {
             "Swoft\\Session\\": "src/"
-        },
-        "files": [
-            "src/Helper/Functions.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
-            "SwoftTest\\Session\\": "test/Cases"
+            "SwoftTest\\Session\\Unit\\": "test/unit/",
+            "SwoftTest\\Session\\Testing\\": "test/testing/"
         }
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://packagist.laravel-china.org"
-        }
-    ],
     "scripts": {
-        "test": "./vendor/bin/phpunit -c phpunit.xml"
+
     }
 }
