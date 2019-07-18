@@ -1,13 +1,14 @@
-# swoft-ext
-This repository is used to manage all swoft components.
+# Swoft Ext Components
 
-# IMPORTANT
+This repository is used to manage all swoft extension components.
+
+## IMPORTANT
 
 All components will **NOT** be modified in the original repository of ext component, **SHOULD ALWAYS** be modified in this repository, also commit and push to this repository, and then @swoft-bot would sync changes to the original repository of component by `git subtree push`, notice that this action needs triggered by the repositories owner.
 
 ## Usage
 
-### Add a Sub Repository
+### Add a sub repository
 
 ```bash
 git subtree add --prefix=src/[folder] [repository] [ref] --squash

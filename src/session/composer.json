@@ -7,26 +7,24 @@
         "swoft",
         "session"
     ],
-    "description": "Session Component for Swoft",
+    "description": "Http session component for swoft",
     "license": "Apache-2.0",
     "require": {
-        "swoft/framework": "^1.0",
-        "swoft/http-message": "^1.0",
-        "swoft/redis": "^1.0",
+        "swoft/http-message": "~2.0.0",
         "nesbot/carbon": "^1.22"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7"
+        "phpunit/phpunit": "^7.5"
     },
     "autoload": {
         "psr-4": {
-            "Swoft\\Session\\": "src/"
+            "Swoft\\Http\\Session\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "SwoftTest\\Session\\Unit\\": "test/unit/",
-            "SwoftTest\\Session\\Testing\\": "test/testing/"
+            "SwoftTest\\Http\\Session\\Unit\\": "test/unit/",
+            "SwoftTest\\Http\\Session\\Testing\\": "test/testing/"
         }
     },
     "scripts": {
