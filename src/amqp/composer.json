@@ -1,6 +1,7 @@
 {
   "name": "swoft/amqp",
   "type": "library",
+  "version": "v2.0.4",
   "keywords": [
     "php",
     "swoole",

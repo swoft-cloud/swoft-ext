@@ -12,7 +12,7 @@
   "require": {
     "php": ">7.1.0",
     "symfony/expression-language": "~4.3",
-    "text/template": "~2.3"
+    "text/template": "~2.6"
   },
   "require-dev": {
     "phpunit/phpunit": "^7.5",
@@ -70,8 +70,8 @@
       "SwoftTest\\Devtool\\Unit\\": "src/devtool/test/unit/",
       "SwoftTest\\View\\Testing\\": "src/view/test/testing/",
       "SwoftTest\\View\\Unit\\": "src/view/test/unit/",
-      "SwoftTest\\Session\\Testing\\": "src/session/test/testing/",
-      "SwoftTest\\Session\\Unit\\": "src/session/test/unit/"
+      "SwoftTest\\Http\\Session\\Testing\\": "src/session/test/testing/",
+      "SwoftTest\\Http\\Session\\Unit\\": "src/session/test/unit/"
     }
   },
   "extra": {
