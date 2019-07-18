@@ -1,0 +1,25 @@
+{
+    "name": "swoft/pgsql",
+    "type": "library",
+    "keywords": [
+        "php",
+        "swoole",
+        "swoft",
+        "pgsql"
+    ],
+    "description": "swoft pgsql component",
+    "license": "Apache-2.0",
+    "require": {
+        "swoft/framework": "~2.0.0",
+        "swoft/connection-pool": "~2.0.0"
+    },
+    "autoload": {
+        "classmap": [
+        ],
+        "psr-4": {
+            "Swoft\\Pgsql\\": "src/"
+        },
+        "files": [
+        ]
+    }
+}
