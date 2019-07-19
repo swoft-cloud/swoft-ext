@@ -42,27 +42,29 @@ class RedisRateLimiter extends AbstractRateLimiter
         $default = $config['default'];
 
         $lua = <<<LUA
-        local now = tonumber(KEYS[1]);
-        local sKey = KEYS[2];
-        local nKey = KEYS[3];
-        local rate = tonumber(KEYS[4]);
-        local max = tonumber(KEYS[5]);
-        local default = tonumber(KEYS[6]);
+        local sKey = KEYS[1];
+        local nKey = KEYS[2];
+        local now = tonumber(ARGV[1]);
+        local rate = tonumber(ARGV[2]);
+        local max = tonumber(ARGV[3]);
+        local default = tonumber(ARGV[4]);
         
         local sNum = redis.call('get', sKey);
-        sNum = tonumber(sNum);
-        if(sNum == nil)
+        if((not sNum) or sNum == nil)
         then
             sNum = 0
         end
         
+        sNum = tonumber(sNum);
+        
         local nNum = redis.call('get', nKey);
-        nNum = tonumber(nNum);
-        if(nNum == nil)
+        if((not nNum) or nNum == nil)
         then
             nNum = now
             sNum = default
         end
+        
+        nNum = tonumber(nNum);
         
         local newPermits = 0;
         if(now > nNum)
@@ -85,21 +87,20 @@ class RedisRateLimiter extends AbstractRateLimiter
 LUA;
 
         $args = [
-            $now,
             $sKey,
             $nKey,
+            $now,
             $rate,
             $max,
             $default,
         ];
 
-        $result = Redis::connection($this->pool)->eval($lua, $args, count($args));
+        $result = Redis::connection($this->pool)->eval($lua, $args, 2);
         return (bool)$result;
     }
 
     /**
      * @param string $name
-     *
      * @param string $key
      *
      * @return string
@@ -111,7 +112,6 @@ LUA;
 
     /**
      * @param string $name
-     *
      * @param string $key
      *
      * @return string
