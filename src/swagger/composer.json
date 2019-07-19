@@ -1,6 +1,7 @@
 {
   "name": "swoft/swagger",
   "type": "library",
+  "version": "v2.0.4",
   "keywords": [
     "php",
     "swoole",
