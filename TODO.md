@@ -1,5 +1,5 @@
 # TODO
 
-- jwt auth
-- auth manager
-- whoops
+- [ ] jwt auth
+- [ ] auth manager
+- [x] whoops
