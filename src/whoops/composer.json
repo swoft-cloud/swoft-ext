@@ -1,0 +1,32 @@
+{
+  "name": "swoft/whoops",
+  "description": "Whoops Component for Swoft",
+  "type": "library",
+  "homepage": "https://github.com/swoft-cloud/swoft",
+  "keywords": [
+    "php",
+    "swoole",
+    "swoft"
+  ],
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "inhere",
+      "email": "in.798@qq.com",
+      "homepage": "http://www.yzone.net/"
+    },
+    {
+      "name": "wujunze",
+      "email": "itwujunze@163.com"
+    }
+  ],
+  "require": {
+    "php": ">7.1",
+    "filp/whoops": "^2.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Swoft\\Whoops\\": "src/"
+    }
+  }
+}
