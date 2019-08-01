@@ -2,39 +2,74 @@
 
 namespace Swoft\Crontab;
 
+use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
-use Swoft\Process\Process;
-use Swoft\Process\UserProcess;
+use Swoft\Bean\Exception\ContainerException;
 use Swoft\Timer;
-use Swoole\Coroutine;
+use Swoole\Coroutine\Channel;
 
 /**
  * Class Crontab
  *
  * @since 2.0
  *
- * @Bean()
+ * @Bean(name="crontab")
  */
-class Crontab extends UserProcess
+class Crontab
 {
     /**
-     * @param Process $process
+     * Seconds
+     *
+     * @var float
      */
-    public function run(Process $process): void
+    private $tickTime = 1;
+
+    /**
+     * @var int
+     */
+    private $maxTask = 10;
+
+    /**
+     * @var Channel
+     */
+    private $channel;
+
+    /**
+     * Init
+     */
+    public function init(): void
     {
-        $channel = new Channel(1);
-        Timer::tick(1000, function () use ($channel) {
-            $time = time();
-            $task = CrontabRegister::getCronTasks($time);
-            foreach ($task as $item) {
-                $channel->push($item);
+        $this->channel = new Channel($this->maxTask);
+    }
+
+    /**
+     * Tick task
+     *
+     * @throws ReflectionException
+     * @throws ContainerException
+     */
+    public function tick(): void
+    {
+        Timer::tick($this->tickTime * 1000, function () {
+            // All task
+            $tasks = CrontabRegister::getCronTasks();
+
+            // Push task to channel
+            foreach ($tasks as $task) {
+                $this->channel->push($task);
             }
         });
+    }
+
+    /**
+     * Exe task
+     */
+    public function exe(): void
+    {
         while (true) {
-            $item = $channel->pop();
+            $item = $this->channel->pop();
             sgo(function () use ($item) {
-                $obj = new $item[0]();
-                call_user_func(array($obj, $item[1]));
+
             });
         }
     }

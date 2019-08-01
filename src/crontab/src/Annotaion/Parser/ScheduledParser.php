@@ -20,10 +20,12 @@ class ScheduledParser extends Parser
     {
         /* @var Scheduled $annotationObject */
         $beanName = $this->className;
-        $name = $annotationObject->getName();
+        $name     = $annotationObject->getName();
+
         if (!empty($name)) {
             $beanName = $name;
         }
+
         CrontabRegister::registerScheduled($this->className, $beanName);
         return [];
     }
