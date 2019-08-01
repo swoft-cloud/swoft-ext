@@ -1,5 +1,5 @@
 {
-    "name": "swoft/zipkin",
+    "name": "swoft/swoole-dashboard",
     "type": "library",
     "version": "v2.0.4",
     "keywords": [
@@ -23,13 +23,10 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "SwoftTest\\Zipkin\\Unit\\": "test/unit/",
-            "SwoftTest\\Zipkin\\Testing\\": "test/testing/"
+            "SwoftTest\\Swoole\\Dashboard\\Unit\\": "test/unit/",
+            "SwoftTest\\Swoole\\Dashboard\\Testing\\": "test/testing/"
         }
     },
-    "repositories": {
-    },
     "scripts": {
-        "test": "./vendor/bin/phpunit -c phpunit.xml"
     }
 }

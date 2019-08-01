@@ -1,17 +1,16 @@
 <?php declare(strict_types=1);
 
 
-namespace SwoftTest\Swoole\Dashboard\Unit;
-
+namespace SwoftTest\Crontab\Unit;
 
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class DashboardTest
+ * Class CrontabTest
  *
  * @since 2.0
  */
-class DashboardTest extends TestCase
+class CrontabTest extends TestCase
 {
     public function testIndex()
     {

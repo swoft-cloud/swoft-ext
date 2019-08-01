@@ -194,7 +194,7 @@ class Consul
             // Close
             $client->close();
 
-            Log::profileStart($uri);
+            Log::profileEnd($uri);
 
             if ($statusCode == -1 || $statusCode == -2 || $statusCode == -3) {
                 throw new ConsulException(

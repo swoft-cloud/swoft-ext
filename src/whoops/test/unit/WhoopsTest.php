@@ -1,17 +1,17 @@
 <?php declare(strict_types=1);
 
 
-namespace SwoftTest\Swoole\Dashboard\Unit;
+namespace SwoftTest\Whoops\Testing;
 
 
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class DashboardTest
+ * Class WhoopsTest
  *
  * @since 2.0
  */
-class DashboardTest extends TestCase
+class WhoopsTest extends TestCase
 {
     public function testIndex()
     {

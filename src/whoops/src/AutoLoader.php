@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
+namespace Swoft\Whoops;
 
-namespace SwoftTest\Apollo\Testing;
-
-
+use Swoft\Helper\ComposerJSON;
 use Swoft\SwoftComponent;
+use function dirname;
 
 /**
  * Class AutoLoader
@@ -14,8 +14,6 @@ use Swoft\SwoftComponent;
 class AutoLoader extends SwoftComponent
 {
     /**
-     * Get namespace and dirs
-     *
      * @return array
      */
     public function getPrefixDirs(): array
@@ -30,6 +28,8 @@ class AutoLoader extends SwoftComponent
      */
     public function metadata(): array
     {
-        return [];
+        $jsonFile = dirname(__DIR__) . '/composer.json';
+
+        return ComposerJSON::open($jsonFile)->getMetadata();
     }
 }
