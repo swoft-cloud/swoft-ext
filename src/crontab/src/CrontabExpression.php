@@ -124,13 +124,13 @@ class CrontabExpression
     }
 
     /**
-     * @param string $cron_str
+     * @param string $cronExpress
      *
      * @return array
      */
-    public static function parseCronItem(string $cron_str): array
+    public static function parseCronItem(string $cronExpress): array
     {
-        $cron_arr = preg_split('/\s/', $cron_str, -1, PREG_SPLIT_NO_EMPTY);
+        $cron_arr = preg_split('/\s/', $cronExpress, -1, PREG_SPLIT_NO_EMPTY);
         $return_arr = array();
         foreach ($cron_arr as $k => $item) {
             if ('*' === $item || '?' === $item) {

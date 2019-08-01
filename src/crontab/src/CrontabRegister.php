@@ -18,7 +18,7 @@ class CrontabRegister
      *      ]
      * ]
      */
-    private static $crontabObj = [];
+    private static $crontabs = [];
 
     /**
      * @var array
@@ -42,7 +42,7 @@ class CrontabRegister
     /**
      * @param string $className
      * @param string $methodName
-     * @param Cron $objAnnotation
+     * @param Cron   $objAnnotation
      *
      * @throws CrontabException
      */
@@ -53,45 +53,50 @@ class CrontabRegister
                 sprintf('%s must be define class `@Scheduled()`', get_class($objAnnotation))
             );
         }
+
         $cronExpression = $objAnnotation->getCron();
         if (!CrontabExpression::parse($cronExpression)) {
             throw new CrontabException(
                 sprintf('`%s::%s()` `@Cron()` expression format is error', $className, $methodName)
             );
         }
-        self::$crontabObj[] = ['class' => $className, 'method' => $methodName, 'cron' => $cronExpression];
+
+
+        self::$crontabs[] = ['class' => $className, 'method' => $methodName, 'cron' => $cronExpression];
     }
 
     /**
-     * @param int|null $timeStamp
-     *
      * @return array
      */
-    public static function getCronTasks(int $timeStamp = null): array
+    public static function getCronTasks(): array
     {
-        $start_time = empty($timeStamp) ? time() : $timeStamp;
-        $date[] = (int)date('s', $start_time);
-        $date[] = (int)date('i', $start_time);
-        $date[] = (int)date('H', $start_time);
-        $date[] = (int)date('d', $start_time);
-        $date[] = (int)date('m', $start_time);
-        $date[] = (int)date('w', $start_time);
-        $task_arr = array();
-        foreach (self::$crontabObj as $item) {
-            list('class' => $className, 'method' => $methodName, 'cron' => $cron) = $item;
-            array_push($task_arr, [$className, $methodName, self::$scheduledClasses[$className]]);
+        $startTime = time();
+
+        $date[] = (int)date('s', $startTime);
+        $date[] = (int)date('i', $startTime);
+        $date[] = (int)date('H', $startTime);
+        $date[] = (int)date('d', $startTime);
+        $date[] = (int)date('m', $startTime);
+        $date[] = (int)date('w', $startTime);
+
+        $taskArr = array();
+        foreach (self::$crontabs as $crontab) {
+
+            ['class' => $className, 'method' => $methodName, 'cron' => $cron] = $crontab;
+            array_push($taskArr, [$className, $methodName, self::$scheduledClasses[$className]]);
+
             $cron_arr_date = CrontabExpression::parseCronItem($cron);
             foreach ($cron_arr_date as $k => $cron_item) {
                 if ($cron_item === '*' || $cron_item === '?') {
                     continue;
                 }
                 if (!in_array($date[$k], $cron_item)) {
-                    array_pop($task_arr);
+                    array_pop($taskArr);
                     break;
                 }
             }
         }
 
-        return $task_arr;
+        return $taskArr;
     }
 }
