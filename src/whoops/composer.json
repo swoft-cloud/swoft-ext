@@ -9,17 +9,6 @@
     "swoft"
   ],
   "license": "Apache-2.0",
-  "authors": [
-    {
-      "name": "inhere",
-      "email": "in.798@qq.com",
-      "homepage": "http://www.yzone.net/"
-    },
-    {
-      "name": "wujunze",
-      "email": "itwujunze@163.com"
-    }
-  ],
   "require": {
     "php": ">7.1",
     "filp/whoops": "^2.4"
@@ -27,6 +16,12 @@
   "autoload": {
     "psr-4": {
       "Swoft\\Whoops\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "SwoftTest\\Whoops\\Unit\\": "test/unit/",
+      "SwoftTest\\Whoops\\Testing\\": "test/testing/"
     }
   }
 }

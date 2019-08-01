@@ -8,18 +8,18 @@
     "swoft",
     "crontab"
   ],
-  "description": "Validator component for swoft",
+  "description": "Crontab component for swoft",
   "license": "Apache-2.0",
   "require": {
     "php": ">7.1",
     "swoft/framework": "~2.0.0",
-    "swoft/process": "^2.0"
+    "swoft/process": "~2.0.0"
   },
   "autoload": {
     "classmap": [
     ],
     "psr-4": {
-      "Swoft\\Validator\\": "src/"
+      "Swoft\\Crontab\\": "src/"
     },
     "files": [
     ]
@@ -29,11 +29,11 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "SwoftTest\\Validator\\Unit\\": "test/unit",
-      "SwoftTest\\Validator\\Testing\\": "test/testing"
+      "SwoftTest\\Crontab\\Unit\\": "test/unit",
+      "SwoftTest\\Crontab\\Testing\\": "test/testing"
     }
   },
   "scripts": {
-    "test": "php run.php -c phpunit.xml"
+
   }
 }
