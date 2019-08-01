@@ -1,21 +1,20 @@
 <?php declare(strict_types=1);
 
 
-namespace SwoftTest\Apollo\Unit;
+namespace SwoftTest\Swoole\Dashboard\Unit;
 
 
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class ApolloTest
+ * Class DashboardTest
  *
  * @since 2.0
  */
 class DashboardTest extends TestCase
 {
-    public function tearDown()
+    public function testIndex()
     {
-
+        $this->assertTrue(true);
     }
-
 }
