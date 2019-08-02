@@ -4,6 +4,12 @@
 namespace SwoftTest\Crontab\Unit;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
+use Swoft\Bean\BeanFactory;
+use Swoft\Bean\Exception\ContainerException;
+use Swoft\Crontab\Crontab;
+use Swoft\Crontab\Exception\CrontabException;
+use SwoftTest\Crontab\Testing\TestCrontab;
 
 /**
  * Class CrontabTest
@@ -12,8 +18,22 @@ use PHPUnit\Framework\TestCase;
  */
 class CrontabTest extends TestCase
 {
+    /**
+     * @throws ReflectionException
+     * @throws ContainerException
+     * @throws CrontabException
+     */
     public function testIndex()
     {
-        $this->assertTrue(true);
+        /* @var Crontab $crontab */
+        $crontab = BeanFactory::getBean("crontab");
+
+        $crontab->execute("testCrontab", "method");
+
+        /* @var TestCrontab $testCrontab */
+        $testCrontab = BeanFactory::getBean("testCrontab");
+        $testResult  = $testCrontab->getTest();
+
+        var_dump($testResult);
     }
 }

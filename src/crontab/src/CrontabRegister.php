@@ -84,25 +84,4 @@ class CrontabRegister
         }
         return $tasks;
     }
-
-    /**
-     * @param string $beanName
-     * @param string $methodName
-     *
-     * @throws CrontabException
-     * @throws ReflectionException
-     * @throws ContainerException
-     */
-    public static function dispatch(string $beanName, string $methodName)
-    {
-        $object = BeanFactory::getBean($beanName);
-        if (!method_exists($object, $methodName)) {
-            throw new CrontabException(
-                sprintf('Crontab(name=%s method=%s) method is not exist!', $beanName, $methodName)
-            );
-        }
-        PhpHelper::call([$object, $methodName]);
-    }
-
-
 }
