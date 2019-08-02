@@ -70,33 +70,14 @@ class CrontabRegister
      */
     public static function getCronTasks(): array
     {
-        $startTime = time();
-
-        $date[] = (int)date('s', $startTime);
-        $date[] = (int)date('i', $startTime);
-        $date[] = (int)date('H', $startTime);
-        $date[] = (int)date('d', $startTime);
-        $date[] = (int)date('m', $startTime);
-        $date[] = (int)date('w', $startTime);
-
-        $taskArr = array();
+        $time = time();
+        $tasks = array();
         foreach (self::$crontabs as $crontab) {
-
             ['class' => $className, 'method' => $methodName, 'cron' => $cron] = $crontab;
-            array_push($taskArr, [$className, $methodName, self::$scheduledClasses[$className]]);
-
-            $cron_arr_date = CrontabExpression::parseCronItem($cron);
-            foreach ($cron_arr_date as $k => $cron_item) {
-                if ($cron_item === '*' || $cron_item === '?') {
-                    continue;
-                }
-                if (!in_array($date[$k], $cron_item)) {
-                    array_pop($taskArr);
-                    break;
-                }
+            if (CrontabExpression::parseObj($cron, $time)) {
+                array_push($tasks, [$className, $methodName, self::$scheduledClasses[$className]]);
             }
         }
-
-        return $taskArr;
+        return $tasks;
     }
 }

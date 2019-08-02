@@ -157,4 +157,34 @@ class CrontabExpression
         }
         return $return_arr;
     }
+
+    /**
+     * @param string $cron
+     * @param int $time
+     *
+     * @return bool
+     */
+    public static function parseObj(string $cron, int $time = null): bool
+    {
+        $startTime = $time ?? time();
+
+        $date[] = (int)date('s', $startTime);
+        $date[] = (int)date('i', $startTime);
+        $date[] = (int)date('H', $startTime);
+        $date[] = (int)date('d', $startTime);
+        $date[] = (int)date('m', $startTime);
+        $date[] = (int)date('w', $startTime);
+        $parsedDate = self::parseCronItem($cron);
+
+        foreach ($parsedDate as $k => $cronItem) {
+            if ($cronItem === '*' || $cronItem === '?') {
+                continue;
+            }
+            if (!in_array($date[$k], $cronItem)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
