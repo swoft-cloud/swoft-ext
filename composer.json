@@ -24,9 +24,9 @@
     "swoft/limiter": "self.version",
     "swoft/apollo": "self.version",
     "swoft/session": "self.version",
-    "swoft/crontab": "self.crontab",
-    "swoft/swoole-dashboard": "self.swoole-dashboard",
-    "swoft/whoops": "self.whoops"
+    "swoft/crontab": "self.version",
+    "swoft/swoole-dashboard": "self.version",
+    "swoft/whoops": "self.version"
   },
   "autoload": {
     "psr-4": {
