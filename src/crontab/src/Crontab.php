@@ -4,7 +4,10 @@ namespace Swoft\Crontab;
 
 use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
+use Swoft\Bean\BeanFactory;
 use Swoft\Bean\Exception\ContainerException;
+use Swoft\Crontab\Exception\CrontabException;
+use Swoft\Stdlib\Helper\PhpHelper;
 use Swoft\Timer;
 use Swoole\Coroutine\Channel;
 
@@ -64,14 +67,36 @@ class Crontab
     /**
      * Exe task
      */
-    public function exe(): void
+    public function dispatch(): void
     {
         while (true) {
             $item = $this->channel->pop();
             sgo(function () use ($item) {
-                [$beanName,$methodName]=$item;
-                CrontabRegister::dispatch($beanName,$methodName);
+                // Execute task
+                [$beanName, $methodName] = $item;
+                $this->execute($beanName, $methodName);
             });
         }
+    }
+
+    /**
+     * @param string $beanName
+     * @param string $methodName
+     *
+     * @throws ContainerException
+     * @throws CrontabException
+     * @throws ReflectionException
+     */
+    public function execute(string $beanName, string $methodName): void
+    {
+        $object = BeanFactory::getBean($beanName);
+
+        if (!method_exists($object, $methodName)) {
+            throw new CrontabException(
+                sprintf('Crontab(name=%s method=%s) method is not exist!', $beanName, $methodName)
+            );
+        }
+
+        PhpHelper::call([$object, $methodName]);
     }
 }

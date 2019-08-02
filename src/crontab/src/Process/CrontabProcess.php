@@ -40,6 +40,6 @@ class CrontabProcess extends UserProcess
         $this->crontab->tick();
 
         // Exe task
-        $this->crontab->exe();
+        $this->crontab->dispatch();
     }
 }
