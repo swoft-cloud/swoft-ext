@@ -34,6 +34,6 @@ class CrontabTest extends TestCase
         $testCrontab = BeanFactory::getBean("testCrontab");
         $testResult  = $testCrontab->getTest();
 
-        var_dump($testResult);
+        $this->assertEquals('method', $testResult);
     }
 }
