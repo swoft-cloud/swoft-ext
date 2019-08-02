@@ -10,7 +10,7 @@ namespace Swoft\Crontab\Annotaion\Mapping;
  * @Annotation
  * @Target("METHOD")
  * @Attributes({
- *     @Attribute("cron", type="string")
+ *     @Attribute("value", type="string")
  * })
  */
 class Cron
@@ -29,9 +29,6 @@ class Cron
     {
         if (isset($values['value'])) {
             $this->cron = $values['value'];
-        }
-        if (isset($values['cron'])) {
-            $this->cron = $values['cron'];
         }
     }
 
