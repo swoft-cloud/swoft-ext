@@ -6,6 +6,8 @@ use Swoft\Annotation\Annotation\Mapping\AnnotationParser;
 use Swoft\Annotation\Annotation\Parser\Parser;
 use Swoft\Crontab\Annotaion\Mapping\Scheduled;
 use Swoft\Crontab\CrontabRegister;
+use Swoft\Bean\Annotation\Mapping\Bean;
+
 
 /**
  * Class ScheduledParser
@@ -27,6 +29,6 @@ class ScheduledParser extends Parser
         }
 
         CrontabRegister::registerScheduled($this->className, $beanName);
-        return [];
+        return [$beanName, $this->className, Bean::SINGLETON, ''];
     }
 }
