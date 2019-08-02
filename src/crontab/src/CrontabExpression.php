@@ -132,6 +132,7 @@ class CrontabExpression
     {
         $cron_arr = preg_split('/\s/', $cronExpress, -1, PREG_SPLIT_NO_EMPTY);
         $return_arr = array();
+        $maxLimit=[59,59,23,31,12,6];
         foreach ($cron_arr as $k => $item) {
             if ('*' === $item || '?' === $item) {
                 $return_arr [$k] = $item;
@@ -139,7 +140,7 @@ class CrontabExpression
             if (strpos($item, '/') !== false) {
                 str_replace('*', '0', '$value');
                 list($start, $end) = explode('/', $item);
-                while ($start <= 59) {
+                while ($start <= $maxLimit[$k]) {
                     $return_arr [$k][] = $start;
                     $start += $end;
                 }
