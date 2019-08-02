@@ -43,7 +43,7 @@
       "Swoft\\View\\": "src/view/src/",
       "Swoft\\Zipkin\\": "src/zipkin/src/",
       "Swoft\\Session\\": "src/session/src/",
-      "Swoft\\Crontab\\": "src/session/src/",
+      "Swoft\\Crontab\\": "src/crontab/src/",
       "Swoft\\Swoole\\Dashboard\\": "src/swoole-dashboard/src/",
       "Swoft\\Whoops\\": "src/whoops/src/"
     },
