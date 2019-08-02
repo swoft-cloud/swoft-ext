@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Swoft\woole\Dashboard;
+namespace Swoft\Swoole\Dashboard;
 
 
 use Swoft\Bean\Annotation\Mapping\Bean;
