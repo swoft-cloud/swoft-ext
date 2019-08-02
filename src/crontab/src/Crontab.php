@@ -69,7 +69,8 @@ class Crontab
         while (true) {
             $item = $this->channel->pop();
             sgo(function () use ($item) {
-
+                [$beanName,$methodName]=$item;
+                CrontabRegister::dispatch($beanName,$methodName);
             });
         }
     }

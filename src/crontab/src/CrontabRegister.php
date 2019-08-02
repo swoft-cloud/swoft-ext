@@ -2,8 +2,12 @@
 
 namespace Swoft\Crontab;
 
+use ReflectionException;
+use Swoft\Bean\BeanFactory;
+use Swoft\Bean\Exception\ContainerException;
 use Swoft\Crontab\Annotaion\Mapping\Cron;
 use Swoft\Crontab\Exception\CrontabException;
+use Swoft\Stdlib\Helper\PhpHelper;
 
 class CrontabRegister
 {
@@ -70,33 +74,35 @@ class CrontabRegister
      */
     public static function getCronTasks(): array
     {
-        $startTime = time();
-
-        $date[] = (int)date('s', $startTime);
-        $date[] = (int)date('i', $startTime);
-        $date[] = (int)date('H', $startTime);
-        $date[] = (int)date('d', $startTime);
-        $date[] = (int)date('m', $startTime);
-        $date[] = (int)date('w', $startTime);
-
-        $taskArr = array();
+        $time = time();
+        $tasks = array();
         foreach (self::$crontabs as $crontab) {
-
             ['class' => $className, 'method' => $methodName, 'cron' => $cron] = $crontab;
-            array_push($taskArr, [$className, $methodName, self::$scheduledClasses[$className]]);
-
-            $cron_arr_date = CrontabExpression::parseCronItem($cron);
-            foreach ($cron_arr_date as $k => $cron_item) {
-                if ($cron_item === '*' || $cron_item === '?') {
-                    continue;
-                }
-                if (!in_array($date[$k], $cron_item)) {
-                    array_pop($taskArr);
-                    break;
-                }
+            if (CrontabExpression::parseObj($cron, $time)) {
+                array_push($tasks, [self::$scheduledClasses[$className]], $methodName);
             }
         }
-
-        return $taskArr;
+        return $tasks;
     }
+
+    /**
+     * @param string $beanName
+     * @param string $methodName
+     *
+     * @throws CrontabException
+     * @throws ReflectionException
+     * @throws ContainerException
+     */
+    public static function dispatch(string $beanName, string $methodName)
+    {
+        $object = BeanFactory::getBean($beanName);
+        if (!method_exists($object, $methodName)) {
+            throw new CrontabException(
+                sprintf('Crontab(name=%s method=%s) method is not exist!', $beanName, $methodName)
+            );
+        }
+        PhpHelper::call([$object, $methodName]);
+    }
+
+
 }
