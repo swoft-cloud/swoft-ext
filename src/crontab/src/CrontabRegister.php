@@ -75,7 +75,7 @@ class CrontabRegister
         foreach (self::$crontabs as $crontab) {
             ['class' => $className, 'method' => $methodName, 'cron' => $cron] = $crontab;
             if (CrontabExpression::parseObj($cron, $time)) {
-                array_push($tasks, [$className, $methodName, self::$scheduledClasses[$className]]);
+                array_push($tasks, [self::$scheduledClasses[$className]], $methodName);
             }
         }
         return $tasks;
