@@ -130,33 +130,33 @@ class CrontabExpression
      */
     public static function parseCronItem(string $cronExpress): array
     {
-        $cron_arr = preg_split('/\s/', $cronExpress, -1, PREG_SPLIT_NO_EMPTY);
-        $return_arr = array();
+        $cronItems = preg_split('/\s/', $cronExpress, -1, PREG_SPLIT_NO_EMPTY);
+        $times = array();
         $maxLimit=[59,59,23,31,12,6];
-        foreach ($cron_arr as $k => $item) {
+        foreach ($cronItems as $k => $item) {
             if ('*' === $item || '?' === $item) {
-                $return_arr [$k] = $item;
+                $times [$k] = $item;
             }
             if (strpos($item, '/') !== false) {
                 str_replace('*', '0', '$value');
                 list($start, $end) = explode('/', $item);
                 while ($start <= $maxLimit[$k]) {
-                    $return_arr [$k][] = $start;
+                    $times [$k][] = $start;
                     $start += $end;
                 }
             }
             if (strpos($item, '-') !== false) {
                 list($start, $end) = explode('-', $item);
-                $return_arr[$k] = range($start, $end);
+                $times[$k] = range($start, $end);
             }
             if (strpos($item, ',') !== false) {
-                $return_arr[$k] = explode(',', $item);
+                $times[$k] = explode(',', $item);
             }
             if (ctype_digit($item)) {
-                $return_arr[$k][] = $item;
+                $times[$k][] = $item;
             }
         }
-        return $return_arr;
+        return $times;
     }
 
     /**

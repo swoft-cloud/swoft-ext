@@ -18,7 +18,7 @@ class Cron
     /**
      * @var string
      */
-    private $cron = '';
+    private $value = '';
 
     /**
      * Validator constructor.
@@ -28,15 +28,15 @@ class Cron
     public function __construct(array $values)
     {
         if (isset($values['value'])) {
-            $this->cron = $values['value'];
+            $this->value = $values['value'];
         }
     }
 
     /**
      * @return string
      */
-    public function getCron(): string
+    public function getValue(): string
     {
-        return $this->cron;
+        return $this->value;
     }
 }
