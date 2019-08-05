@@ -6,7 +6,7 @@ namespace Swoft\Swoole\Dashboard\Logic;
 
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
-use Swoft\swoole\Dashboard\SwooleDashboard;
+use Swoft\Swoole\Dashboard\SwooleDashboard;
 
 /**
  * Class SwooleDashboardLogic
