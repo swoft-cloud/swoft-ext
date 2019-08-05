@@ -197,6 +197,6 @@ class SwooleDashboardManager
             return;
         }
 
-        return StatsCenter::afterExecRpc($tick, $isSuccess, $errno);
+        StatsCenter::afterExecRpc($tick, $isSuccess, $errno);
     }
 }
