@@ -18,28 +18,28 @@ class SwooleDashboard
      *
      * @var bool
      */
-    private $memoryLeakCheck;
+    private $memoryLeakCheck = true;
 
     /**
      * Check Blocking detection
      *
      * @var bool
      */
-    private $blockCheck;
+    private $blockCheck = false;
 
     /**
      * Performance analysis
      *
      * @var bool
      */
-    private $performanceAnalysis;
+    private $performanceAnalysis = false;
 
     /**
      * Distributed link tracking
      *
      * @var bool
      */
-    private $linkTracking;
+    private $linkTracking = false;
 
     /**
      * @return bool

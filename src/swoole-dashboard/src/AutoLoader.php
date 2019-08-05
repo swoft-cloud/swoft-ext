@@ -38,6 +38,14 @@ class AutoLoader extends SwoftComponent
      */
     public function beans(): array
     {
-        return [];
+        return [
+            'swooleDashboard' => [
+                'class'               => SwooleDashboard::class,
+                'memoryLeakCheck'     => false,
+                'blockCheck'          => false,
+                'performanceAnalysis' => false,
+                'linkTracking'        => true,
+            ],
+        ];
     }
 }
