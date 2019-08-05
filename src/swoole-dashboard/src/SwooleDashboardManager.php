@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Swoft\Swoole\Dashboard\Logic;
+namespace Swoft\Swoole\Dashboard;
 
 use ReflectionException;
 use StatsCenter;

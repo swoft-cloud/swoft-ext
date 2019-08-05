@@ -58,7 +58,7 @@ class CrontabRegister
             );
         }
 
-        $cronExpression = $objAnnotation->getCron();
+        $cronExpression = $objAnnotation->getValue();
         if (!CrontabExpression::parse($cronExpression)) {
             throw new CrontabException(
                 sprintf('`%s::%s()` `@Cron()` expression format is error', $className, $methodName)

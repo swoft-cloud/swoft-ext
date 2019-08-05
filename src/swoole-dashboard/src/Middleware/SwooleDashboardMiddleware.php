@@ -11,7 +11,7 @@ use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Http\Message\Request;
 use Swoft\Http\Server\Contract\MiddlewareInterface;
-use Swoft\Swoole\Dashboard\Logic\SwooleDashboardManager;
+use Swoft\Swoole\Dashboard\SwooleDashboardManager;
 use Swoft\Swoole\Dashboard\SwooleDashboard;
 use Throwable;
 use function config;
