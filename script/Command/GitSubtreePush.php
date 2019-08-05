@@ -49,7 +49,7 @@ STR;
         // git subtree push --prefix=src/stdlib stdlib master
         foreach ($this->findComponents($app) as $dir) {
             $name = basename($dir);
-            $cmd = "git subtree push --prefix=src/{$name} {$name} $targetBranch --squash";
+            $cmd = "git subtree push --prefix=src/{$name} {$name} $targetBranch";
 
             $runner->add(function () use ($name, $cmd) {
                 Color::println("\n====== Push the component:【{$name}】");
