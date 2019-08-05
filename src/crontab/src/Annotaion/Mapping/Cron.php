@@ -10,7 +10,7 @@ namespace Swoft\Crontab\Annotaion\Mapping;
  * @Annotation
  * @Target("METHOD")
  * @Attributes({
- *     @Attribute("cron", type="string")
+ *     @Attribute("value", type="string")
  * })
  */
 class Cron
@@ -18,7 +18,7 @@ class Cron
     /**
      * @var string
      */
-    private $cron = '';
+    private $value = '';
 
     /**
      * Validator constructor.
@@ -28,18 +28,15 @@ class Cron
     public function __construct(array $values)
     {
         if (isset($values['value'])) {
-            $this->cron = $values['value'];
-        }
-        if (isset($values['cron'])) {
-            $this->cron = $values['cron'];
+            $this->value = $values['value'];
         }
     }
 
     /**
      * @return string
      */
-    public function getCron(): string
+    public function getValue(): string
     {
-        return $this->cron;
+        return $this->value;
     }
 }

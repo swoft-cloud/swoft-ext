@@ -21,7 +21,7 @@ class TestCrontab
     private $test;
 
     /**
-     * @Cron(cron="*")
+     * @Cron(value="*")
      *
      * @return array
      */
