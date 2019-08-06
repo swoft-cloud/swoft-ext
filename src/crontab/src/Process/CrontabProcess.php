@@ -8,6 +8,7 @@ use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Bean\Exception\ContainerException;
 use Swoft\Crontab\Crontab;
+use Swoft\Exception\SwoftException;
 use Swoft\Process\Process;
 use Swoft\Process\UserProcess;
 
@@ -31,8 +32,9 @@ class CrontabProcess extends UserProcess
     /**
      * @param Process $process
      *
-     * @throws ReflectionException
      * @throws ContainerException
+     * @throws ReflectionException
+     * @throws SwoftException
      */
     public function run(Process $process): void
     {

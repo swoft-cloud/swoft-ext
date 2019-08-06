@@ -7,6 +7,7 @@ use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\BeanFactory;
 use Swoft\Bean\Exception\ContainerException;
 use Swoft\Crontab\Exception\CrontabException;
+use Swoft\Exception\SwoftException;
 use Swoft\Stdlib\Helper\PhpHelper;
 use Swoft\Timer;
 use Swoole\Coroutine\Channel;
@@ -48,8 +49,9 @@ class Crontab
     /**
      * Tick task
      *
-     * @throws ReflectionException
      * @throws ContainerException
+     * @throws ReflectionException
+     * @throws SwoftException
      */
     public function tick(): void
     {
@@ -70,10 +72,12 @@ class Crontab
     public function dispatch(): void
     {
         while (true) {
-            $item = $this->channel->pop();
-            sgo(function () use ($item) {
+            $task = $this->channel->pop();
+            sgo(function () use ($task) {
+
                 // Execute task
-                [$beanName, $methodName] = $item;
+                [$beanName, $methodName] = $task;
+
                 $this->execute($beanName, $methodName);
             });
         }
@@ -83,9 +87,7 @@ class Crontab
      * @param string $beanName
      * @param string $methodName
      *
-     * @throws ContainerException
      * @throws CrontabException
-     * @throws ReflectionException
      */
     public function execute(string $beanName, string $methodName): void
     {
@@ -96,6 +98,8 @@ class Crontab
                 sprintf('Crontab(name=%s method=%s) method is not exist!', $beanName, $methodName)
             );
         }
+
+
 
         PhpHelper::call([$object, $methodName]);
     }
