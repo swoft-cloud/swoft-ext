@@ -5,6 +5,7 @@ namespace SwoftTest\Swoole\Dashboard\Unit;
 
 
 use PHPUnit\Framework\TestCase;
+use Swoft\Swoole\Dashboard\SwooleDashboard;
 
 /**
  * Class DashboardTest
@@ -13,8 +14,14 @@ use PHPUnit\Framework\TestCase;
  */
 class DashboardTest extends TestCase
 {
-    public function testIndex()
+    public function testStatus()
     {
-        $this->assertTrue(true);
+        /** @var $dashboard SwooleDashboard */
+        $dashboard = bean(SwooleDashboard::class);
+
+        $this->assertTrue($dashboard->isMemoryLeakCheck());
+        $this->assertTrue($dashboard->isBlockCheck());
+        $this->assertFalse($dashboard->isPerformanceAnalysis());
+        $this->assertTrue($dashboard->isLinkTracking());
     }
 }

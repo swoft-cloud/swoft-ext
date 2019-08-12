@@ -25,10 +25,13 @@ class SwooleDashboard
      *
      * @var bool
      */
-    private $blockCheck = false;
+    private $blockCheck = true;
 
     /**
      * Performance analysis
+     *
+     * Be careful not to open multiple tools at the same time.
+     * For example, both "startXhprof()" and "startBlockCheck()" in the code will affect each other and cause inaccurate results.
      *
      * @var bool
      */
@@ -39,7 +42,7 @@ class SwooleDashboard
      *
      * @var bool
      */
-    private $linkTracking = false;
+    private $linkTracking = true;
 
     /**
      * @return bool
