@@ -15,6 +15,15 @@ use Swoole\Coroutine;
 
 class RateLimiterTest extends TestCase
 {
+    public function testKeyName()
+    {
+        /* @var RateLimiterBean $rateLimiterBean */
+        $rateLimiterBean = BeanFactory::getBean(RateLimiterBean::class);
+
+        $result = $rateLimiterBean->limitKey();
+        $this->assertEquals($result, 'keyName');
+    }
+
     /**
      * @throws ReflectionException
      * @throws ContainerException
