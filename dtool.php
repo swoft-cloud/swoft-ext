@@ -11,6 +11,7 @@ use SwoftExt\Command\GitAddRemote;
 use SwoftExt\Command\GitReleaseTag;
 use SwoftExt\Command\GitSubtreePull;
 use SwoftExt\Command\GitSubtreePush;
+use SwoftExt\Command\GitForcePush;
 use Toolkit\Cli\App;
 
 require __DIR__ . '/script/bootstrap.php';
@@ -23,6 +24,7 @@ $cli->addByConfig($gi = new GitFindTag(), $gi->getHelpConfig());
 $cli->addByConfig($drt = new DeleteRemoteTag(), $drt->getHelpConfig());
 $cli->addByConfig($grt = new GitReleaseTag(), $grt->getHelpConfig());
 $cli->addByConfig($gar = new GitAddRemote(), $gar->getHelpConfig());
+$cli->addByConfig($gfp = new GitForcePush(), $gfp->getHelpConfig());
 $cli->addByConfig($gsp1 = new GitSubtreePull(), $gsp1->getHelpConfig());
 $cli->addByConfig($gsp2 = new GitSubtreePush(), $gsp2->getHelpConfig());
 
