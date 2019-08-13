@@ -3,13 +3,11 @@
 
 namespace Swoft\Swoole\Dashboard;
 
-use ReflectionException;
 use StatsCenter;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
-use Swoft\Bean\Exception\ContainerException;
-use Swoft\Log\Helper\Log;
-use Swoft\Swoole\Dashboard\SwooleDashboard;
+use Swoft\Log\Helper\CLog;
+use Throwable;
 use function function_exists;
 
 /**
@@ -31,8 +29,6 @@ class SwooleDashboardManager
      * start analysis
      *
      * @return void
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function startAnalysis(): void
     {
@@ -69,15 +65,13 @@ class SwooleDashboardManager
      * Start memory leak check buried point
      *
      * @return void
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function startMemoryLeakCheck(): void
     {
         if (function_exists('startMemleakCheck')) {
             startMemleakCheck();
         } else {
-            Log::error('startMemleakCheck function not found, Please check swoole_plus extend');
+            CLog::error('startMemleakCheck function not found, Please check swoole_plus extend');
         }
     }
 
@@ -97,15 +91,13 @@ class SwooleDashboardManager
      * Start block check buried point
      *
      * @return void
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function startBlockCheck(): void
     {
         if (function_exists('startBlockCheck')) {
             startBlockCheck();
         } else {
-            Log::error('startBlockCheck function not found, Please check swoole_plus extend');
+            CLog::error('startBlockCheck function not found, Please check swoole_plus extend');
         }
     }
 
@@ -125,15 +117,13 @@ class SwooleDashboardManager
      * Start performance analysis buried point
      *
      * @return void
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function startPerformanceAnalysis(): void
     {
         if (function_exists('startXhprof')) {
             startXhprof();
         } else {
-            Log::error('startPerformanceAnalysis function not found, Please check swoole_plus extend');
+            CLog::error('startPerformanceAnalysis function not found, Please check swoole_plus extend');
         }
     }
 
@@ -159,8 +149,7 @@ class SwooleDashboardManager
      * @param string $spanId
      *
      * @return object|null StatsCenter_Tick
-     * @throws ReflectionException
-     * @throws ContainerException
+     * @throws Throwable
      */
     public function startRpcAnalysis(
         string $path,
@@ -170,7 +159,7 @@ class SwooleDashboardManager
         string $spanId
     ): ?object {
         if (class_exists(StatsCenter::class) === false) {
-            Log::error('StatsCenter::class not found, Please check swoole_plus extend');
+            CLog::error('StatsCenter::class not found, Please check swoole_plus extend');
             return null;
         }
 
