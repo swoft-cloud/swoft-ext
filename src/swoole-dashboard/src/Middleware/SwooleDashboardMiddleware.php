@@ -10,8 +10,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Http\Message\Request;
+use Swoft\Http\Message\Response;
 use Swoft\Http\Server\Contract\MiddlewareInterface;
-use Swoft\Swoole\Dashboard\SwooleDashboardManager;
 use Swoft\Swoole\Dashboard\SwooleDashboard;
 use Throwable;
 use function config;
@@ -29,14 +29,12 @@ class SwooleDashboardMiddleware implements MiddlewareInterface
 {
 
     /**
-     * @Inject()
-     *
-     * @var SwooleDashboardManager
+     * Swoole dashboard tick
      */
-    private $swoleDashboardManager;
+    public const SWOOLE_DASHBOARD_TICK = 'swooleashboardDTick';
 
     /**
-     * @Inject()
+     * @Inject("swooleDashboard")
      *
      * @var SwooleDashboard
      */
@@ -51,13 +49,36 @@ class SwooleDashboardMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $path = $request->getUriPath();
-        if ($path === '/favicon.ico') {
+        if ($request->getUriPath() === '/favicon.ico') {
             return $handler->handle($request);
         }
 
+        $request = $this->startAnalysis($request);
+
+        try {
+            // Handle Request
+            $response = $handler->handle($request);
+
+            $this->endNormalAnalysis($request, $response);
+        } catch (Throwable $e) {
+            $this->endExceptionAnalysis($request, $e);
+
+            throw $e;
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param ServerRequestInterface|Request $request
+     *
+     * @return ServerRequestInterface
+     * @throws Throwable
+     */
+    private function startAnalysis(ServerRequestInterface $request): ServerRequestInterface
+    {
         // Before request
-        $this->swoleDashboardManager->startAnalysis();
+        $this->swoleDashboard->startAnalysis();
 
         if ($this->swoleDashboard->isLinkTracking()) {
             $ip      = current(swoole_get_local_ip());
@@ -65,32 +86,53 @@ class SwooleDashboardMiddleware implements MiddlewareInterface
             $traceId = context()->get('traceid', '');
             $spanId  = context()->get('spanid', '');
 
-            $tick = $this->swoleDashboardManager->startRpcAnalysis($path, $appName, $ip, $traceId, $spanId);
+            $tick = $this->swoleDashboard->startRpcAnalysis($request->getUriPath(), $appName, $ip, $traceId, $spanId);
+
+            return $request->withAttribute(self::SWOOLE_DASHBOARD_TICK, $tick);
         }
 
-        try {
+        return $request;
+    }
 
-            // Handle Request
-            $response = $handler->handle($request);
-
-            // After request
-            $this->swoleDashboardManager->endAnalysis();
-
-            if (isset($tick)) {
-                $this->swoleDashboardManager->endRpcAnalysis(
-                    $tick,
-                    $response->getStatusCode() === 200,
-                    $response->getStatusCode()
-                );
-            }
-
-            return $response;
-        } catch (Throwable $e) {
-            if (isset($tick)) {
-                $this->swoleDashboardManager->endRpcAnalysis($tick, false, $e->getCode());
-            }
-
-            throw $e;
+    /**
+     * @param ServerRequestInterface|Request $request
+     * @param ResponseInterface|Response     $response
+     *
+     * @return void
+     */
+    private function endNormalAnalysis(ServerRequestInterface $request, ResponseInterface $response): void
+    {
+        $tick = $request->getAttribute(self::SWOOLE_DASHBOARD_TICK);
+        if (isset($tick)) {
+            $this->swoleDashboard->endRpcAnalysis(
+                $tick,
+                $response->getStatusCode() === 200,
+                $response->getStatusCode()
+            );
         }
+
+        // After request
+        $this->swoleDashboard->endAnalysis();
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param Throwable              $throwable
+     *
+     * @return void
+     */
+    private function endExceptionAnalysis(ServerRequestInterface $request, Throwable $throwable): void
+    {
+        $tick = $request->getAttribute(self::SWOOLE_DASHBOARD_TICK);
+        if (isset($tick)) {
+            $this->swoleDashboard->endRpcAnalysis(
+                $tick,
+                false,
+                $throwable->getCode()
+            );
+        }
+
+        // After request
+        $this->swoleDashboard->endAnalysis();
     }
 }
