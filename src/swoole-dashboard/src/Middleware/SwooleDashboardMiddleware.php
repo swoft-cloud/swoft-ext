@@ -27,12 +27,6 @@ use function swoole_get_local_ip;
  */
 class SwooleDashboardMiddleware implements MiddlewareInterface
 {
-
-    /**
-     * Swoole dashboard tick
-     */
-    public const SWOOLE_DASHBOARD_TICK = 'swooleashboardDTick';
-
     /**
      * @Inject("swooleDashboard")
      *
@@ -49,19 +43,20 @@ class SwooleDashboardMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($request->getUriPath() === '/favicon.ico') {
+        $path = $request->getUriPath();
+        if ($path === '/favicon.ico') {
             return $handler->handle($request);
         }
 
-        $request = $this->startAnalysis($request);
+        $tick = $this->startAnalysis($path);
 
         try {
             // Handle Request
             $response = $handler->handle($request);
 
-            $this->endNormalAnalysis($request, $response);
+            $this->endNormalAnalysis($tick, $response);
         } catch (Throwable $e) {
-            $this->endExceptionAnalysis($request, $e);
+            $this->endExceptionAnalysis($tick, $e);
 
             throw $e;
         }
@@ -70,12 +65,12 @@ class SwooleDashboardMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param ServerRequestInterface|Request $request
+     * @param string $path
      *
-     * @return ServerRequestInterface
+     * @return object|null
      * @throws Throwable
      */
-    private function startAnalysis(ServerRequestInterface $request): ServerRequestInterface
+    private function startAnalysis(string $path): ?object
     {
         // Before request
         $this->swoleDashboard->startAnalysis();
@@ -86,23 +81,22 @@ class SwooleDashboardMiddleware implements MiddlewareInterface
             $traceId = context()->get('traceid', '');
             $spanId  = context()->get('spanid', '');
 
-            $tick = $this->swoleDashboard->startRpcAnalysis($request->getUriPath(), $appName, $ip, $traceId, $spanId);
+            $tick = $this->swoleDashboard->startRpcAnalysis($path, $appName, $ip, $traceId, $spanId);
 
-            return $request->withAttribute(self::SWOOLE_DASHBOARD_TICK, $tick);
+            return $tick;
         }
 
-        return $request;
+        return null;
     }
 
     /**
-     * @param ServerRequestInterface|Request $request
-     * @param ResponseInterface|Response     $response
+     * @param object|null                $tick
+     * @param ResponseInterface|Response $response
      *
      * @return void
      */
-    private function endNormalAnalysis(ServerRequestInterface $request, ResponseInterface $response): void
+    private function endNormalAnalysis(?object $tick, ResponseInterface $response): void
     {
-        $tick = $request->getAttribute(self::SWOOLE_DASHBOARD_TICK);
         if (isset($tick)) {
             $this->swoleDashboard->endRpcAnalysis(
                 $tick,
@@ -116,14 +110,13 @@ class SwooleDashboardMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param Throwable              $throwable
+     * @param object|null $tick
+     * @param Throwable   $throwable
      *
      * @return void
      */
-    private function endExceptionAnalysis(ServerRequestInterface $request, Throwable $throwable): void
+    private function endExceptionAnalysis(?object $tick, Throwable $throwable): void
     {
-        $tick = $request->getAttribute(self::SWOOLE_DASHBOARD_TICK);
         if (isset($tick)) {
             $this->swoleDashboard->endRpcAnalysis(
                 $tick,

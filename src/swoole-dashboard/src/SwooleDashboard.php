@@ -221,9 +221,15 @@ class SwooleDashboard
             return null;
         }
 
-        $tick = StatsCenter::beforeExecRpc($path, $serviceName, $serverIp, $traceId, $spanId);
+        try {
+            $tick = StatsCenter::beforeExecRpc($path, $serviceName, $serverIp, $traceId, $spanId);
 
-        return $tick;
+            return $tick;
+        } catch (Throwable $e) {
+            CLog::error(__FUNCTION__ . $e->getMessage());
+        }
+
+        return null;
     }
 
     /**
@@ -244,6 +250,10 @@ class SwooleDashboard
             return;
         }
 
-        StatsCenter::afterExecRpc($tick, $isSuccess, $errno);
+        try {
+            StatsCenter::afterExecRpc($tick, $isSuccess, $errno);
+        } catch (Throwable $e) {
+            CLog::error(__FUNCTION__ . $e->getMessage());
+        }
     }
 }
