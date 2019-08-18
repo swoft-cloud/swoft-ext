@@ -51,25 +51,25 @@ class SwooleDashboardMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $path = $request->getUriPath();
+        if ($path === '/favicon.ico') {
+            return $handler->handle($request);
+        }
+
         // Before request
         $this->swoleDashboardManager->startAnalysis();
 
         if ($this->swoleDashboard->isLinkTracking()) {
-            $ip = current(swoole_get_local_ip());
-
+            $ip      = current(swoole_get_local_ip());
+            $appName = defined('APP_NAME') ? APP_NAME : config('app_name', $ip);
             $traceId = context()->get('traceid', '');
             $spanId  = context()->get('spanid', '');
 
-            $tick = $this->swoleDashboardManager->startRpcAnalysis(
-                $request->getUriPath(),
-                defined('APP_NAME') ? APP_NAME : config('app_name'),
-                $ip,
-                $traceId,
-                $spanId
-            );
+            $tick = $this->swoleDashboardManager->startRpcAnalysis($path, $appName, $ip, $traceId, $spanId);
         }
 
         try {
+
             // Handle Request
             $response = $handler->handle($request);
 
@@ -79,7 +79,7 @@ class SwooleDashboardMiddleware implements MiddlewareInterface
             if (isset($tick)) {
                 $this->swoleDashboardManager->endRpcAnalysis(
                     $tick,
-                    $response->getStatusCode() == 200,
+                    $response->getStatusCode() === 200,
                     $response->getStatusCode()
                 );
             }
