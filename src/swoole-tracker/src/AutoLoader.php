@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Swoft\Swoole\Dashboard;
+namespace Swoft\Swoole\Tracker;
 
 
 use Swoft\SwoftComponent;
