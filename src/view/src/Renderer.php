@@ -118,7 +118,7 @@ class Renderer implements ViewInterface
         if ($layout = $layout ?: $this->layout) {
             $mark    = $this->placeholder;
             $main    = $this->fetch($layout, $data);
-            $content = \preg_replace("/$mark/", $content, $main, 1);
+            $content = \str_replace($mark, $content, $main);
         }
 
         return $content;
