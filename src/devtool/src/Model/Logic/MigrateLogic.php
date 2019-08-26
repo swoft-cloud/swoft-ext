@@ -601,6 +601,9 @@ class MigrateLogic
             // match names
             foreach ($migrations as $migrationName => $migration) {
                 if (stripos($migrationName, $name) !== false) {
+                    // Sort migrations by time
+                    $temp = array_column($migrations, 'time');
+                    array_multisort($migrations, SORT_ASC, $temp);
                     $matchNames[] = $migrationName;
                 }
             }
