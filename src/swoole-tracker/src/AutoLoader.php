@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Swoft\Swoole\Dashboard;
+namespace Swoft\Swoole\Tracker;
 
 
 use Swoft\SwoftComponent;
@@ -31,20 +31,5 @@ class AutoLoader extends SwoftComponent
     public function metadata(): array
     {
         return [];
-    }
-
-    /**
-     * @return array
-     */
-    public function beans(): array
-    {
-        return [
-            SwooleDashboard::class => [
-                'memoryLeakCheck'     => true,
-                'blockCheck'          => true,
-                'performanceAnalysis' => false,
-                'linkTracking'        => true,
-            ],
-        ];
     }
 }
