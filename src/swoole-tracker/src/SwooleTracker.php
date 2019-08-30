@@ -4,7 +4,7 @@
 namespace Swoft\Swoole\Tracker;
 
 
-use StatsCenter;
+use SwooleTracker\Stats;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Log\Helper\CLog;
 use Throwable;
@@ -37,13 +37,13 @@ class SwooleTracker
         string $traceId,
         string $spanId
     ): ?object {
-        if (class_exists(StatsCenter::class) === false) {
-            CLog::error('StatsCenter::class not found, Please check swoole_plus extend');
+        if (class_exists(Stats::class) === false) {
+            CLog::error('Stats::class not found, Please check swoole_tracker extend');
             return null;
         }
 
         try {
-            $tick = StatsCenter::beforeExecRpc($path, $serviceName, $serverIp, $traceId, $spanId);
+            $tick = Stats::beforeExecRpc($path, $serviceName, $serverIp, $traceId, $spanId);
 
             return $tick;
         } catch (Throwable $e) {
@@ -67,12 +67,12 @@ class SwooleTracker
         if (empty($tick)) {
             return;
         }
-        if (class_exists(StatsCenter::class) === false) {
+        if (class_exists(Stats::class) === false) {
             return;
         }
 
         try {
-            StatsCenter::afterExecRpc($tick, $isSuccess, $errno);
+            Stats::afterExecRpc($tick, $isSuccess, $errno);
         } catch (Throwable $e) {
             CLog::error(__FUNCTION__ . ' ' . $e->getMessage());
         }
