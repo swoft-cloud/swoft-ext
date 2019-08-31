@@ -1,5 +1,5 @@
 {
-    "name": "swoft/swoole-dashboard",
+    "name": "swoft/swoole-tracker",
     "type": "library",
     "version": "v2.0.5",
     "keywords": [
@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Swoft\\Swoole\\Dashboard\\": "src/"
+            "Swoft\\Swoole\\Tracker\\": "src/"
         }
     },
     "require-dev": {
@@ -23,8 +23,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "SwoftTest\\Swoole\\Dashboard\\Unit\\": "test/unit/",
-            "SwoftTest\\Swoole\\Dashboard\\Testing\\": "test/testing/"
+            "SwoftTest\\Swoole\\Tracker\\Unit\\": "test/unit/",
+            "SwoftTest\\Swoole\\Tracker\\Testing\\": "test/testing/"
         }
     },
     "scripts": {

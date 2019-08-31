@@ -25,7 +25,7 @@
     "swoft/apollo": "self.version",
     "swoft/session": "self.version",
     "swoft/crontab": "self.version",
-    "swoft/swoole-dashboard": "self.version",
+    "swoft/swoole-tracker": "self.version",
     "swoft/whoops": "self.version"
   },
   "autoload": {
@@ -44,7 +44,7 @@
       "Swoft\\Zipkin\\": "src/zipkin/src/",
       "Swoft\\Session\\": "src/session/src/",
       "Swoft\\Crontab\\": "src/crontab/src/",
-      "Swoft\\Swoole\\Dashboard\\": "src/swoole-dashboard/src/",
+      "Swoft\\Swoole\\Tracker\\": "src/swoole-tracker/src/",
       "Swoft\\Whoops\\": "src/whoops/src/"
     },
     "files": [
@@ -80,8 +80,8 @@
       "SwoftTest\\Http\\Session\\Unit\\": "src/session/test/unit/",
       "SwoftTest\\Crontab\\Testing\\": "src/crontab/test/testing/",
       "SwoftTest\\Crontab\\Unit\\": "src/crontab/test/unit/",
-      "SwoftTest\\Swoole\\Dashboard\\Testing\\": "src/swoole-dashboard/test/testing/",
-      "SwoftTest\\Swoole\\Dashboard\\Unit\\": "src/swoole-dashboard/test/unit/",
+      "SwoftTest\\Swoole\\Tracker\\Testing\\": "src/swoole-tracker/test/testing/",
+      "SwoftTest\\Swoole\\Tracker\\Unit\\": "src/swoole-tracker/test/unit/",
       "SwoftTest\\Whoops\\Testing\\": "src/whoops/test/testing/",
       "SwoftTest\\Whoops\\Unit\\": "src/whoops/test/unit/"
     }
