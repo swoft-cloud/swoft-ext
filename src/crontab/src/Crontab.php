@@ -10,6 +10,7 @@ use Swoft\Crontab\Exception\CrontabException;
 use Swoft\Exception\SwoftException;
 use Swoft\Stdlib\Helper\PhpHelper;
 use Swoft\Timer;
+use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
 /**
@@ -73,12 +74,18 @@ class Crontab
     {
         while (true) {
             $task = $this->channel->pop();
-            sgo(function () use ($task) {
 
-                // Execute task
+            Coroutine::create(function () use ($task) {
                 [$beanName, $methodName] = $task;
 
+                //Before
+                \Swoft::trigger(CrontabEvent::BEFORE_CRONTAB, $this, $beanName, $methodName);
+
+                // Execute task
                 $this->execute($beanName, $methodName);
+
+                //Before
+                \Swoft::trigger(CrontabEvent::AFTER_CRONTAB, $this, $beanName, $methodName);
             });
         }
     }
@@ -98,7 +105,6 @@ class Crontab
                 sprintf('Crontab(name=%s method=%s) method is not exist!', $beanName, $methodName)
             );
         }
-
 
 
         PhpHelper::call([$object, $methodName]);
