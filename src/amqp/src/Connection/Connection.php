@@ -52,7 +52,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
 
     /**
      * @param Pool   $pool
-     * @param AmqpDb $redisDb
+     * @param AmqpDb $amqpDb
      */
     public function initialize(Pool $pool, AmqpDb $amqpDb)
     {
@@ -153,7 +153,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
      *
      * @param array $exchange
      *
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @throws AMQPException
      */
     public function declareExchange(array $exchange): void
     {
@@ -170,7 +170,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
                 $exchange['ticket'] ?? null
             );
             $this->exchange = $exchange['name'];
-        } catch (Exception $exception) {
+        } catch (Exception $e) {
             throw new AMQPException(
                 sprintf('RabbitMQ declare exchange error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
             );
@@ -199,7 +199,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
                 $queue['ticket'] ?? null
             );
             $this->queue = $queue['name'];
-        } catch (Exception $exception) {
+        } catch (Exception $e) {
             throw new AMQPException(
                 sprintf('RabbitMQ declare queue error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
             );
@@ -225,7 +225,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
                 $config['arguments'] ?? [],
                 $config['ticket'] ?? null
             );
-        } catch (Exception $exception) {
+        } catch (Exception $e) {
             throw new AMQPException(
                 sprintf('RabbitMQ bind queue and exchange error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
             );
@@ -236,11 +236,9 @@ class Connection extends AbstractConnection implements ConnectionInterface
      * 推送消息
      * push
      *
-     * @param string $body
-     * @param array  $properties
-     * @param string $routeKey
-     *
-     * @throws \PhpAmqpLib\Exception\AMQPConnectionClosedException
+     * @param string $message
+     * @param array  $prop
+     * @param string $route
      */
     public function push(string $message, array $prop = [], string $route = ''): void
     {
@@ -270,13 +268,8 @@ class Connection extends AbstractConnection implements ConnectionInterface
      * consume
      *
      * @param Closure|null $callback
-     * @param array        $consume
      *
-     * @return string
-     * @throws \ErrorException
-     * @throws \PhpAmqpLib\Exception\AMQPOutOfBoundsException
-     * @throws \PhpAmqpLib\Exception\AMQPRuntimeException
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @return void
      */
     public function consume(Closure $callback = null): void
     {
