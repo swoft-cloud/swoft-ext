@@ -2,6 +2,7 @@
 
 namespace Swoft\Amqp\Connection;
 
+use PhpAmqpLib\Connection\AMQPSocketConnection;
 use Swoft\Bean\Annotation\Mapping\Bean;
 
 /**
@@ -14,7 +15,16 @@ use Swoft\Bean\Annotation\Mapping\Bean;
  */
 class SocketConnection extends Connection
 {
-    public function create(): void
+    /**
+     * connect
+     * @param $auths
+     * @param $options
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function connect($auths, $options)
     {
+        return AMQPSocketConnection::create_connection($auths, $options);
     }
 }
