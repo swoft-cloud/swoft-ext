@@ -11,6 +11,8 @@
   "license": "Apache-2.0",
   "require": {
     "php": ">7.1",
+    "php-amqplib/php-amqplib": "^2.9",
+    "swoft/connection-pool": "~2.0.0",
     "swoft/stdlib": "~2.0.0"
   },
   "autoload": {
