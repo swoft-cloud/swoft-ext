@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Swoft\Amqp;
 
@@ -9,32 +11,29 @@ use Swoft\Amqp\Connection\SocketConnection;
 use Swoft\Amqp\Connection\SSLConnection;
 use Swoft\Amqp\Connection\StreamConnection;
 use Swoft\Amqp\Connector\AMQPConnector;
-use Swoft\Amqp\Connector\PhpAmqpConnector;
 use Swoft\Amqp\Contract\ConnectorInterface;
 use Swoft\Amqp\Exception\AMQPException;
 use Swoft\Stdlib\Helper\Arr;
 
 /**
- * Class AmqpDb
+ * Class AmqpDb.
  *
  * @since   2.0
- *
- * @package Swoft\Amqp
  */
 class AmqpDb
 {
     /**
-     * StreamConnection
+     * StreamConnection.
      */
     const STREAM = 'StreamConnection';
 
     /**
-     * SocketConnection
+     * SocketConnection.
      */
     const SOCKET = 'SocketConnection';
 
     /**
-     * SSLConnection
+     * SSLConnection.
      */
     const SSL = 'SSLConnection';
 
@@ -44,17 +43,17 @@ class AmqpDb
     private $driver = self::STREAM;
 
     /**
-     * must contain keys (host, port, user, password, vhost)
+     * must contain keys (host, port, user, password, vhost).
      *
      * @var array
      */
     private $auths = [
         [
-            'host'     => '127.0.0.1',
-            'port'     => '5672',
-            'user'     => 'admin',
+            'host' => '127.0.0.1',
+            'port' => '5672',
+            'user' => 'admin',
             'password' => 'admin',
-            'vhost'    => '/',
+            'vhost' => '/',
         ],
     ];
 
@@ -67,51 +66,51 @@ class AmqpDb
      * @var array
      */
     private $exchange = [
-        'name'        => 'exchange',
-        'type'        => AMQPExchangeType::DIRECT,
-        'passive'     => false,
-        'durable'     => true,
+        'name' => 'exchange',
+        'type' => AMQPExchangeType::DIRECT,
+        'passive' => false,
+        'durable' => true,
         'auto_delete' => false,
-        'internal'    => false,
-        'nowait'      => false,
-        'arguments'   => [],
-        'ticket'      => null,
+        'internal' => false,
+        'nowait' => false,
+        'arguments' => [],
+        'ticket' => null,
     ];
 
     /**
      * @var array
      */
     private $queue = [
-        'name'        => 'queue',
-        'passive'     => false,
-        'durable'     => true,
-        'exclusive'   => false,
+        'name' => 'queue',
+        'passive' => false,
+        'durable' => true,
+        'exclusive' => false,
         'auto_delete' => false,
-        'nowait'      => false,
-        'arguments'   => [],
-        'ticket'      => null,
+        'nowait' => false,
+        'arguments' => [],
+        'ticket' => null,
     ];
 
     /**
      * @var array
      */
     private $route = [
-        'key'       => '',
-        'nowait'    => false,
+        'key' => '',
+        'nowait' => false,
         'arguments' => [],
-        'ticket'    => null,
+        'ticket' => null,
     ];
 
     /**
      * @var array
      */
     private $consume = [
-        'cancel_tag'   => ['exit', 'quit'],
+        'cancel_tag' => ['exit', 'quit'],
         'consumer_tag' => 'consumer',
-        'no_local'     => false,
-        'no_ack'       => false,
-        'exclusive'    => false,
-        'nowait'       => false,
+        'no_local' => false,
+        'no_ack' => false,
+        'exclusive' => false,
+        'nowait' => false,
     ];
 
     /**
@@ -128,9 +127,8 @@ class AmqpDb
      * @param Pool $pool
      *
      * @return Connection
-     * @throws RedisException
-     * @throws ReflectionException
-     * @throws ContainerException
+     *
+     * @throws AMQPException
      */
     public function createConnection(Pool $pool): Connection
     {
@@ -143,14 +141,13 @@ class AmqpDb
 
     /**
      * @return Connection
-     * @throws RedisException
-     * @throws ReflectionException
-     * @throws ContainerException
+     *
+     * @throws AMQPException
      */
     public function getConnection(): Connection
     {
         $connections = Arr::merge($this->defaultConnections(), $this->connections);
-        $connection  = $connections[$this->driver] ?? null;
+        $connection = $connections[$this->driver] ?? null;
 
         if (!$connection instanceof Connection) {
             throw new AMQPException(sprintf('Connection(dirver=%s) is not exist', $this->driver));
@@ -161,14 +158,13 @@ class AmqpDb
 
     /**
      * @return ConnectorInterface
-     * @throws RedisException
-     * @throws ReflectionException
-     * @throws ContainerException
+     *
+     * @throws AMQPException
      */
     public function getConnector(): ConnectorInterface
     {
         $connectors = Arr::merge($this->defaultConnectors(), $this->connectors);
-        $connector  = $connectors[$this->driver] ?? null;
+        $connector = $connectors[$this->driver] ?? null;
 
         if (!$connector instanceof ConnectorInterface) {
             throw new AMQPException(sprintf('Connector(dirver=%s) is not exist', $this->driver));
@@ -179,6 +175,7 @@ class AmqpDb
 
     /**
      * @return array
+     *
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -187,12 +184,13 @@ class AmqpDb
         return [
             self::STREAM => bean(AMQPConnector::class),
             self::SOCKET => bean(AMQPConnector::class),
-            self::SSL    => bean(AMQPConnector::class),
+            self::SSL => bean(AMQPConnector::class),
         ];
     }
 
     /**
      * @return array
+     *
      * @throws ReflectionException
      * @throws ContainerException
      */
@@ -201,7 +199,7 @@ class AmqpDb
         return [
             self::STREAM => bean(StreamConnection::class),
             self::SOCKET => bean(SocketConnection::class),
-            self::SSL    => bean(SSLConnection::class),
+            self::SSL => bean(SSLConnection::class),
         ];
     }
 

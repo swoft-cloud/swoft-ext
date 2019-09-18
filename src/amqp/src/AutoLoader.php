@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Swoft\Amqp;
 
@@ -7,7 +9,8 @@ use Swoft\SwoftComponent;
 use function dirname;
 
 /**
- * class AutoLoader
+ * class AutoLoader.
+ *
  * @since 2.0
  */
 final class AutoLoader extends SwoftComponent
@@ -21,7 +24,7 @@ final class AutoLoader extends SwoftComponent
     }
 
     /**
-     * Get namespace and dirs
+     * Get namespace and dirs.
      *
      * @return array
      */
@@ -33,19 +36,19 @@ final class AutoLoader extends SwoftComponent
     }
 
     /**
-     * Metadata information for the component
+     * Metadata information for the component.
      *
      * @return array
      */
     public function metadata(): array
     {
-        $jsonFile = dirname(__DIR__) . '/composer.json';
+        $jsonFile = dirname(__DIR__).'/composer.json';
 
         return ComposerJSON::open($jsonFile)->getMetadata();
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function beans(): array
     {

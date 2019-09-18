@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Swoft\Amqp\Connection;
 
@@ -17,11 +19,9 @@ use Swoft\Bean\BeanFactory;
 use Swoft\Connection\Pool\AbstractConnection;
 
 /**
- * Class Connection
+ * Class Connection.
  *
  * @since   2.0
- *
- * @package Swoft\Amqp\Connection
  */
 class Connection extends AbstractConnection implements ConnectionInterface
 {
@@ -56,15 +56,15 @@ class Connection extends AbstractConnection implements ConnectionInterface
      */
     public function initialize(Pool $pool, AmqpDb $amqpDb)
     {
-        $this->pool     = $pool;
-        $this->amqpDb   = $amqpDb;
+        $this->pool = $pool;
+        $this->amqpDb = $amqpDb;
         $this->lastTime = time();
 
         $this->id = $this->pool->getConnectionId();
     }
 
     /**
-     * create
+     * create.
      *
      * @throws AMQPException
      * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
@@ -75,36 +75,38 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * createClient
+     * createClient.
      *
      * @throws AMQPException
      * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      */
     public function createClient(): void
     {
-        $auths    = $this->amqpDb->getAuths();
-        $options  = $this->amqpDb->getOptions();
+        $auths = $this->amqpDb->getAuths();
+        $options = $this->amqpDb->getOptions();
         $exchange = $this->amqpDb->getExchange();
-        $queue    = $this->amqpDb->getQueue();
-        $route    = $this->amqpDb->getRoute();
+        $queue = $this->amqpDb->getQueue();
+        $route = $this->amqpDb->getRoute();
         try {
             $this->connection = $this->connect($auths, $options);
-            $this->channel    = $this->connection->channel();
+            $this->channel = $this->connection->channel();
         } catch (Exception $e) {
             throw new AMQPException(
                 sprintf('RabbitMQ connect error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
             );
         }
 
+        //TODO: move to connector
         $this->declareQueue($queue);
         $this->declareExchange($exchange);
         $this->bind($route);
     }
 
     /**
-     * reconnect
+     * reconnect.
      *
      * @return bool
+     *
      * @throws AMQPException
      * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      */
@@ -122,8 +124,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * 关闭连接
-     * close
+     * close.
      *
      * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      */
@@ -134,7 +135,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * release
+     * release.
      *
      * @param bool $force
      */
@@ -148,8 +149,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * 声明交换器
-     * declareExchange
+     * declareExchange.
      *
      * @param array $exchange
      *
@@ -178,8 +178,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * 声明队列
-     * declareQueue
+     * declareQueue.
      *
      * @param array $queue
      *
@@ -207,8 +206,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * 绑定队列和交换器
-     * bind
+     * bind queue and exchange.
      *
      * @param array $route
      *
@@ -220,10 +218,10 @@ class Connection extends AbstractConnection implements ConnectionInterface
             $this->channel->queue_bind(
                 $this->queue,
                 $this->exchange,
-                $config['key'] ?? '',
-                $config['nowait'] ?? false,
-                $config['arguments'] ?? [],
-                $config['ticket'] ?? null
+                $route['key'] ?? '',
+                $route['nowait'] ?? false,
+                $route['arguments'] ?? [],
+                $route['ticket'] ?? null
             );
         } catch (Exception $e) {
             throw new AMQPException(
@@ -233,8 +231,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * 推送消息
-     * push
+     * push message to RabbitMQ.
      *
      * @param string $message
      * @param array  $prop
@@ -248,10 +245,10 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * 获取第一条消息
-     * pop
+     * pop the first message from RabbitMQ.
      *
      * @return string|null
+     *
      * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      */
     public function pop(): ?string
@@ -264,16 +261,13 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * 持续订阅消息
-     * consume
+     * listen the queue from RabbitMQ.
      *
      * @param Closure|null $callback
-     *
-     * @return void
      */
     public function consume(Closure $callback = null): void
     {
-        //消费消息
+        //get the consume config
         $consume = $this->amqpDb->getConsume();
         $this->channel->basic_consume(
             $this->queue,
@@ -291,7 +285,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
                 !empty($callback) && $callback($message);
             }
         );
-        //等待获取队列
+        //wait for queue
         while ($this->channel->is_consuming()) {
             $this->channel->wait();
         }
