@@ -3,9 +3,7 @@
 
 namespace Swoft\Breaker\State;
 
-use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Breaker\Exception\BreakerException;
 use Swoole\Coroutine\Channel;
 
@@ -37,8 +35,6 @@ class HalfOpenState extends AbstractState
     }
 
     /**
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function success(): void
     {
@@ -65,8 +61,6 @@ class HalfOpenState extends AbstractState
     }
 
     /**
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function exception(): void
     {

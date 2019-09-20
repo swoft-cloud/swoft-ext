@@ -4,10 +4,7 @@
 namespace SwoftTest\Breaker\Unit;
 
 
-use Exception;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Breaker\Breaker;
 use Swoft\Breaker\BreakerManager;
 use Swoft\Breaker\Exception\BreakerException;
@@ -23,9 +20,6 @@ class BreakerTest extends TestCase
 {
     /**
      * @throws BreakerException
-     * @throws ContainerException
-     * @throws ReflectionException
-     * @throws Exception
      */
     public function testBreaker()
     {
@@ -95,8 +89,6 @@ class BreakerTest extends TestCase
      * @expectedException Swoft\Breaker\Exception\BreakerException
      *
      * @throws BreakerException
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function testOutTimeout()
     {
@@ -107,8 +99,6 @@ class BreakerTest extends TestCase
 
     /**
      * @throws BreakerException
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function testTimeoutFallback()
     {
@@ -120,8 +110,6 @@ class BreakerTest extends TestCase
 
     /**
      * @return BreakerBean
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     private function getBreakerBean(): BreakerBean
     {
@@ -133,8 +121,6 @@ class BreakerTest extends TestCase
      * @param string $method
      *
      * @return Breaker
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws BreakerException
      */
     private function getBreaker(string $className, string $method): Breaker
@@ -144,8 +130,6 @@ class BreakerTest extends TestCase
 
     /**
      * @return BreakerManager
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     private function getBreakerManager(): BreakerManager
     {

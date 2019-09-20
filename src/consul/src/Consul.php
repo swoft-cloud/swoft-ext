@@ -3,9 +3,7 @@
 
 namespace Swoft\Consul;
 
-use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Exception\ClientException;
 use Swoft\Consul\Exception\ConsulException;
 use Swoft\Consul\Exception\ServerException;
@@ -46,8 +44,6 @@ class Consul
      *
      * @return Response
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function get(string $url = null, array $options = []): Response
@@ -61,8 +57,6 @@ class Consul
      *
      * @return Response
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function head(string $url, array $options = []): Response
@@ -76,8 +70,6 @@ class Consul
      *
      * @return Response
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function delete(string $url, array $options = []): Response
@@ -91,8 +83,6 @@ class Consul
      *
      * @return Response
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function put(string $url, array $options = []): Response
@@ -106,8 +96,6 @@ class Consul
      *
      * @return Response
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function patch(string $url, array $options = []): Response
@@ -121,8 +109,6 @@ class Consul
      *
      * @return Response
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function post(string $url, array $options = []): Response
@@ -136,8 +122,6 @@ class Consul
      *
      * @return Response
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function options(string $url, array $options = []): Response
@@ -153,8 +137,6 @@ class Consul
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     private function request($method, $uri, $options): Response
     {

@@ -3,9 +3,7 @@
 
 namespace Swoft\Breaker\State;
 
-use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
-use Swoft\Bean\Exception\ContainerException;
 
 /**
  * Class CloseState
@@ -35,8 +33,6 @@ class CloseState extends AbstractState
     }
 
     /**
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function exception(): void
     {

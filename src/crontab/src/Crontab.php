@@ -2,10 +2,8 @@
 
 namespace Swoft\Crontab;
 
-use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\BeanFactory;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Crontab\Exception\CrontabException;
 use Swoft\Exception\SwoftException;
 use Swoft\Stdlib\Helper\PhpHelper;
@@ -50,8 +48,6 @@ class Crontab
     /**
      * Tick task
      *
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws SwoftException
      */
     public function tick(): void
