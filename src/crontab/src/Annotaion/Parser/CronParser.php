@@ -19,15 +19,15 @@ class CronParser extends Parser
 {
     /**
      * @param int $type
-     * @param object $annotationObject
+     * @param Cron $annotation
      *
      * @return array
      * @throws CrontabException
      */
-    public function parse(int $type, $annotationObject): array
+    public function parse(int $type, $annotation): array
     {
-        /* @var Cron $annotationObject */
-        CrontabRegister::registerCron($this->className, $this->methodName, $annotationObject);
+        CrontabRegister::registerCron($this->className, $this->methodName, $annotation);
+
         return [];
     }
 }

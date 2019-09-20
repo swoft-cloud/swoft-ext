@@ -64,7 +64,7 @@ class Crontab
     }
 
     /**
-     * Exe task
+     * Exec task
      */
     public function dispatch(): void
     {

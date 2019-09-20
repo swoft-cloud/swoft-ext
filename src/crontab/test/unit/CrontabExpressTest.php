@@ -6,7 +6,7 @@ namespace SwoftTest\Crontab\Unit;
 use PHPUnit\Framework\TestCase;
 use Swoft\Crontab\CrontabExpression;
 
-class CronabExpressTest extends TestCase
+class CrontabExpressTest extends TestCase
 {
     public function testParse()
     {
