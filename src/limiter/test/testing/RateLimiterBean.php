@@ -16,6 +16,16 @@ use Swoft\Limiter\Annotation\Mapping\RateLimiter;
 class RateLimiterBean
 {
     /**
+     * @RateLimiter(rate=3, default=3, max=3, key="'keyName'")
+     *
+     * @return string
+     */
+    public function limitKey(): string
+    {
+        return 'keyName';
+    }
+
+    /**
      * @RateLimiter(rate=3, default=3, max=3)
      *
      * @return string

@@ -12,6 +12,7 @@
   "require": {
     "php": ">7.1.0",
     "symfony/expression-language": "~4.3",
+    "filp/whoops": "^2.4",
     "text/template": "~2.6"
   },
   "require-dev": {

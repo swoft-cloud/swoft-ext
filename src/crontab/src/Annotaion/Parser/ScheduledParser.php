@@ -18,9 +18,14 @@ use Swoft\Bean\Annotation\Mapping\Bean;
  */
 class ScheduledParser extends Parser
 {
+    /**
+     * @param int    $type
+     * @param Scheduled $annotationObject
+     *
+     * @return array
+     */
     public function parse(int $type, $annotationObject): array
     {
-        /* @var Scheduled $annotationObject */
         $beanName = $this->className;
         $name     = $annotationObject->getName();
 
