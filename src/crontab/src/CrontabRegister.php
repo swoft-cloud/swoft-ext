@@ -2,12 +2,8 @@
 
 namespace Swoft\Crontab;
 
-use ReflectionException;
-use Swoft\Bean\BeanFactory;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Crontab\Annotaion\Mapping\Cron;
 use Swoft\Crontab\Exception\CrontabException;
-use Swoft\Stdlib\Helper\PhpHelper;
 
 class CrontabRegister
 {

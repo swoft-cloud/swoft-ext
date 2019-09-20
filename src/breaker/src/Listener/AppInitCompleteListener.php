@@ -4,9 +4,7 @@
 namespace Swoft\Breaker\Listener;
 
 
-use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Inject;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Breaker\BreakerManager;
 use Swoft\Breaker\BreakerRegister;
 use Swoft\Event\Annotation\Mapping\Listener;
@@ -33,8 +31,6 @@ class AppInitCompleteListener implements EventHandlerInterface
     /**
      * @param EventInterface $event
      *
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function handle(EventInterface $event): void
     {

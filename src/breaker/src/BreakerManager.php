@@ -3,9 +3,7 @@
 
 namespace Swoft\Breaker;
 
-use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Breaker\Annotation\Mapping\Breaker as BreakerAnnotation;
 use Swoft\Breaker\Exception\BreakerException;
 
@@ -32,8 +30,6 @@ class BreakerManager
     /**
      * @param array $breakers
      *
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function initBreaker(array $breakers): void
     {

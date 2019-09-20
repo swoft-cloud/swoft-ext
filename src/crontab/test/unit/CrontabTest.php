@@ -4,9 +4,7 @@
 namespace SwoftTest\Crontab\Unit;
 
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
 use Swoft\Bean\BeanFactory;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Crontab\Crontab;
 use Swoft\Crontab\Exception\CrontabException;
 use SwoftTest\Crontab\Testing\TestCrontab;
@@ -19,8 +17,6 @@ use SwoftTest\Crontab\Testing\TestCrontab;
 class CrontabTest extends TestCase
 {
     /**
-     * @throws ReflectionException
-     * @throws ContainerException
      * @throws CrontabException
      */
     public function testIndex()

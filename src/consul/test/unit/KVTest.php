@@ -5,9 +5,7 @@ namespace SwoftTest\Consul\Unit;
 
 
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
 use Swoft\Bean\BeanFactory;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Exception\ClientException;
 use Swoft\Consul\Exception\ServerException;
 use Swoft\Consul\KV;
@@ -21,8 +19,6 @@ class KVTest extends TestCase
     private $kv;
 
     /**
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ClientException
      * @throws ServerException
      */
@@ -42,8 +38,6 @@ class KVTest extends TestCase
 
     /**
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function testSetGetWithDefaultOptions()
@@ -61,8 +55,6 @@ class KVTest extends TestCase
 
     /**
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function testSetGetWithRawOption()
@@ -79,8 +71,6 @@ class KVTest extends TestCase
 
     /**
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function testSetGetWithFlagsOption()
@@ -97,8 +87,6 @@ class KVTest extends TestCase
 
     /**
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function testSetGetWithKeysOption()
@@ -119,10 +107,7 @@ class KVTest extends TestCase
      * @expectedException Swoft\Consul\Exception\ClientException
      *
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
-     * @throws ClientException
      */
     public function testDeleteWithDefaultOptions()
     {
@@ -135,8 +120,6 @@ class KVTest extends TestCase
 
     /**
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function testDeleteWithRecurseOption()

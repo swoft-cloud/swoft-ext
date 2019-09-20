@@ -4,9 +4,7 @@
 namespace Swoft\Breaker\State;
 
 
-use ReflectionException;
 use Swoft\Bean\Concern\PrototypeTrait;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Breaker\Breaker;
 use Swoft\Breaker\Contract\StateInterface;
 
@@ -28,8 +26,6 @@ abstract class AbstractState implements StateInterface
      * @param Breaker $breaker
      *
      * @return AbstractState
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public static function new(Breaker $breaker): self
     {

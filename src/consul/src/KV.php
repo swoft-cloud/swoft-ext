@@ -4,10 +4,8 @@
 namespace Swoft\Consul;
 
 
-use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Contract\KVInterface;
 use Swoft\Consul\Exception\ClientException;
 use Swoft\Consul\Exception\ServerException;
@@ -43,8 +41,6 @@ class KV implements KVInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function get(string $key, array $options = []): Response
     {
@@ -74,8 +70,6 @@ class KV implements KVInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function put(string $key, string $value, array $options = []): Response
     {
@@ -94,8 +88,6 @@ class KV implements KVInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function delete(string $key, array $options = []): Response
     {
