@@ -8,7 +8,7 @@ namespace Swoft\Swagger\Node;
  *
  * @since 2.0
  */
-class License
+class License extends Node
 {
     /**
      * @var string
@@ -19,4 +19,16 @@ class License
      * @var string
      */
     protected $url = '';
+
+    /**
+     * License constructor.
+     *
+     * @param string $name
+     * @param string $url
+     */
+    public function __construct(string $name, string $url)
+    {
+        $this->name = $name;
+        $this->url  = $url;
+    }
 }

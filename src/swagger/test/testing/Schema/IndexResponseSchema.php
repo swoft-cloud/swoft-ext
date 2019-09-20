@@ -20,5 +20,5 @@ class IndexResponseSchema extends ResponseSchema
      *
      * @var IndexData
      */
-    protected $data;
+    public $data;
 }
