@@ -3,7 +3,6 @@
 
 namespace Swoft\Consul\Contract;
 
-use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Consul\Response;
 
 /**

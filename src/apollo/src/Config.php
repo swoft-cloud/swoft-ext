@@ -4,12 +4,10 @@
 namespace Swoft\Apollo;
 
 
-use ReflectionException;
 use Swoft\Apollo\Contract\ConfigInterface;
 use Swoft\Apollo\Exception\ApolloException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Co;
 use Swoft\Stdlib\Helper\JsonHelper;
 use Swoft\Stdlib\Helper\PhpHelper;
@@ -97,8 +95,6 @@ class Config implements ConfigInterface
      * @param string $clientIp
      *
      * @return array
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function batchPull(array $namespaces, string $clientIp = ''): array
     {
@@ -119,8 +115,6 @@ class Config implements ConfigInterface
      * @param string         $clientIp
      *
      * @throws ApolloException
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function listen(array $namespaces, $callback, array $notifications = [], string $clientIp = ''): void
     {

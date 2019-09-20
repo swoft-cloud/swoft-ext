@@ -4,10 +4,8 @@
 namespace Swoft\Consul;
 
 
-use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Contract\CatalogInterface;
 use Swoft\Consul\Exception\ClientException;
 use Swoft\Consul\Exception\ServerException;
@@ -35,8 +33,6 @@ class Catalog implements CatalogInterface
      * @return Response
      *
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function register(array $node): Response
@@ -53,8 +49,6 @@ class Catalog implements CatalogInterface
      *
      * @return Response
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function deregister(array $node): Response
@@ -70,8 +64,6 @@ class Catalog implements CatalogInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function datacenters(): Response
     {
@@ -84,8 +76,6 @@ class Catalog implements CatalogInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function nodes(array $options = []): Response
     {
@@ -103,8 +93,6 @@ class Catalog implements CatalogInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function node(string $node, array $options = []): Response
     {
@@ -120,8 +108,6 @@ class Catalog implements CatalogInterface
      *
      * @return Response
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function services(array $options = []): Response
@@ -140,8 +126,6 @@ class Catalog implements CatalogInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function service(string $service, array $options = []): Response
     {

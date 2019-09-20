@@ -5,11 +5,9 @@ namespace SwoftTest\Apollo\Unit;
 
 
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
 use Swoft\Apollo\Config;
 use Swoft\Apollo\Exception\ApolloException;
 use Swoft\Bean\BeanFactory;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Context\Context;
 
 /**
@@ -20,8 +18,6 @@ use Swoft\Context\Context;
 class ApolloTest extends TestCase
 {
     /**
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function tearDown()
     {
@@ -29,8 +25,6 @@ class ApolloTest extends TestCase
     }
 
     /**
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ApolloException
      */
     public function testPullWithCache()
@@ -43,8 +37,6 @@ class ApolloTest extends TestCase
     }
 
     /**
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ApolloException
      */
     public function testPull()
@@ -63,8 +55,6 @@ class ApolloTest extends TestCase
     }
 
     /**
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function testBatchPull()
     {

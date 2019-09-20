@@ -4,10 +4,8 @@
 namespace Swoft\Consul;
 
 
-use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Contract\AgentInterface;
 use Swoft\Consul\Exception\ClientException;
 use Swoft\Consul\Exception\ServerException;
@@ -33,8 +31,6 @@ class Agent implements AgentInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function checks(): Response
     {
@@ -45,8 +41,6 @@ class Agent implements AgentInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function services(): Response
     {
@@ -59,8 +53,6 @@ class Agent implements AgentInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function members(array $options = []): Response
     {
@@ -75,8 +67,6 @@ class Agent implements AgentInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function self(): Response
     {
@@ -90,8 +80,6 @@ class Agent implements AgentInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function join(string $address, array $options = []): Response
     {
@@ -106,10 +94,8 @@ class Agent implements AgentInterface
      * @param string $node
      *
      * @return Response
-     * @throws Exception\ClientException
-     * @throws Exception\ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
+     * @throws ClientException
+     * @throws ServerException
      */
     public function forceLeave(string $node): Response
     {
@@ -121,8 +107,6 @@ class Agent implements AgentInterface
      *
      * @return Response
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function registerCheck(array $check): Response
@@ -140,8 +124,6 @@ class Agent implements AgentInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function deregisterCheck(string $checkId): Response
     {
@@ -155,8 +137,6 @@ class Agent implements AgentInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function passCheck(string $checkId, array $options = []): Response
     {
@@ -174,8 +154,6 @@ class Agent implements AgentInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function warnCheck(string $checkId, array $options = []): Response
     {
@@ -193,8 +171,6 @@ class Agent implements AgentInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function failCheck(string $checkId, array $options = []): Response
     {
@@ -206,13 +182,11 @@ class Agent implements AgentInterface
     }
 
     /**
-     * @param string $service
+     * @param array $service
      *
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function registerService(array $service): Response
     {
@@ -229,8 +203,6 @@ class Agent implements AgentInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function deregisterService(string $serviceId): Response
     {

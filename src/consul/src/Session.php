@@ -4,10 +4,8 @@
 namespace Swoft\Consul;
 
 
-use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Contract\SessionInterface;
 use Swoft\Consul\Exception\ClientException;
 use Swoft\Consul\Exception\ServerException;
@@ -35,8 +33,6 @@ class Session implements SessionInterface
      *
      * @return Response
      * @throws ClientException
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ServerException
      */
     public function create(array $body = null, array $options = []): Response
@@ -56,8 +52,6 @@ class Session implements SessionInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function destroy(string $sessionId, array $options = []): Response
     {
@@ -75,8 +69,6 @@ class Session implements SessionInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function info(string $sessionId, array $options = []): Response
     {
@@ -94,8 +86,6 @@ class Session implements SessionInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function node(string $node, array $options = []): Response
     {
@@ -112,8 +102,6 @@ class Session implements SessionInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function all(array $options = []): Response
     {
@@ -131,8 +119,6 @@ class Session implements SessionInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function renew(string $sessionId, array $options = []): Response
     {

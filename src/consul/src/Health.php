@@ -4,10 +4,8 @@
 namespace Swoft\Consul;
 
 
-use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Contract\HealthInterface;
 use Swoft\Consul\Exception\ClientException;
 use Swoft\Consul\Exception\ServerException;
@@ -34,10 +32,8 @@ class Health implements HealthInterface
      * @param array  $options
      *
      * @return Response
-     * @throws ContainerException
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
      */
     public function node(string $node, array $options = []): Response
     {
@@ -55,8 +51,6 @@ class Health implements HealthInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function checks(string $service, array $options = []): Response
     {
@@ -74,8 +68,6 @@ class Health implements HealthInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function service(string $service, array $options = []): Response
     {
@@ -93,8 +85,6 @@ class Health implements HealthInterface
      * @return Response
      * @throws ClientException
      * @throws ServerException
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function state(string $state, array $options = []): Response
     {
