@@ -4,9 +4,7 @@
 namespace SwoftTest\Limiter\Unit;
 
 
-use ReflectionException;
 use Swoft\Bean\BeanFactory;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Limiter\Exception\RateLImiterException;
 use SwoftTest\Db\Unit\TestCase;
 use SwoftTest\Limiter\Testing\KeyHelper;
@@ -25,8 +23,6 @@ class RateLimiterTest extends TestCase
     }
 
     /**
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function testLimitByCount()
     {
@@ -62,8 +58,6 @@ class RateLimiterTest extends TestCase
     }
 
     /**
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function testLimitByEl()
     {
@@ -87,8 +81,6 @@ class RateLimiterTest extends TestCase
     }
 
     /**
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function testLimitFall()
     {
@@ -106,8 +98,6 @@ class RateLimiterTest extends TestCase
     }
 
     /**
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function testLimtInnerVars()
     {
@@ -119,8 +109,6 @@ class RateLimiterTest extends TestCase
     }
 
     /**
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function testLimitByElObj()
     {

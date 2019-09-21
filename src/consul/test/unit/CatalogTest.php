@@ -5,9 +5,7 @@ namespace SwoftTest\Consul\Unit;
 
 
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
 use Swoft\Bean\BeanFactory;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Catalog;
 use Swoft\Consul\Exception\ClientException;
 use Swoft\Consul\Exception\ServerException;
@@ -25,8 +23,6 @@ class CatalogTest extends TestCase
     private $catalog;
 
     /**
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function setUp()
     {
@@ -34,8 +30,6 @@ class CatalogTest extends TestCase
     }
 
     /**
-     * @throws ContainerException
-     * @throws ReflectionException
      * @throws ClientException
      * @throws ServerException
      */

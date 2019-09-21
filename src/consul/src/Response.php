@@ -4,10 +4,8 @@
 namespace Swoft\Consul;
 
 
-use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Concern\PrototypeTrait;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Stdlib\Helper\JsonHelper;
 
 /**
@@ -42,8 +40,6 @@ class Response
      * @param int    $status
      *
      * @return Response
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public static function new(array $headers, string $body, int $status = 200): self
     {

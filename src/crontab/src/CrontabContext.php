@@ -4,10 +4,8 @@
 namespace Swoft\Crontab;
 
 
-use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Concern\PrototypeTrait;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Context\AbstractContext;
 
 /**
@@ -36,8 +34,6 @@ class CrontabContext extends AbstractContext
      * @param string $methodName
      *
      * @return CrontabContext
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public static function new(string $beanName, string $methodName): self
     {

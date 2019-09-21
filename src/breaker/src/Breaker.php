@@ -3,10 +3,8 @@
 
 namespace Swoft\Breaker;
 
-use ReflectionException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Concern\PrototypeTrait;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Breaker\Contract\StateInterface;
 use Swoft\Breaker\Exception\BreakerException;
 use Swoft\Breaker\State\CloseState;
@@ -84,8 +82,6 @@ class Breaker
      * @param array $config
      *
      * @return Breaker
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public static function new(array $config): self
     {
@@ -126,8 +122,6 @@ class Breaker
     }
 
     /**
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function moveToOpen(): void
     {
@@ -135,8 +129,6 @@ class Breaker
     }
 
     /**
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function moveToClose(): void
     {
@@ -144,8 +136,6 @@ class Breaker
     }
 
     /**
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function moveToHalfOpen(): void
     {
@@ -226,8 +216,7 @@ class Breaker
      * @param array          $params
      *
      * @return mixed
-     * @throws ContainerException
-     * @throws ReflectionException
+     * @throws BreakerException
      * @throws Throwable
      */
     public function run($target, string $className, string $method, $callback, $params = [])

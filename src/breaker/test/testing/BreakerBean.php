@@ -6,7 +6,6 @@ namespace SwoftTest\Breaker\Testing;
 use Exception;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Breaker\Annotation\Mapping\Breaker;
-use Swoft\Http\Server\Annotation\Mapping\RequestMapping;
 use Swoole\Coroutine;
 
 /**

@@ -3,8 +3,6 @@
 
 namespace Swoft\Crontab\Listener;
 
-use ReflectionException;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Context\Context;
 use Swoft\Crontab\CrontabContext;
 use Swoft\Crontab\CrontabEvent;
@@ -30,8 +28,6 @@ class BeforeCrontabListener implements EventHandlerInterface
     /**
      * @param EventInterface $event
      *
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function handle(EventInterface $event): void
     {

@@ -4,9 +4,7 @@
 namespace SwoftTest\Consul\Unit;
 
 
-use ReflectionException;
 use Swoft\Bean\BeanFactory;
-use Swoft\Bean\Exception\ContainerException;
 use Swoft\Consul\Agent;
 use Swoft\Consul\Exception\ClientException;
 use Swoft\Consul\Exception\ServerException;
@@ -25,8 +23,6 @@ class AgentTest extends TestCase
     private $agent;
 
     /**
-     * @throws ContainerException
-     * @throws ReflectionException
      */
     public function setUp()
     {
@@ -34,8 +30,6 @@ class AgentTest extends TestCase
     }
 
     /**
-     * @throws ReflectionException
-     * @throws ContainerException
      * @throws ClientException
      * @throws ServerException
      */
@@ -61,8 +55,6 @@ class AgentTest extends TestCase
      * @param string $serviceId
      *
      * @return string
-     * @throws ReflectionException
-     * @throws ContainerException
      * @throws ClientException
      * @throws ServerException
      */
