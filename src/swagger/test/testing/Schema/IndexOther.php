@@ -16,12 +16,32 @@ use Swoft\Swagger\Schema;
 class IndexOther extends Schema
 {
     /**
-     * @var string
+     * @var int
      */
-    public $id = '';
+    public $id;
+
+    /**
+     * @var integer
+     */
+    public $count;
 
     /**
      * @var string
      */
     public $desc = '';
+
+    /**
+     * @var double
+     */
+    public $amount;
+
+    /**
+     * @var bool
+     */
+    public $isComplete = false;
+
+    /**
+     * @var boolean
+     */
+    public $isBegin = false;
 }

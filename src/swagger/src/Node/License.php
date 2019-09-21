@@ -20,15 +20,20 @@ class License extends Node
      */
     protected $url = '';
 
+
     /**
-     * License constructor.
-     *
      * @param string $name
-     * @param string $url
      */
-    public function __construct(string $name, string $url)
+    public function setName(string $name): void
     {
         $this->name = $name;
-        $this->url  = $url;
+    }
+
+    /**
+     * @param string $url
+     */
+    public function setUrl(string $url): void
+    {
+        $this->url = $url;
     }
 }

@@ -3,8 +3,12 @@
 
 namespace Swoft\Swagger\Node;
 
-
-class Operation
+/**
+ * Class Operation
+ *
+ * @since 2.0
+ */
+class Operation extends Node
 {
     /**
      * @var array

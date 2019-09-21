@@ -11,7 +11,7 @@ use Swoft\Bean\Annotation\Mapping\Bean;
  *
  * @since 2.0
  */
-class Paths implements JsonSerializable
+class Paths extends Node
 {
     /**
      * @var array
@@ -19,24 +19,18 @@ class Paths implements JsonSerializable
     protected $paths = [];
 
     /**
-     * Paths constructor.
-     *
-     * @param array $paths
+     * @return array
      */
-    public function __construct(array $paths)
+    public function getPaths(): array
     {
-        $this->paths = $paths;
+        return $this->paths;
     }
 
     /**
-     * Specify data which should be serialized to JSON
-     * @link  https://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @param array $paths
      */
-    public function jsonSerialize()
+    public function setPaths(array $paths): void
     {
-        return [];
+        $this->paths = $paths;
     }
 }

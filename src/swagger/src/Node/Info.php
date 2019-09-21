@@ -41,19 +41,35 @@ class Info extends Node
     protected $version = '';
 
     /**
-     * Info constructor.
-     *
      * @param string $title
+     */
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
+    /**
      * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
      * @param string $termsOfService
+     */
+    public function setTermsOfService(string $termsOfService): void
+    {
+        $this->termsOfService = $termsOfService;
+    }
+
+    /**
      * @param string $version
      */
-    public function __construct(string $title, string $description, string $termsOfService, string $version)
+    public function setVersion(string $version): void
     {
-        $this->title          = $title;
-        $this->description    = $description;
-        $this->termsOfService = $termsOfService;
-        $this->version        = $version;
+        $this->version = $version;
     }
 
     /**

@@ -7,6 +7,9 @@ namespace Swoft\Swagger;
 use Swoft\Swagger\Annotation\Mapping\ApiContact;
 use Swoft\Swagger\Annotation\Mapping\ApiInfo;
 use Swoft\Swagger\Annotation\Mapping\ApiLicense;
+use Swoft\Swagger\Annotation\Mapping\ApiOperation;
+use Swoft\Swagger\Annotation\Mapping\ApiRequestBody;
+use Swoft\Swagger\Annotation\Mapping\ApiResponse;
 use Swoft\Swagger\Annotation\Mapping\ApiServer;
 use Swoft\Swagger\Exception\SwaggerException;
 use Swoft\Swagger\Node\Contact;
@@ -42,6 +45,56 @@ class ApiRegister
     private static $pathServers = [];
 
     /**
+     * @var array
+     *
+     * @example
+     * [
+     *     'schemaName' => [
+     *         'className',
+     *         ApiSchemaAnnotation
+     *     ],
+     *     'className' => [
+     *         'schemaName',
+     *         ApiSchemaAnnotation
+     *     ]
+     * ]
+     */
+    private static $schemas = [];
+
+    /**
+     * @var array
+     *
+     * @example
+     * [
+     *     'className' => [
+     *         'propertyName' => ApiPropertyAnnotation|ApiPropertyEntityAnnotation|ApiPropertySchemaAnnotation
+     *     ]
+     * ]
+     */
+    private static $properties;
+
+    /**
+     * @var array
+     *
+     * @example
+     * [
+     *     'className' => [
+     *         'methodName' => [
+     *              'operation' => ApiOperationAnnotation,
+     *              'response' => ApiResponseAnnotation,
+     *              'requestBody' => ApiRequestBodyAnnotation,
+     *              'servers' => [
+     *                  ApiServerAnnotation,
+     *                  ApiServerAnnotation,
+     *              ]
+     *         ]
+     *     ]
+     * ]
+     */
+    private static $paths = [];
+
+
+    /**
      * @param ApiContact $contact
      *
      * @throws SwaggerException
@@ -52,7 +105,13 @@ class ApiRegister
             throw new SwaggerException('`@ApiContact` annotation must be only one!');
         }
 
-        self::$contract = new Contact($contact->getName(), $contact->getUrl(), $contact->getEmail());
+        $data = [
+            'name'  => $contact->getName(),
+            'url'   => $contact->getUrl(),
+            'email' => $contact->getEmail()
+        ];
+
+        self::$contract = new Contact($data);
     }
 
     /**
@@ -66,12 +125,14 @@ class ApiRegister
             throw new SwaggerException('`@ApiInfo` annotation must be only one!');
         }
 
-        $title       = $info->getTitle();
-        $desc        = $info->getDescription();
-        $termService = $info->getTermsOfService();
-        $version     = $info->getVersion();
+        $data       = [
 
-        self::$info = new Info($title, $desc, $termService, $version);
+            'title'          => $info->getTitle(),
+            'description'    => $info->getDescription(),
+            'termsOfService' => $info->getTermsOfService(),
+            'version'        => $info->getVersion(),
+        ];
+        self::$info = new Info($data);
     }
 
     /**
@@ -85,7 +146,12 @@ class ApiRegister
             throw new SwaggerException('`@ApiLicense` annotation must be only one!');
         }
 
-        self::$license = new License($license->getName(), $license->getUrl());
+        $data = [
+            'name' => $license->getName(),
+            'url'  => $license->getUrl()
+        ];
+
+        self::$license = new License($data);
     }
 
     /**
@@ -93,7 +159,12 @@ class ApiRegister
      */
     public static function registerServers(ApiServer $server): void
     {
-        self::$servers[] = new Server($server->getUrl(), $server->getDescription());
+        $data = [
+            'url'         => $server->getUrl(),
+            'description' => $server->getDescription()
+        ];
+
+        self::$servers[] = new Server($data);
     }
 
     /**
@@ -103,7 +174,40 @@ class ApiRegister
      */
     public static function registerPathServers(string $className, string $methodName, ApiServer $server): void
     {
-        self::$pathServers[$className][$methodName] = new Server($server->getUrl(), $server->getDescription());
+        $data = [
+            'url'         => $server->getUrl(),
+            'description' => $server->getDescription()
+        ];
+
+        self::$pathServers[$className][$methodName] = new Server($data);
+    }
+
+    /**
+     * @param string $className
+     * @param string $methodName
+     * @param object $annotation
+     */
+    public static function registerPaths(string $className, string $methodName, $annotation): void
+    {
+        if ($annotation instanceof ApiOperation) {
+            self::$paths[$className][$methodName]['operation'] = $annotation;
+            return;
+        }
+
+        if ($annotation instanceof ApiResponse) {
+            self::$paths[$className][$methodName]['response'] = $annotation;
+            return;
+        }
+
+        if ($annotation instanceof ApiRequestBody) {
+            self::$paths[$className][$methodName]['requestBody'] = $annotation;
+            return;
+        }
+
+        if ($annotation instanceof ApiServer) {
+            self::$paths[$className][$methodName]['servers'][] = $annotation;
+            return;
+        }
     }
 
     /**
@@ -144,5 +248,34 @@ class ApiRegister
     public static function getPathServers(): array
     {
         return self::$pathServers;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getSchemas(): array
+    {
+        return self::$schemas;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getProperties(): array
+    {
+        return self::$properties;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getPaths(): array
+    {
+        return self::$paths;
+    }
+
+    public static function checkPaths(): void
+    {
+
     }
 }

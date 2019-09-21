@@ -13,7 +13,7 @@ use Doctrine\Common\Annotations\Annotation\Target;
  * @Annotation
  * @Target("PROPERTY")
  */
-class ApiEntity
+class ApiPropertyEntity
 {
     /**
      * @var string

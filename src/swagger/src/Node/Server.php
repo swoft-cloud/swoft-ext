@@ -22,38 +22,26 @@ class Server extends Node
     protected $variables = [];
 
     /**
-     * Server constructor.
-     *
      * @param string $url
+     */
+    public function setUrl(string $url): void
+    {
+        $this->url = $url;
+    }
+
+    /**
      * @param string $description
      */
-    public function __construct(string $url, string $description)
+    public function setDescription(string $description): void
     {
-        $this->url         = $url;
         $this->description = $description;
     }
 
     /**
-     * @return string
+     * @param ServerVariable[] $variables
      */
-    public function getUrl(): string
+    public function setVariables(array $variables): void
     {
-        return $this->url;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
-    /**
-     * @return ServerVariable[]
-     */
-    public function getVariables(): array
-    {
-        return $this->variables;
+        $this->variables = $variables;
     }
 }

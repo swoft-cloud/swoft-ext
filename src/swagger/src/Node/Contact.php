@@ -26,40 +26,26 @@ class Contact extends Node
     protected $email = '';
 
     /**
-     * Contact constructor.
-     *
      * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
      * @param string $url
+     */
+    public function setUrl(string $url): void
+    {
+        $this->url = $url;
+    }
+
+    /**
      * @param string $email
      */
-    public function __construct(string $name, string $url, string $email)
+    public function setEmail(string $email): void
     {
-        $this->name  = $name;
-        $this->url   = $url;
         $this->email = $email;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUrl(): string
-    {
-        return $this->url;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmail(): string
-    {
-        return $this->email;
     }
 }

@@ -3,7 +3,8 @@
 
 namespace SwoftTest\Swagger\Testing\Schema;
 
-use Swoft\Swagger\Annotation\Mapping\ApiEntity;
+use Swoft\Swagger\Annotation\Mapping\ApiPropertyEntity;
+use Swoft\Swagger\Annotation\Mapping\ApiPropertySchema;
 use Swoft\Swagger\Annotation\Mapping\ApiSchema;
 use Swoft\Swagger\Schema;
 use SwoftTest\Swagger\Testing\Entity\User;
@@ -28,21 +29,21 @@ class IndexData extends Schema
     public $count = 0;
 
     /**
-     * @ApiEntity(fields={"name"})
+     * @ApiPropertyEntity(fields={"name"})
      *
      * @var User
      */
     public $user;
 
     /**
-     * @ApiEntity(unfields={"age"})
+     * @ApiPropertyEntity(unfields={"age"})
      *
      * @var User[]
      */
     public $list = [];
 
     /**
-     * @ApiSchema()
+     * @ApiPropertySchema()
      *
      * @var IndexOther
      */

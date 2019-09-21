@@ -6,14 +6,14 @@ namespace Swoft\Swagger\Annotation\Mapping;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
- * Class ApiProperty
+ * Class ApiPropertySchema
  *
  * @since 2.0
  *
  * @Annotation
  * @Target("PROPERTY")
  */
-class ApiProperty
+class ApiPropertySchema
 {
     /**
      * @var string
@@ -21,7 +21,17 @@ class ApiProperty
     private $name = '';
 
     /**
-     * ApiProperty constructor.
+     * @var array
+     */
+    private $fields = [];
+
+    /**
+     * @var array
+     */
+    private $unfields = [];
+
+    /**
+     * ApiPropertySchema constructor.
      *
      * @param array $values
      */
@@ -30,9 +40,14 @@ class ApiProperty
         if (isset($values['value'])) {
             $this->name = $values['value'];
         }
-
         if (isset($values['name'])) {
             $this->name = $values['name'];
+        }
+        if (isset($values['fields'])) {
+            $this->fields = $values['fields'];
+        }
+        if (isset($values['unfields'])) {
+            $this->unfields = $values['unfields'];
         }
     }
 
@@ -42,5 +57,21 @@ class ApiProperty
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFields(): array
+    {
+        return $this->fields;
+    }
+
+    /**
+     * @return array
+     */
+    public function getUnfields(): array
+    {
+        return $this->unfields;
     }
 }

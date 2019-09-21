@@ -3,7 +3,7 @@
 
 namespace SwoftTest\Swagger\Testing\Schema;
 
-use Swoft\Swagger\Annotation\Mapping\ApiProperty;
+use Swoft\Swagger\Annotation\Mapping\ApiPropertySchema;
 use Swoft\Swagger\Annotation\Mapping\ApiSchema;
 
 /**
@@ -16,7 +16,7 @@ use Swoft\Swagger\Annotation\Mapping\ApiSchema;
 class IndexResponseSchema extends ResponseSchema
 {
     /**
-     * @ApiSchema()
+     * @ApiPropertySchema()
      *
      * @var IndexData
      */

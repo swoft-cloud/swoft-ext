@@ -4,6 +4,7 @@
 namespace Swoft\Swagger\Node;
 
 use JsonSerializable;
+use Swoft\Stdlib\Helper\ObjectHelper;
 
 /**
  * Class Node
@@ -12,6 +13,16 @@ use JsonSerializable;
  */
 abstract class Node implements JsonSerializable
 {
+    /**
+     * Node constructor.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
+    {
+        ObjectHelper::init($this, $data);
+    }
+
     /**
      * @return mixed|void
      */
