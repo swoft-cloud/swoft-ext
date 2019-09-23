@@ -25,6 +25,81 @@ composer require swoft/amqp
 [repository]: https://github.com/swoft-cloud/swoft
 [issues]: https://github.com/swoft-cloud/swoft/issues
 
+## Config
+
+- app/bean.php
+
+```php
+use PhpAmqpLib\Exchange\AMQPExchangeType;
+use Swoft\Amqp\Pool;
+use Swoft\Amqp\AmqpDb;
+
+return [
+    'amqp' => [
+        'class'    => AmqpDb::class,
+        'auths'    => [
+            [
+                'host'     => '127.0.0.1',
+                'port'     => 5672,
+                'user'     => 'admin',
+                'password' => 'admin',
+                'vhost'    => '/',
+            ],
+        ],
+        'exchange' => [
+            'name' => 'exchange_name',
+            'type' => AMQPExchangeType::TOPIC
+        ],
+        'queue'    => [
+            'name' => 'queue_name'
+        ],
+        'route'    => [],
+    ],
+    'amqp.pool'         => [
+        'class'  => Pool::class,
+        'amqpDb' => bean('amqp'),
+    ]
+]
+```
+
+## Example
+- push message into queue
+```php
+use Swoft\Amqp\Amqp;
+
+Amqp::push('test message', [ 'property_key' => 'property_value' ], '/');
+```
+
+- get message from queue
+```php
+use Swoft\Amqp\Amqp;
+
+$message = Amqp::pop();
+```
+
+- listen the queue
+```php
+use PhpAmqpLib\Message\AMQPMessage;
+use Swoft\Amqp\Amqp;
+
+Amqp::consume(function(AMQPMessage $message) {
+    echo $message->body;
+});
+```
+
+- connect to another amqp pool
+```php
+use PhpAmqpLib\Message\AMQPMessage;
+use Swoft\Amqp\Amqp;
+
+$connection = Amqp::connection('another_amqp_pool');
+$connection->push('message');
+$connection->pop();
+$connection->consume(function(AMQPMessage $message) {
+    echo $message->body;
+});
+```
+
 ## LICENSE
 
 The Component is open-sourced software licensed under the [Apache license](LICENSE).
