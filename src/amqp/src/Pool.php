@@ -32,9 +32,7 @@ class Pool extends AbstractPool
     /**
      * @return ConnectionInterface
      *
-     * @throws Exception\RedisException
-     * @throws ReflectionException
-     * @throws ContainerException
+     * @throws AMQPException
      */
     public function createConnection(): ConnectionInterface
     {
@@ -49,7 +47,7 @@ class Pool extends AbstractPool
      *
      * @return Connection
      *
-     * @throws RedisException
+     * @throws AMQPException
      */
     public function __call(string $name, array $arguments)
     {
@@ -69,7 +67,7 @@ class Pool extends AbstractPool
 
         // Not instanceof Connection
         if (!$connection instanceof Connection) {
-            throw new RedisException(
+            throw new AMQPException(
                 sprintf('%s is not instanceof %s', get_class($connection), Connection::class)
             );
         }

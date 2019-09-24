@@ -175,9 +175,6 @@ class AmqpDb
 
     /**
      * @return array
-     *
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function defaultConnectors(): array
     {
@@ -190,9 +187,6 @@ class AmqpDb
 
     /**
      * @return array
-     *
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function defaultConnections(): array
     {

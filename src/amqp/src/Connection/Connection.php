@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Swoft\Amqp\Connection;
 
 use Closure;
+use ErrorException;
 use Exception;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPSocketConnection;
 use PhpAmqpLib\Connection\AMQPSSLConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
 use Swoft\Amqp\AmqpDb;
 use Swoft\Amqp\Contract\ConnectionInterface;
@@ -67,7 +69,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
      * create.
      *
      * @throws AMQPException
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @throws AMQPTimeoutException
      */
     public function create(): void
     {
@@ -78,7 +80,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
      * createClient.
      *
      * @throws AMQPException
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @throws AMQPTimeoutException
      */
     public function createClient(): void
     {
@@ -108,7 +110,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
      * @return bool
      *
      * @throws AMQPException
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @throws AMQPTimeoutException
      */
     public function reconnect(): bool
     {
@@ -126,7 +128,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
     /**
      * close.
      *
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @throws Exception
      */
     public function close(): void
     {
@@ -249,7 +251,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
      *
      * @return string|null
      *
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @throws AMQPTimeoutException
      */
     public function pop(): ?string
     {
@@ -264,6 +266,8 @@ class Connection extends AbstractConnection implements ConnectionInterface
      * listen the queue from RabbitMQ.
      *
      * @param Closure|null $callback
+     *
+     * @throws ErrorException
      */
     public function consume(Closure $callback = null): void
     {
