@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Swoft\Amqp\Connection;
 
+use Exception;
 use PhpAmqpLib\Connection\AMQPSocketConnection;
 use Swoft\Bean\Annotation\Mapping\Bean;
 
@@ -23,7 +24,7 @@ class SocketConnection extends Connection
      *
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function connect($auths, $options)
     {
