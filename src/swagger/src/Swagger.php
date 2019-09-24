@@ -143,11 +143,17 @@ class Swagger
                 $reflectProperty = new ReflectionProperty($className, $propertyName);
                 $propType        = ObjectHelper::getPropertyBaseType($reflectProperty);
                 $description     = DocBlock::description($reflectProperty->getDocComment());
+                $defultValue     = $reflectProperty->getValue(new $className());
 
                 $propData = [
                     'type'        => $propType,
                     'description' => $description
                 ];
+
+                if ($defultValue !== null) {
+                    $propData['default'] = $defultValue;
+                }
+
             } elseif ($propAnnotation instanceof ApiPropertyEntity) {
 
             } elseif ($propAnnotation instanceof ApiPropertySchema) {
@@ -169,6 +175,7 @@ class Swagger
                     'description' => $description
                 ];
             } else {
+
             }
 
             $propNodes[] = new Property($propData);
