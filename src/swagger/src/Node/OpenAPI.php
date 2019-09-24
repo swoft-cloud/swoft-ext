@@ -33,6 +33,11 @@ class OpenApi extends Node
     protected $paths;
 
     /**
+     * @var Components
+     */
+    protected $components;
+
+    /**
      * @param string $openapi
      */
     public function setOpenapi(string $openapi): void
@@ -78,5 +83,13 @@ class OpenApi extends Node
     public function toJson(): string
     {
         return JsonHelper::encode($this, JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * @param Components $components
+     */
+    public function setComponents(Components $components): void
+    {
+        $this->components = $components;
     }
 }

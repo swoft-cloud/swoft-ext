@@ -19,6 +19,17 @@ class Paths extends Node
     protected $paths = [];
 
     /**
+     * Paths constructor.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);
+        $this->paths = $data;
+    }
+
+    /**
      * @return array
      */
     public function getPaths(): array

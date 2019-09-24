@@ -14,6 +14,11 @@ use Swoft\Stdlib\Helper\ObjectHelper;
 abstract class Node implements JsonSerializable
 {
     /**
+     * Ref key
+     */
+    public const REF_KEY = 'ref';
+
+    /**
      * Node constructor.
      *
      * @param array $data
@@ -30,6 +35,11 @@ abstract class Node implements JsonSerializable
     {
         $data = [];
         foreach ($this as $key => $value) {
+            // Ref key
+            if ($key == self::REF_KEY) {
+                $key = sprintf('$%s', $key);
+            }
+
             if (!empty($value)) {
                 $data[$key] = $value;
             }

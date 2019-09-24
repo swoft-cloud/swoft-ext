@@ -6,36 +6,35 @@ namespace Swoft\Swagger\Annotation\Parser;
 
 use Swoft\Annotation\Annotation\Mapping\AnnotationParser;
 use Swoft\Annotation\Annotation\Parser\Parser;
-use Swoft\Log\Helper\CLog;
-use Swoft\Swagger\Annotation\Mapping\ApiRequestBody;
+use Swoft\Swagger\Annotation\Mapping\ApiPropertyEntity;
 use Swoft\Swagger\ApiRegister;
 use Swoft\Swagger\Exception\SwaggerException;
 
 /**
- * Class ApiRequestBodyParser
+ * Class ApiPropertyEntityParser
  *
  * @since 2.0
  *
- * @AnnotationParser(annotation=ApiRequestBody::class)
+ * @AnnotationParser(annotation=ApiPropertyEntity::class)
  */
-class ApiRequestBodyParser extends Parser
+class ApiPropertyEntityParser extends Parser
 {
     /**
-     * @param int            $type
-     * @param ApiRequestBody $annotationObject
+     * @param int               $type
+     * @param ApiPropertyEntity $annotationObject
      *
      * @return array
      * @throws SwaggerException
      */
     public function parse(int $type, $annotationObject): array
     {
-        if ($type != self::TYPE_METHOD) {
+        if ($type != self::TYPE_PROPERTY) {
             throw new SwaggerException(
-                sprintf('`@ApiRequestBody` must be on class class=%s', $this->className)
+                sprintf('`@ApiPropertyEntity` must be on property class=%s', $this->className)
             );
         }
 
-        ApiRegister::registerPaths($this->className, $this->methodName, $annotationObject);
+        ApiRegister::registerProperty($this->className, $this->propertyName, $annotationObject);
         return [];
     }
 }

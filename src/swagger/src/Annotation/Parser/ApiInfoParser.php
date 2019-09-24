@@ -30,8 +30,9 @@ class ApiInfoParser extends Parser
     public function parse(int $type, $annotationObject): array
     {
         if ($type != self::TYPE_CLASS) {
-            CLog::debug('`@ApiInfo` must be on Class');
-            return [];
+            throw new SwaggerException(
+                sprintf('`@ApiInfo` must be on class class=%s', $this->className)
+            );
         }
 
         ApiRegister::registerInfo($annotationObject);

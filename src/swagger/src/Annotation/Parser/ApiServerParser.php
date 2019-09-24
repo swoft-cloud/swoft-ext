@@ -9,6 +9,7 @@ use Swoft\Annotation\Annotation\Parser\Parser;
 use Swoft\Log\Helper\CLog;
 use Swoft\Swagger\Annotation\Mapping\ApiServer;
 use Swoft\Swagger\ApiRegister;
+use Swoft\Swagger\Exception\SwaggerException;
 
 /**
  * Class ApiServerParser
@@ -24,6 +25,7 @@ class ApiServerParser extends Parser
      * @param ApiServer $annotationObject
      *
      * @return array
+     * @throws SwaggerException
      */
     public function parse(int $type, $annotationObject): array
     {
@@ -31,11 +33,12 @@ class ApiServerParser extends Parser
             ApiRegister::registerServers($annotationObject);
             return [];
         } elseif ($type == self::TYPE_METHOD) {
-            ApiRegister::registerPathServers($this->className, $this->methodName, $annotationObject);
+            ApiRegister::registerPaths($this->className, $this->methodName, $annotationObject);
             return [];
         }
 
-        CLog::debug('`@ApiServer` must be on Class Or Method');
-        return [];
+        throw new SwaggerException(
+            sprintf('`@ApiResponse` must be on class Or method class=%s', $this->className)
+        );
     }
 }

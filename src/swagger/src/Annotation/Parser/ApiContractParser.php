@@ -31,8 +31,9 @@ class ApiContractParser extends Parser
     public function parse(int $type, $annotationObject): array
     {
         if ($type != self::TYPE_CLASS) {
-            CLog::debug('`@ApiContact` must be on Class');
-            return [];
+            throw new SwaggerException(
+                sprintf('`@ApiContact` must be on class class=%s', $this->className)
+            );
         }
 
         ApiRegister::registerContract($annotationObject);

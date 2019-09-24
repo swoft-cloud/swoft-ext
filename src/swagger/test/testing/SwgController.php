@@ -8,6 +8,7 @@ use Swoft\Http\Server\Annotation\Mapping\RequestMapping;
 use Swoft\Swagger\Annotation\Mapping\ApiOperation;
 use Swoft\Swagger\Annotation\Mapping\ApiRequestBody;
 use Swoft\Swagger\Annotation\Mapping\ApiResponse;
+use Swoft\Swagger\Annotation\Mapping\ApiServer;
 use Swoft\Validator\Annotation\Mapping\Validate;
 use SwoftTest\Swagger\Testing\Schema\IndexRequestSchema;
 use SwoftTest\Swagger\Testing\Schema\IndexResponseSchema;
@@ -30,9 +31,17 @@ class SwgController
      * @Validate(validator=TestValidator2::class, unfields={"content"})
      * @RequestMapping()
      *
-     * @ApiOperation()
+     * @ApiOperation(tags={"user"}, summary="api index", description="home index")
      * @ApiRequestBody(schema=IndexRequestSchema::class)
      * @ApiResponse(schema=IndexResponseSchema::class)
+     * @ApiServer(
+     *     url="https://index.swoft.org",
+     *     description="v1"
+     * )
+     * @ApiServer(
+     *     url="https://index2.swoft.org",
+     *     description="v2"
+     * )
      *
      * @return string
      */

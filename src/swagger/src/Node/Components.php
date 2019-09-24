@@ -3,8 +3,12 @@
 
 namespace Swoft\Swagger\Node;
 
-
-class Components
+/**
+ * Class Components
+ *
+ * @since 2.0
+ */
+class Components extends Node
 {
     protected $schemas = [];
 
@@ -12,7 +16,47 @@ class Components
 
     protected $examples = [];
 
-    protected $requestBodies= [];
+    protected $requestBodies = [];
 
     protected $headers = [];
+
+    /**
+     * @param array $schemas
+     */
+    public function setSchemas(array $schemas): void
+    {
+        $this->schemas = $schemas;
+    }
+
+    /**
+     * @param array $responses
+     */
+    public function setResponses(array $responses): void
+    {
+        $this->responses = $responses;
+    }
+
+    /**
+     * @param array $examples
+     */
+    public function setExamples(array $examples): void
+    {
+        $this->examples = $examples;
+    }
+
+    /**
+     * @param array $requestBodies
+     */
+    public function setRequestBodies(array $requestBodies): void
+    {
+        $this->requestBodies = $requestBodies;
+    }
+
+    /**
+     * @param array $headers
+     */
+    public function setHeaders(array $headers): void
+    {
+        $this->headers = $headers;
+    }
 }

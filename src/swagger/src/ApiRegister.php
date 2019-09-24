@@ -10,6 +10,7 @@ use Swoft\Swagger\Annotation\Mapping\ApiLicense;
 use Swoft\Swagger\Annotation\Mapping\ApiOperation;
 use Swoft\Swagger\Annotation\Mapping\ApiRequestBody;
 use Swoft\Swagger\Annotation\Mapping\ApiResponse;
+use Swoft\Swagger\Annotation\Mapping\ApiSchema;
 use Swoft\Swagger\Annotation\Mapping\ApiServer;
 use Swoft\Swagger\Exception\SwaggerException;
 use Swoft\Swagger\Node\Contact;
@@ -40,21 +41,12 @@ class ApiRegister
     private static $servers = [];
 
     /**
-     * @var Server[]
-     */
-    private static $pathServers = [];
-
-    /**
      * @var array
      *
      * @example
      * [
      *     'schemaName' => [
      *         'className',
-     *         ApiSchemaAnnotation
-     *     ],
-     *     'className' => [
-     *         'schemaName',
      *         ApiSchemaAnnotation
      *     ]
      * ]
@@ -168,21 +160,6 @@ class ApiRegister
     }
 
     /**
-     * @param string    $className
-     * @param string    $methodName
-     * @param ApiServer $server
-     */
-    public static function registerPathServers(string $className, string $methodName, ApiServer $server): void
-    {
-        $data = [
-            'url'         => $server->getUrl(),
-            'description' => $server->getDescription()
-        ];
-
-        self::$pathServers[$className][$methodName] = new Server($data);
-    }
-
-    /**
      * @param string $className
      * @param string $methodName
      * @param object $annotation
@@ -208,6 +185,34 @@ class ApiRegister
             self::$paths[$className][$methodName]['servers'][] = $annotation;
             return;
         }
+    }
+
+    /**
+     * @param string    $className
+     * @param ApiSchema $apiSchema
+     */
+    public static function registerSchema(string $className, ApiSchema $apiSchema): void
+    {
+        $schemaName    = $className;
+        $apiSchemaName = $apiSchema->getName();
+        if (!empty($apiSchemaName)) {
+            $schemaName = $apiSchemaName;
+        }
+
+        self::$schemas[$schemaName] = [
+            $className,
+            $apiSchema
+        ];
+    }
+
+    /**
+     * @param string $className
+     * @param string $propertyName
+     * @param object $annotationObject
+     */
+    public static function registerProperty(string $className, string $propertyName, $annotationObject): void
+    {
+        self::$properties[$className][$propertyName] = $annotationObject;
     }
 
     /**
@@ -243,14 +248,6 @@ class ApiRegister
     }
 
     /**
-     * @return Server[]
-     */
-    public static function getPathServers(): array
-    {
-        return self::$pathServers;
-    }
-
-    /**
      * @return array
      */
     public static function getSchemas(): array
@@ -259,11 +256,23 @@ class ApiRegister
     }
 
     /**
+     * @param string $schemaName
+     *
      * @return array
      */
-    public static function getProperties(): array
+    public static function getSchemaByClassName(string $schemaName): array
     {
-        return self::$properties;
+        return self::$schemas[$schemaName] ?? [];
+    }
+
+    /**
+     * @param string $className
+     *
+     * @return array
+     */
+    public static function getProperties(string $className): array
+    {
+        return self::$properties[$className] ?? [];
     }
 
     /**

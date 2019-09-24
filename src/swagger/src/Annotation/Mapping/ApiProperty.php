@@ -21,6 +21,11 @@ class ApiProperty
     private $name = '';
 
     /**
+     * @var bool
+     */
+    private $required = true;
+
+    /**
      * ApiProperty constructor.
      *
      * @param array $values
@@ -30,9 +35,11 @@ class ApiProperty
         if (isset($values['value'])) {
             $this->name = $values['value'];
         }
-
         if (isset($values['name'])) {
             $this->name = $values['name'];
+        }
+        if (isset($values['required'])) {
+            $this->required = $values['required'];
         }
     }
 
@@ -42,5 +49,13 @@ class ApiProperty
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRequired(): bool
+    {
+        return $this->required;
     }
 }

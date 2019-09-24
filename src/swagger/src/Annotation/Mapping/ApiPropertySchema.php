@@ -21,6 +21,11 @@ class ApiPropertySchema
     private $name = '';
 
     /**
+     * @var string
+     */
+    private $type = 'object';
+
+    /**
      * @var array
      */
     private $fields = [];
@@ -49,6 +54,9 @@ class ApiPropertySchema
         if (isset($values['unfields'])) {
             $this->unfields = $values['unfields'];
         }
+        if (isset($values['type'])) {
+            $this->type = $values['type'];
+        }
     }
 
     /**
@@ -73,5 +81,13 @@ class ApiPropertySchema
     public function getUnfields(): array
     {
         return $this->unfields;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
     }
 }

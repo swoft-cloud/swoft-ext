@@ -30,8 +30,9 @@ class ApiLicenseParser extends Parser
     public function parse(int $type, $annotationObject): array
     {
         if ($type != self::TYPE_CLASS) {
-            CLog::debug('`@ApiLicense` must be on Class');
-            return [];
+            throw new SwaggerException(
+                sprintf('`@ApiLicense` must be on class class=%s', $this->className)
+            );
         }
 
         ApiRegister::registerLicense($annotationObject);
