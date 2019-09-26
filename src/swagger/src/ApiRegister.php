@@ -267,8 +267,9 @@ class ApiRegister
         $name        = $annotationObject->getName();
         $entity      = $annotationObject->getEntity();
         $description = $annotationObject->getDescription();
+
+        // Reset name
         if (empty($name)) {
-            // Reset name
             $annotationObject->setName($propertyName);
         }
 
@@ -278,12 +279,12 @@ class ApiRegister
 
         // Reset schema
         if (empty($entity)) {
-            $refEntity = $phpReader->getPropertyClass($reflectProperty);
-            if (!empty($refEntity)) {
-                $refEntity = self::getSchemaName($refEntity);
-                $annotationObject->setEntity($refEntity);
-            }
+            $entity = $phpReader->getPropertyClass($reflectProperty);
         }
+
+        // Reset
+        $entity = self::getSchemaName($entity);
+        $annotationObject->setEntity($entity);
 
         // Reset description
         if (empty($description)) {
@@ -313,7 +314,7 @@ class ApiRegister
 
         // Reset name
         if (empty($name)) {
-            $annotationObject->setName($name);
+            $annotationObject->setName($propertyName);
         }
 
         // Parse php document
@@ -322,12 +323,12 @@ class ApiRegister
 
         // Reset schema
         if (empty($schema)) {
-            $refSchema = $phpReader->getPropertyClass($reflectProperty);
-            if (!empty($refSchema)) {
-                $refSchema = self::getSchemaName($refSchema);
-                $annotationObject->setSchema($refSchema);
-            }
+            $schema = $phpReader->getPropertyClass($reflectProperty);
         }
+
+        // Reset
+        $schema = self::getSchemaName($schema);
+        $annotationObject->setSchema($schema);
 
         // Reset description
         if (empty($description)) {

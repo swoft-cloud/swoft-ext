@@ -23,6 +23,11 @@ class ApiPropertyEntity
     /**
      * @var string
      */
+    private $type = 'object';
+
+    /**
+     * @var string
+     */
     private $entity = '';
 
     /**
@@ -39,6 +44,11 @@ class ApiPropertyEntity
      * @var string
      */
     private $description = '';
+
+    /**
+     * @var bool
+     */
+    private $required = true;
 
     /**
      * ApiEntity constructor.
@@ -59,12 +69,34 @@ class ApiPropertyEntity
         if (isset($values['entity'])) {
             $this->entity = $values['entity'];
         }
+        if (isset($values['type'])) {
+            $this->type = $values['type'];
+        }
         if (isset($values['fields'])) {
             $this->fields = $values['fields'];
         }
         if (isset($values['unfields'])) {
             $this->unfields = $values['unfields'];
         }
+        if (isset($values['required'])) {
+            $this->required = $values['required'];
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRequired(): bool
+    {
+        return $this->required;
     }
 
     /**

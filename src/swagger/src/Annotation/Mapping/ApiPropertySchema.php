@@ -46,6 +46,11 @@ class ApiPropertySchema
     private $description = '';
 
     /**
+     * @var bool
+     */
+    private $required = true;
+
+    /**
      * ApiPropertySchema constructor.
      *
      * @param array $values
@@ -73,6 +78,17 @@ class ApiPropertySchema
         if (isset($values['type'])) {
             $this->type = $values['type'];
         }
+        if (isset($values['required'])) {
+            $this->required = $values['required'];
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRequired(): bool
+    {
+        return $this->required;
     }
 
     /**

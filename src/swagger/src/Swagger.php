@@ -4,11 +4,9 @@
 namespace Swoft\Swagger;
 
 use PhpDocReader\AnnotationException;
-use PhpDocReader\PhpDocReader;
 use ReflectionException;
 use ReflectionProperty;
 use Swoft\Bean\Annotation\Mapping\Bean;
-use Swoft\Db\Annotation\Mapping\Entity;
 use Swoft\Db\EntityRegister;
 use Swoft\Http\Server\Router\Router;
 use Swoft\Stdlib\Helper\ArrayHelper;
@@ -46,6 +44,11 @@ class Swagger
      * @var SchemaNode[]
      */
     private $schemas = [];
+
+    /**
+     * @var array
+     */
+    private $dynamicSchemas = [];
 
     /**
      * @var array
@@ -128,9 +131,9 @@ class Swagger
                 $reflectProperty = new ReflectionProperty($className, $propName);
                 $description     = DocBlock::description($reflectProperty->getDocComment());
 
-                $type        = $prop['type'];
-                $hidden      = $prop['hidden'];
-                $prop        = $prop['pro'];
+                $type   = $prop['type'];
+                $hidden = $prop['hidden'];
+                $prop   = $prop['pro'];
 
                 // Default value
                 $reflectProperty->setAccessible(true);
@@ -179,7 +182,7 @@ class Swagger
             $schemas[$schemaName] = $this->createSchema($schemaName);
         }
 
-        return $schemas;
+        return array_merge($schemas, $this->dynamicSchemas);
     }
 
     /**
@@ -210,66 +213,21 @@ class Swagger
         $propNodes = [];
         $requireds = [];
         foreach ($properties as $propertyName => $propAnnotation) {
-            $propData    = [];
-            $swgPropName = $propertyName;
-
             // Property
             if ($propAnnotation instanceof ApiProperty) {
-                if ($propAnnotation->isRequired()) {
-                    $requireds[] = $propertyName;
-                }
-
-                // Parse php document
-                $reflectProperty = new ReflectionProperty($className, $propertyName);
-                $propType        = ObjectHelper::getPropertyBaseType($reflectProperty);
-                $defultValue     = $reflectProperty->getValue(new $className());
-
-                $propData = [
-                    'type'        => $propType,
-                    'description' => $propAnnotation->getDescription()
-                ];
-
-                if ($defultValue !== null) {
-                    $propData['default'] = $defultValue;
-                }
-
-                $name = $propAnnotation->getName();
-                if (!empty($name)) {
-                    $swgPropName = $name;
-                }
-
-                $propNodes[$swgPropName] = new Property($propData);
+                $this->createProperty($className, $propertyName, $propAnnotation, $propNodes, $requireds);
                 continue;
             }
 
             // Entity property
             if ($propAnnotation instanceof ApiPropertyEntity) {
-
-                $name = $propAnnotation->getName();
-                if (!empty($name)) {
-                    $swgPropName = $name;
-                }
-
-                $propNodes[$swgPropName] = new Property($propData);
+                $this->createPropertyEntity($className, $propertyName, $propAnnotation, $propNodes, $requireds);
                 continue;
             }
 
             // Schema property
             if ($propAnnotation instanceof ApiPropertySchema) {
-                $refSchemaName = $propAnnotation->getSchema();
-
-                $propData = [
-                    'type'        => $propAnnotation->getType(),
-                    'ref'         => sprintf('#/components/schemas/%s', $refSchemaName),
-                    'description' => $propAnnotation->getDescription()
-                ];
-
-                $name = $propAnnotation->getName();
-                if (!empty($name)) {
-                    $swgPropName = $name;
-                }
-
-                $propNodes[$swgPropName] = new Property($propData);
+                $this->createPropertySchema($className, $propertyName, $propAnnotation, $propNodes, $requireds);
                 continue;
             }
         }
@@ -286,67 +244,203 @@ class Swagger
     }
 
     /**
+     * @param string      $className
+     * @param string      $propertyName
+     * @param ApiProperty $propAnnotation
+     * @param array       $propNodes
+     * @param array       $requireds
+     *
+     * @return void
+     * @throws ReflectionException
+     */
+    private function createProperty(
+        string $className,
+        string $propertyName,
+        ApiProperty $propAnnotation,
+        array &$propNodes,
+        array &$requireds
+    ): void {
+        // Parse php document
+        $reflectProperty = new ReflectionProperty($className, $propertyName);
+        $propType        = ObjectHelper::getPropertyBaseType($reflectProperty);
+        $defultValue     = $reflectProperty->getValue(new $className());
+        $propType        = $this->transferPropertyType($propType);
+
+        $propData = [
+            'type'        => $propType,
+            'description' => $propAnnotation->getDescription()
+        ];
+
+        if ($defultValue !== null) {
+            $propData['default'] = $defultValue;
+        }
+
+        $name        = $propAnnotation->getName();
+        $swgPropName = $propertyName;
+        if (!empty($name)) {
+            $swgPropName = $name;
+        }
+
+        if ($propAnnotation->isRequired()) {
+            $requireds[] = $swgPropName;
+        }
+
+        $propNodes[$swgPropName] = new Property($propData);
+    }
+
+    /**
+     * @param string            $className
+     * @param string            $propertyName
+     * @param ApiPropertySchema $propAnnotation
+     * @param array             $propNodes
+     * @param array             $requireds
+     *
+     * @return void
+     * @throws ReflectionException
+     * @throws SwaggerException
+     */
+    private function createPropertySchema(
+        string $className,
+        string $propertyName,
+        ApiPropertySchema $propAnnotation,
+        array &$propNodes,
+        array &$requireds
+    ): void {
+        $refSchemaName = $propAnnotation->getSchema();
+        $fields        = $propAnnotation->getFields();
+        $unfields      = $propAnnotation->getUnfields();
+
+        $name = $propAnnotation->getName();
+
+        if ($propAnnotation->isRequired()) {
+            $requireds[] = $name;
+        }
+
+        $schemaKey     = md5($className . '-' . $propertyName);
+        $newSchemaName = $this->createDynamicSchema($refSchemaName, $schemaKey, $fields, $unfields);
+
+        $propData = [
+            'type'        => $propAnnotation->getType(),
+            'ref'         => sprintf('#/components/schemas/%s', $newSchemaName),
+            'description' => $propAnnotation->getDescription()
+        ];
+
+        $propNodes[$name] = new Property($propData);
+    }
+
+    /**
+     * @param string            $className
+     * @param string            $propertyName
+     * @param ApiPropertyEntity $propAnnotation
+     * @param array             $propNodes
+     * @param array             $requireds
+     *
+     * @return void
+     * @throws ReflectionException
+     * @throws SwaggerException
+     */
+    private function createPropertyEntity(
+        string $className,
+        string $propertyName,
+        ApiPropertyEntity $propAnnotation,
+        array &$propNodes,
+        array &$requireds
+    ): void {
+        $refSchemaName = $propAnnotation->getEntity();
+        $fields        = $propAnnotation->getFields();
+        $unfields      = $propAnnotation->getUnfields();
+
+        $name = $propAnnotation->getName();
+
+        if ($propAnnotation->isRequired()) {
+            $requireds[] = $name;
+        }
+
+        $schemaKey     = md5($className . '-' . $propertyName);
+        $newSchemaName = $this->createDynamicSchema($refSchemaName, $schemaKey, $fields, $unfields);
+
+        $propData = [
+            'type'        => $propAnnotation->getType(),
+            'ref'         => sprintf('#/components/schemas/%s', $newSchemaName),
+            'description' => $propAnnotation->getDescription()
+        ];
+
+        $propNodes[$name] = new Property($propData);
+    }
+
+    /**
+     * @param string $refSchemaName
+     * @param string $newSchemaName
+     * @param array  $fields
+     * @param array  $unfields
+     *
+     * @return string
+     * @throws ReflectionException
+     * @throws SwaggerException
+     */
+    private function createDynamicSchema(
+        string $refSchemaName,
+        string $newSchemaName,
+        array $fields,
+        array $unfields
+    ): string {
+        $refNewProps       = [];
+        $refSchema         = $this->createSchema($refSchemaName);
+        $refSchemaProps    = $refSchema->getProperties();
+        $refSchemaRequired = $refSchema->getRequired();
+        foreach ($refSchemaProps as $refSchemaPropName => $refSchemaProp) {
+            $isNotFields = !empty($fields) && !in_array($refSchemaPropName, $fields);
+            $isUnfields  = !empty($unfields) && in_array($refSchemaPropName, $unfields);
+            if ($isNotFields || $isUnfields) {
+                ArrayHelper::remove($refSchemaRequired, $refSchemaPropName);
+                continue;
+            }
+
+            $refNewProps[$refSchemaPropName] = $refSchemaProp;
+        }
+
+        // Create new schema
+        $data = [
+            'properties' => $refNewProps,
+            'required'   => $refSchemaRequired
+        ];
+
+        $schema        = new SchemaNode($data);
+        $newSchemaName = sprintf('%s_%s', $refSchemaName, $newSchemaName);
+
+        $this->dynamicSchemas[$newSchemaName] = $schema;
+
+        return $newSchemaName;
+    }
+
+    /**
      * @param string $type
      *
      * @return string
      */
     private function transferPropertyType(string $type): string
     {
-        return $type;
-    }
-
-    /**
-     * @param string            $className
-     * @param string            $propName
-     * @param ApiPropertySchema $propAnt
-     * @param string            $refSchemaName
-     *
-     * @return string
-     * @throws AnnotationException
-     * @throws ReflectionException
-     * @throws SwaggerException
-     */
-    private function createDynamicSchema(
-        string $className,
-        string $propName,
-        ApiPropertySchema $propAnt,
-        string $refSchemaName
-    ): string {
-        $apiSchemaFields   = $propAnt->getFields();
-        $apiSchemaUnfields = $propAnt->getUnfields();
-
-        $refSchemaName = ApiRegister::getSchemaName($refSchemaName);
-        $refSchema     = $this->createSchema($refSchemaName);
-
-        $newProps     = [];
-        $newRequireds = [];
-
-        // Dynamic to generate schema
-        $refSchemaProps = $refSchema->getProperties();
-        foreach ($refSchemaProps as $refSchemaPropName => $refSchemaProp) {
-            $isFields   = empty($apiSchemaFields) || in_array($refSchemaPropName, $apiSchemaFields);
-            $isUnfields = empty($apiSchemaUnfields) || !in_array($refSchemaPropName, $apiSchemaUnfields);
-
-            if ($isFields && $isUnfields) {
-                $newProps[$refSchemaPropName] = $refSchemaProp;
-            } else {
-                ArrayHelper::remove($newRequireds, $refSchemaProp);
-            }
-        }
-
-        $data = [
-            'properties' => $newProps,
-            'required'   => $newRequireds
+        $mapping = [
+            'array'   => 'array',
+            'bool'    => 'boolean',
+            'boolean' => 'boolean',
+            'int'     => 'integer',
+            'integer' => 'integer',
+            'object'  => 'object',
+            'string'  => 'string',
+            'float'   => 'number',
+            'double'  => 'number',
+            'number'  => 'number'
         ];
 
+        if (!isset($mapping[$type])) {
+            throw new SwaggerException(
+                sprintf('%s type is not var type', $type)
+            );
+        }
 
-        $schema = new SchemaNode($data);
-
-        $schemaName = sprintf('%s_%s_%s', $refSchemaName, md5($className), $propName);
-
-        $this->schemas[$schemaName] = $schema;
+        return $mapping[$type];
     }
-
 
     /**
      * @return Info
@@ -367,7 +461,7 @@ class Swagger
      * @return Paths
      * @throws SwaggerException
      */
-    private function createPaths(): Paths
+    private function createPaths(): array
     {
         /** @var Router $router Register HTTP routes */
         $router = bean('httpRouter');
@@ -399,7 +493,7 @@ class Swagger
             }
         }
 
-        return new Paths($paths);
+        return $paths;
     }
 
     /**

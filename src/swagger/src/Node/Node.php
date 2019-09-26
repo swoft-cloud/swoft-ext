@@ -40,9 +40,15 @@ abstract class Node implements JsonSerializable
                 $key = sprintf('$%s', $key);
             }
 
-            if ($value !== null) {
-                $data[$key] = $value;
+            if ($value === null) {
+                continue;
             }
+
+            if (is_array($value) && empty($value)) {
+                continue;
+            }
+
+            $data[$key] = $value;
         }
 
         return $data;

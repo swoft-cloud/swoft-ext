@@ -40,7 +40,7 @@ class IndexData extends Schema
     /**
      * User Info
      *
-     * @ApiPropertyEntity(name=User::class, fields={"name"})
+     * @ApiPropertyEntity(name="userInfo", fields={"name"})
      *
      * @var User
      */
@@ -49,7 +49,7 @@ class IndexData extends Schema
     /**
      * User list
      *
-     * @ApiPropertyEntity(User::class, unfields={"age"})
+     * @ApiPropertyEntity(entity=User::class, unfields={"age"})
      *
      * @var User[]
      */

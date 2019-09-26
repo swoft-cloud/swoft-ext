@@ -28,7 +28,7 @@ class OpenApi extends Node
     protected $servers = [];
 
     /**
-     * @var Paths
+     * @var array
      */
     protected $paths;
 
@@ -70,9 +70,9 @@ class OpenApi extends Node
     }
 
     /**
-     * @param Paths $paths
+     * @param array $paths
      */
-    public function setPaths(Paths $paths): void
+    public function setPaths(array $paths): void
     {
         $this->paths = $paths;
     }
