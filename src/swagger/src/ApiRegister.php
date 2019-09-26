@@ -181,12 +181,15 @@ class ApiRegister
         }
 
         if ($annotation instanceof ApiResponse) {
-            self::$paths[$className][$methodName]['response'] = $annotation;
+            $schema = $annotation->getSchema();
+            $schema = self::getSchemaName($schema);
+            $annotation->setSchema($schema);
+            self::$paths[$className][$methodName]['response'][] = $annotation;
             return;
         }
 
         if ($annotation instanceof ApiRequestBody) {
-            self::$paths[$className][$methodName]['requestBody'] = $annotation;
+            self::$paths[$className][$methodName]['requestBody'][] = $annotation;
             return;
         }
 

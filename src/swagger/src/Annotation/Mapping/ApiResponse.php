@@ -36,6 +36,11 @@ class ApiResponse
     private $schema = '';
 
     /**
+     * @var string
+     */
+    private $description = '';
+
+    /**
      * ApiResponse constructor.
      *
      * @param array $values
@@ -57,6 +62,25 @@ class ApiResponse
         if (isset($values['charset'])) {
             $this->charset = $values['charset'];
         }
+        if (isset($values['description'])) {
+            $this->description = $values['description'];
+        }
+    }
+
+    /**
+     * @param string $schema
+     */
+    public function setSchema(string $schema): void
+    {
+        $this->schema = $schema;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
     }
 
     /**

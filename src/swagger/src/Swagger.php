@@ -23,11 +23,13 @@ use Swoft\Swagger\Annotation\Mapping\ApiServer;
 use Swoft\Swagger\Exception\SwaggerException;
 use Swoft\Swagger\Node\Components;
 use Swoft\Swagger\Node\Info;
+use Swoft\Swagger\Node\MediaType;
 use Swoft\Swagger\Node\OpenApi;
 use Swoft\Swagger\Node\Operation;
 use Swoft\Swagger\Node\PathItem;
 use Swoft\Swagger\Node\Paths;
 use Swoft\Swagger\Node\Property;
+use Swoft\Swagger\Node\Response;
 use Swoft\Swagger\Node\Schema as SchemaNode;
 use Swoft\Swagger\Node\Server;
 
@@ -526,10 +528,10 @@ class Swagger
         /* @var ApiOperation $operation */
         $operation = $path['operation'];
 
-        /* @var ApiResponse $response */
-        $response = $path['response'];
+        /* @var ApiResponse[] $responses */
+        $responses = $path['response'];
 
-        /* @var ApiRequestBody $requestBody */
+        /* @var ApiRequestBody[] $requestBody */
         $requestBody = $path['requestBody'];
 
         /* @var ApiServer[] $servers */
@@ -548,14 +550,53 @@ class Swagger
             $serverNodes[] = new Server($serverInfo);
         }
 
+        // Create response node
+        $responses = $this->createResponses($responses);
+
         $data = [
             'tags'        => $operation->getTags(),
             'summary'     => $operation->getSummary(),
             'description' => $operation->getDescription(),
             'operationId' => $operation->getOperationId(),
-            'servers'     => $serverNodes
+            'servers'     => $serverNodes,
+            'responses'   => $responses,
         ];
 
         return new Operation($data);
+    }
+
+    /**
+     * @param ApiResponse[] $responses
+     *
+     * @return array
+     */
+    private function createResponses(array $responses): array
+    {
+        $mediaTypes    = [];
+        $responseNodes = [];
+        foreach ($responses as $response) {
+            $status      = $response->getStatus();
+            $contentType = $response->getContentType();
+            $schema      = $response->getSchema();
+            $description = $response->getDescription();
+
+            $mediaData = [
+                'schema' => [
+                    '$ref' => sprintf('#/components/schemas/%s', $schema)
+                ]
+            ];
+
+            // MediaTypes
+            $mediaTypes[$contentType] = new MediaType($mediaData);
+
+            $data = [
+                'description' => $description,
+                'content'     => $mediaTypes
+            ];
+
+            $responseNodes[$status] = new Response($data);
+        }
+
+        return $responseNodes;
     }
 }

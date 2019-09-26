@@ -41,7 +41,7 @@ class Operation extends Node
     protected $requestBody;
 
     /**
-     * @var Responses
+     * @var Response[]
      */
     protected $responses;
 
@@ -112,9 +112,9 @@ class Operation extends Node
     }
 
     /**
-     * @param Responses $responses
+     * @param Response[] $responses
      */
-    public function setResponses(Responses $responses): void
+    public function setResponses(array $responses): void
     {
         $this->responses = $responses;
     }

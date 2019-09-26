@@ -4,10 +4,18 @@
 namespace Swoft\Swagger\Node;
 
 
-class MediaType
+class MediaType extends Node
 {
     /**
-     * @var Schema
+     * @var array
      */
     protected $schema;
+
+    /**
+     * @param array $schema
+     */
+    public function setSchema(array $schema): void
+    {
+        $this->schema = $schema;
+    }
 }
