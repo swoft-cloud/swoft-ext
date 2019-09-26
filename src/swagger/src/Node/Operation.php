@@ -36,7 +36,7 @@ class Operation extends Node
     protected $parameters = [];
 
     /**
-     * @var
+     * @var RequestBody
      */
     protected $requestBody;
 

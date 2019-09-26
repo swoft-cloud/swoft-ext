@@ -4,7 +4,7 @@
 namespace Swoft\Swagger\Node;
 
 
-class RequestBody
+class RequestBody extends Node
 {
     /**
      * @var string
@@ -20,4 +20,28 @@ class RequestBody
      * @var bool
      */
     protected $required = false;
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @param MediaType[] $content
+     */
+    public function setContent(array $content): void
+    {
+        $this->content = $content;
+    }
+
+    /**
+     * @param bool $required
+     */
+    public function setRequired(bool $required): void
+    {
+        $this->required = $required;
+    }
 }

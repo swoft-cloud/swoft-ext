@@ -32,7 +32,7 @@ class SwgController
      * @RequestMapping()
      *
      * @ApiOperation(tags={"user"}, summary="api index", description="home index")
-     * @ApiRequestBody(schema=IndexRequestSchema::class)
+     * @ApiRequestBody()
      * @ApiResponse(schema=IndexResponseSchema::class)
      * @ApiServer(
      *     url="https://index.swoft.org",

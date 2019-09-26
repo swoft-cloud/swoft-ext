@@ -48,7 +48,6 @@ class ApiRequestBody
         if (isset($values['schema'])) {
             $this->schema = $values['schema'];
         }
-
         if (isset($values['description'])) {
             $this->description = $values['description'];
         }

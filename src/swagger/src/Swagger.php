@@ -29,6 +29,7 @@ use Swoft\Swagger\Node\Operation;
 use Swoft\Swagger\Node\PathItem;
 use Swoft\Swagger\Node\Paths;
 use Swoft\Swagger\Node\Property;
+use Swoft\Swagger\Node\RequestBody;
 use Swoft\Swagger\Node\Response;
 use Swoft\Swagger\Node\Schema as SchemaNode;
 use Swoft\Swagger\Node\Server;
@@ -531,8 +532,8 @@ class Swagger
         /* @var ApiResponse[] $responses */
         $responses = $path['response'];
 
-        /* @var ApiRequestBody[] $requestBody */
-        $requestBody = $path['requestBody'];
+        /* @var ApiRequestBody[] $requestBodys */
+        $requestBodys = $path['requestBody'];
 
         /* @var ApiServer[] $servers */
         $servers = $path['servers'] ?? [];
@@ -560,9 +561,47 @@ class Swagger
             'operationId' => $operation->getOperationId(),
             'servers'     => $serverNodes,
             'responses'   => $responses,
+            'requestBody' => $this->createRequestBody($requestBodys)
         ];
 
         return new Operation($data);
+    }
+
+    /**
+     * @param ApiRequestBody[] $requestBodys
+     *
+     * @return array
+     */
+    private function createRequestBody(array $requestBodys): RequestBody
+    {
+        $mediaTypes  = [];
+        $description = '';
+        $required    = false;
+        foreach ($requestBodys as $requestBody) {
+            $schema      = $requestBody->getSchema();
+            $description = $requestBody->getDescription();
+            $required    = $requestBody->isRequired();
+            $contentType = $requestBody->getContentType();
+            if (empty($schema)) {
+                continue;
+            }
+
+            $mediaData = [
+                'schema' => [
+                    '$ref' => sprintf('#/components/schemas/%s', $schema)
+                ]
+            ];
+
+            $mediaTypes[$contentType] = new MediaType($mediaData);
+        }
+
+        $requestData = [
+            'description' => $description,
+            'content'     => $mediaTypes,
+            'required'    => $required,
+        ];
+
+        return new RequestBody($requestData);
     }
 
     /**
