@@ -4,10 +4,19 @@
 namespace Swoft\Swagger;
 
 
+use PhpDocReader\AnnotationException;
+use PhpDocReader\PhpDocReader;
+use ReflectionException;
+use ReflectionProperty;
+use Swoft\Stdlib\Helper\DocBlock;
+use Swoft\Stdlib\Helper\ObjectHelper;
 use Swoft\Swagger\Annotation\Mapping\ApiContact;
 use Swoft\Swagger\Annotation\Mapping\ApiInfo;
 use Swoft\Swagger\Annotation\Mapping\ApiLicense;
 use Swoft\Swagger\Annotation\Mapping\ApiOperation;
+use Swoft\Swagger\Annotation\Mapping\ApiProperty;
+use Swoft\Swagger\Annotation\Mapping\ApiPropertyEntity;
+use Swoft\Swagger\Annotation\Mapping\ApiPropertySchema;
 use Swoft\Swagger\Annotation\Mapping\ApiRequestBody;
 use Swoft\Swagger\Annotation\Mapping\ApiResponse;
 use Swoft\Swagger\Annotation\Mapping\ApiSchema;
@@ -199,6 +208,11 @@ class ApiRegister
             $schemaName = $apiSchemaName;
         }
 
+        // ClassName to schemaName
+        $schemaName = self::getSchemaName($schemaName);
+
+        // Reset name
+        $apiSchema->setName($schemaName);
         self::$schemas[$schemaName] = [
             $className,
             $apiSchema
@@ -206,12 +220,80 @@ class ApiRegister
     }
 
     /**
-     * @param string $className
-     * @param string $propertyName
-     * @param object $annotationObject
+     * @param string      $className
+     * @param string      $propertyName
+     * @param ApiProperty $annotationObject
      */
-    public static function registerProperty(string $className, string $propertyName, $annotationObject): void
-    {
+    public static function registerProperty(
+        string $className,
+        string $propertyName,
+        ApiProperty $annotationObject
+    ): void {
+        $name = $annotationObject->getName();
+        if (empty($name)) {
+            $name = $propertyName;
+        }
+
+        // Reset name
+        $annotationObject->setName($name);
+
+        self::$properties[$className][$propertyName] = $annotationObject;
+    }
+
+    public static function registerPropertyEntity(
+        string $className,
+        string $propertyName,
+        ApiPropertyEntity $annotationObject
+    ): void {
+        $name = $annotationObject->getName();
+        if (empty($name)) {
+            // Reset name
+            $annotationObject->setName($propertyName);
+        }
+
+        $schema      = $annotationObject->getSchema();
+        $description = $annotationObject->getDescription();
+
+    }
+
+    /**
+     * @param string            $className
+     * @param string            $propertyName
+     * @param ApiPropertySchema $annotationObject
+     *
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
+    public static function registerPropertySchema(
+        string $className,
+        string $propertyName,
+        ApiPropertySchema $annotationObject
+    ): void {
+        $name        = $annotationObject->getName();
+        $schema      = $annotationObject->getSchema();
+        $description = $annotationObject->getDescription();
+
+        // Reset name
+        if (empty($name)) {
+            $annotationObject->setName($name);
+        }
+
+        // Parse php document
+        $phpReader       = new PhpDocReader();
+        $reflectProperty = new ReflectionProperty($className, $propertyName);
+
+        // Reset schema
+        if (empty($schema)) {
+            $refSchema = $phpReader->getPropertyClass($reflectProperty);
+            $annotationObject->setSchema($refSchema);
+        }
+
+        // Reset description
+        if (empty($description)) {
+            $description = DocBlock::description($reflectProperty->getDocComment());
+            $annotationObject->setDescription($description);
+        }
+
         self::$properties[$className][$propertyName] = $annotationObject;
     }
 
@@ -256,13 +338,14 @@ class ApiRegister
     }
 
     /**
-     * @param string $schemaName
+     * @param string $name
      *
      * @return array
      */
-    public static function getSchemaByClassName(string $schemaName): array
+    public static function getSchemaByClassOrSchemaName(string $name): array
     {
-        return self::$schemas[$schemaName] ?? [];
+        $name = self::getSchemaName($name);
+        return self::$schemas[$name] ?? [];
     }
 
     /**
@@ -286,5 +369,15 @@ class ApiRegister
     public static function checkPaths(): void
     {
 
+    }
+
+    /**
+     * @param string $schemaName
+     *
+     * @return string
+     */
+    public static function getSchemaName(string $schemaName): string
+    {
+        return str_replace('\\', '_', $schemaName);
     }
 }

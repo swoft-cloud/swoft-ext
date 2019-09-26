@@ -44,4 +44,20 @@ class Schema extends Node
     {
         $this->properties = $properties;
     }
+
+    /**
+     * @return array
+     */
+    public function getRequired(): array
+    {
+        return $this->required;
+    }
+
+    /**
+     * @return Property[]
+     */
+    public function getProperties(): array
+    {
+        return $this->properties;
+    }
 }

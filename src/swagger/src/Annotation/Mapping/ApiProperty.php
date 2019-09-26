@@ -21,6 +21,11 @@ class ApiProperty
     private $name = '';
 
     /**
+     * @var string
+     */
+    private $description = '';
+
+    /**
      * @var bool
      */
     private $required = true;
@@ -41,6 +46,30 @@ class ApiProperty
         if (isset($values['required'])) {
             $this->required = $values['required'];
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
     }
 
     /**

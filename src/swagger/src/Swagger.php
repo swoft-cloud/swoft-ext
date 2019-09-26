@@ -8,7 +8,9 @@ use PhpDocReader\PhpDocReader;
 use ReflectionException;
 use ReflectionProperty;
 use Swoft\Bean\Annotation\Mapping\Bean;
+use Swoft\Db\EntityRegister;
 use Swoft\Http\Server\Router\Router;
+use Swoft\Stdlib\Helper\ArrayHelper;
 use Swoft\Stdlib\Helper\DocBlock;
 use Swoft\Stdlib\Helper\ObjectHelper;
 use Swoft\Swagger\Annotation\Mapping\ApiOperation;
@@ -40,9 +42,19 @@ use Swoft\Swagger\Node\Server;
 class Swagger
 {
     /**
-     * @var array
+     * @var SchemaNode[]
      */
     private $schemas = [];
+
+    /**
+     * @var array
+     */
+    private $schemaDefinitions = [];
+
+    public function init(): void
+    {
+        $this->schemaDefinitions = ApiRegister::getSchemas();
+    }
 
     /**
      * @throws AnnotationException
@@ -82,6 +94,7 @@ class Swagger
      * @return Components
      * @throws AnnotationException
      * @throws ReflectionException
+     * @throws SwaggerException
      */
     private function createComponentsNode(): Components
     {
@@ -97,14 +110,13 @@ class Swagger
      * @return array
      * @throws AnnotationException
      * @throws ReflectionException
+     * @throws SwaggerException
      */
     private function createSchemas(): array
     {
-        $schemas  = [];
-        $aSchemas = ApiRegister::getSchemas();
-        foreach ($aSchemas as $schemaName => $annotationSchema) {
-            $schemaName           = $this->getSchemaName($schemaName);
-            $schemas[$schemaName] = $this->createSchema($schemaName, $annotationSchema);
+        $schemas = [];
+        foreach ($this->schemaDefinitions as $schemaName => $classSchema) {
+            $schemas[$schemaName] = $this->createSchema($schemaName);
         }
 
         return $schemas;
@@ -113,20 +125,27 @@ class Swagger
     /**
      * @param string $schemaName
      *
-     * @param array  $classSchema
-     *
      * @return SchemaNode
      * @throws AnnotationException
      * @throws ReflectionException
+     * @throws SwaggerException
      */
-    private function createSchema(string $schemaName, array $classSchema): SchemaNode
+    private function createSchema(string $schemaName): SchemaNode
     {
         if (isset($this->schemas[$schemaName])) {
             return $this->schemas[$schemaName];
         }
 
+        if (!isset($this->schemaDefinitions[$schemaName])) {
+            throw new SwaggerException(
+                sprintf('%s schema is not defined', $schemaName)
+            );
+        }
+
+        $schemaDefinition = $this->schemaDefinitions[$schemaName];
+
         /* @var ApiSchema $schemaAnnotation */
-        [$className] = $classSchema;
+        [$className] = $schemaDefinition;
         $properties = ApiRegister::getProperties($className);
 
         $propNodes = [];
@@ -164,12 +183,13 @@ class Swagger
                 $reflectProperty = new ReflectionProperty($className, $propertyName);
                 $refClassName    = $phpReader->getPropertyClass($reflectProperty);
                 $description     = DocBlock::description($reflectProperty->getDocComment());
+
                 if (empty($refSchemaName)) {
                     $refSchemaName = $refClassName;
                 }
 
-                $refSchemaName = $this->getSchemaName($refSchemaName);
-                $propData      = [
+
+                $propData = [
                     'type'        => $propAnnotation->getType(),
                     'ref'         => sprintf('#/components/schemas/%s', $refSchemaName),
                     'description' => $description
@@ -178,16 +198,70 @@ class Swagger
 
             }
 
-            $propNodes[] = new Property($propData);
+            $propNodes[$propertyName] = new Property($propData);
         }
 
         $data = [
-            'properties' => $propNodes
+            'properties' => $propNodes,
+            'required'   => $requireds
         ];
 
-        $schema                     = new SchemaNode($data);
+        $schema = new SchemaNode($data);
+
         $this->schemas[$schemaName] = $schema;
         return $schema;
+    }
+
+    /**
+     * @param string            $className
+     * @param string            $propName
+     * @param ApiPropertySchema $propAnt
+     * @param string            $refSchemaName
+     *
+     * @return string
+     * @throws AnnotationException
+     * @throws ReflectionException
+     * @throws SwaggerException
+     */
+    private function createDynamicSchema(
+        string $className,
+        string $propName,
+        ApiPropertySchema $propAnt,
+        string $refSchemaName
+    ): string {
+        $apiSchemaFields   = $propAnt->getFields();
+        $apiSchemaUnfields = $propAnt->getUnfields();
+
+        $refSchemaName = ApiRegister::getSchemaName($refSchemaName);
+        $refSchema     = $this->createSchema($refSchemaName);
+
+        $newProps     = [];
+        $newRequireds = [];
+
+        // Dynamic to generate schema
+        $refSchemaProps = $refSchema->getProperties();
+        foreach ($refSchemaProps as $refSchemaPropName => $refSchemaProp) {
+            $isFields   = empty($apiSchemaFields) || in_array($refSchemaPropName, $apiSchemaFields);
+            $isUnfields = empty($apiSchemaUnfields) || !in_array($refSchemaPropName, $apiSchemaUnfields);
+
+            if ($isFields && $isUnfields) {
+                $newProps[$refSchemaPropName] = $refSchemaProp;
+            } else {
+                ArrayHelper::remove($newRequireds, $refSchemaProp);
+            }
+        }
+
+        $data = [
+            'properties' => $newProps,
+            'required'   => $newRequireds
+        ];
+
+
+        $schema = new SchemaNode($data);
+
+        $schemaName = sprintf('%s_%s_%s', $refSchemaName, md5($className), $propName);
+
+        $this->schemas[$schemaName] = $schema;
     }
 
 
@@ -306,15 +380,5 @@ class Swagger
         ];
 
         return new Operation($data);
-    }
-
-    /**
-     * @param string $schemaName
-     *
-     * @return string
-     */
-    private function getSchemaName(string $schemaName): string
-    {
-        return str_replace('\\', '_', $schemaName);
     }
 }

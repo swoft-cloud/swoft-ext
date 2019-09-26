@@ -21,6 +21,11 @@ class ApiPropertyEntity
     private $name = '';
 
     /**
+     * @var string
+     */
+    private $entity = '';
+
+    /**
      * @var array
      */
     private $fields = [];
@@ -29,6 +34,11 @@ class ApiPropertyEntity
      * @var array
      */
     private $unfields = [];
+
+    /**
+     * @var string
+     */
+    private $description = '';
 
     /**
      * ApiEntity constructor.
@@ -43,12 +53,50 @@ class ApiPropertyEntity
         if (isset($values['name'])) {
             $this->name = $values['name'];
         }
+        if (isset($values['description'])) {
+            $this->description = $values['description'];
+        }
+        if (isset($values['entity'])) {
+            $this->entity = $values['entity'];
+        }
         if (isset($values['fields'])) {
             $this->fields = $values['fields'];
         }
         if (isset($values['unfields'])) {
             $this->unfields = $values['unfields'];
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntity(): string
+    {
+        return $this->entity;
     }
 
     /**
@@ -73,5 +121,13 @@ class ApiPropertyEntity
     public function getUnfields(): array
     {
         return $this->unfields;
+    }
+
+    /**
+     * @param string $entity
+     */
+    public function setEntity(string $entity): void
+    {
+        $this->entity = $entity;
     }
 }

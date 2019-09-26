@@ -23,6 +23,11 @@ class ApiPropertySchema
     /**
      * @var string
      */
+    private $schema = '';
+
+    /**
+     * @var string
+     */
     private $type = 'object';
 
     /**
@@ -36,6 +41,11 @@ class ApiPropertySchema
     private $unfields = [];
 
     /**
+     * @var string
+     */
+    private $description = '';
+
+    /**
      * ApiPropertySchema constructor.
      *
      * @param array $values
@@ -44,6 +54,12 @@ class ApiPropertySchema
     {
         if (isset($values['value'])) {
             $this->name = $values['value'];
+        }
+        if (isset($values['schema'])) {
+            $this->schema = $values['schema'];
+        }
+        if (isset($values['description'])) {
+            $this->description = $values['description'];
         }
         if (isset($values['name'])) {
             $this->name = $values['name'];
@@ -57,6 +73,30 @@ class ApiPropertySchema
         if (isset($values['type'])) {
             $this->type = $values['type'];
         }
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSchema(): string
+    {
+        return $this->schema;
     }
 
     /**
@@ -89,5 +129,21 @@ class ApiPropertySchema
     public function getType(): string
     {
         return $this->type;
+    }
+
+    /**
+     * @param string $schema
+     */
+    public function setSchema(string $schema): void
+    {
+        $this->schema = $schema;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
     }
 }
