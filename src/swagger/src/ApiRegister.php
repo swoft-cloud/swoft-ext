@@ -223,37 +223,75 @@ class ApiRegister
      * @param string      $className
      * @param string      $propertyName
      * @param ApiProperty $annotationObject
+     *
+     * @throws ReflectionException
      */
     public static function registerProperty(
         string $className,
         string $propertyName,
         ApiProperty $annotationObject
     ): void {
-        $name = $annotationObject->getName();
-        if (empty($name)) {
-            $name = $propertyName;
-        }
-
-        // Reset name
-        $annotationObject->setName($name);
-
-        self::$properties[$className][$propertyName] = $annotationObject;
-    }
-
-    public static function registerPropertyEntity(
-        string $className,
-        string $propertyName,
-        ApiPropertyEntity $annotationObject
-    ): void {
-        $name = $annotationObject->getName();
+        $name        = $annotationObject->getName();
+        $description = $annotationObject->getDescription();
         if (empty($name)) {
             // Reset name
             $annotationObject->setName($propertyName);
         }
 
-        $schema      = $annotationObject->getSchema();
-        $description = $annotationObject->getDescription();
+        // Parse php document
+        $phpReader       = new PhpDocReader();
+        $reflectProperty = new ReflectionProperty($className, $propertyName);
 
+        // Reset description
+        if (empty($description)) {
+            $description = DocBlock::description($reflectProperty->getDocComment());
+            $annotationObject->setDescription($description);
+        }
+
+        self::$properties[$className][$propertyName] = $annotationObject;
+    }
+
+    /**
+     * @param string            $className
+     * @param string            $propertyName
+     * @param ApiPropertyEntity $annotationObject
+     *
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
+    public static function registerPropertyEntity(
+        string $className,
+        string $propertyName,
+        ApiPropertyEntity $annotationObject
+    ): void {
+        $name        = $annotationObject->getName();
+        $entity      = $annotationObject->getEntity();
+        $description = $annotationObject->getDescription();
+        if (empty($name)) {
+            // Reset name
+            $annotationObject->setName($propertyName);
+        }
+
+        // Parse php document
+        $phpReader       = new PhpDocReader();
+        $reflectProperty = new ReflectionProperty($className, $propertyName);
+
+        // Reset schema
+        if (empty($entity)) {
+            $refEntity = $phpReader->getPropertyClass($reflectProperty);
+            if (!empty($refEntity)) {
+                $refEntity = self::getSchemaName($refEntity);
+                $annotationObject->setEntity($refEntity);
+            }
+        }
+
+        // Reset description
+        if (empty($description)) {
+            $description = DocBlock::description($reflectProperty->getDocComment());
+            $annotationObject->setDescription($description);
+        }
+
+        self::$properties[$className][$propertyName] = $annotationObject;
     }
 
     /**
@@ -285,7 +323,10 @@ class ApiRegister
         // Reset schema
         if (empty($schema)) {
             $refSchema = $phpReader->getPropertyClass($reflectProperty);
-            $annotationObject->setSchema($refSchema);
+            if (!empty($refSchema)) {
+                $refSchema = self::getSchemaName($refSchema);
+                $annotationObject->setSchema($refSchema);
+            }
         }
 
         // Reset description

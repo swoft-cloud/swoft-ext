@@ -8,6 +8,7 @@ use PhpDocReader\PhpDocReader;
 use ReflectionException;
 use ReflectionProperty;
 use Swoft\Bean\Annotation\Mapping\Bean;
+use Swoft\Db\Annotation\Mapping\Entity;
 use Swoft\Db\EntityRegister;
 use Swoft\Http\Server\Router\Router;
 use Swoft\Stdlib\Helper\ArrayHelper;
@@ -51,6 +52,9 @@ class Swagger
      */
     private $schemaDefinitions = [];
 
+    /**
+     * Init
+     */
     public function init(): void
     {
         $this->schemaDefinitions = ApiRegister::getSchemas();
@@ -98,17 +102,73 @@ class Swagger
      */
     private function createComponentsNode(): Components
     {
-        $schemas    = $this->createSchemas();
+        $eEntity = $this->createEntitySchema();
+        $schemas = $this->createSchemas();
+
         $components = new Components([
-            'schemas' => $schemas
+            'schemas' => array_merge($eEntity, $schemas)
         ]);
 
         return $components;
     }
 
     /**
+     * @throws ReflectionException
+     */
+    private function createEntitySchema(): array
+    {
+        $schemas = [];
+        $columns = EntityRegister::getColumns();
+        foreach ($columns as $className => $propColumns) {
+
+            $propNodes   = [];
+            $propMapping = $propColumns['mapping'] ?? [];
+            foreach ($propMapping as $propName => $prop) {
+                // Parse php document
+                $reflectProperty = new ReflectionProperty($className, $propName);
+                $description     = DocBlock::description($reflectProperty->getDocComment());
+
+                $type        = $prop['type'];
+                $hidden      = $prop['hidden'];
+                $prop        = $prop['pro'];
+
+                // Default value
+                $reflectProperty->setAccessible(true);
+                $defultValue = $reflectProperty->getValue(new $className());
+
+                // Hidden property
+                if ($hidden) {
+                    continue;
+                }
+
+                $propData = [
+                    'type'        => $this->transferPropertyType($type),
+                    'description' => $description,
+                ];
+
+                if ($defultValue !== null) {
+                    $propData['default'] = $defultValue;
+                }
+
+                $propNodes[$prop] = new Property($propData);
+            }
+
+            $data = [
+                'properties' => $propNodes,
+            ];
+
+            $schema     = new SchemaNode($data);
+            $schemaName = ApiRegister::getSchemaName($className);
+
+            $schemas[$schemaName]       = $schema;
+            $this->schemas[$schemaName] = $schema;
+        }
+
+        return $schemas;
+    }
+
+    /**
      * @return array
-     * @throws AnnotationException
      * @throws ReflectionException
      * @throws SwaggerException
      */
@@ -126,7 +186,6 @@ class Swagger
      * @param string $schemaName
      *
      * @return SchemaNode
-     * @throws AnnotationException
      * @throws ReflectionException
      * @throws SwaggerException
      */
@@ -151,8 +210,10 @@ class Swagger
         $propNodes = [];
         $requireds = [];
         foreach ($properties as $propertyName => $propAnnotation) {
+            $propData    = [];
+            $swgPropName = $propertyName;
 
-            $propData = [];
+            // Property
             if ($propAnnotation instanceof ApiProperty) {
                 if ($propAnnotation->isRequired()) {
                     $requireds[] = $propertyName;
@@ -161,44 +222,56 @@ class Swagger
                 // Parse php document
                 $reflectProperty = new ReflectionProperty($className, $propertyName);
                 $propType        = ObjectHelper::getPropertyBaseType($reflectProperty);
-                $description     = DocBlock::description($reflectProperty->getDocComment());
                 $defultValue     = $reflectProperty->getValue(new $className());
 
                 $propData = [
                     'type'        => $propType,
-                    'description' => $description
+                    'description' => $propAnnotation->getDescription()
                 ];
 
                 if ($defultValue !== null) {
                     $propData['default'] = $defultValue;
                 }
 
-            } elseif ($propAnnotation instanceof ApiPropertyEntity) {
-
-            } elseif ($propAnnotation instanceof ApiPropertySchema) {
-                $refSchemaName = $propAnnotation->getName();
-
-                // Parse php document
-                $phpReader       = new PhpDocReader();
-                $reflectProperty = new ReflectionProperty($className, $propertyName);
-                $refClassName    = $phpReader->getPropertyClass($reflectProperty);
-                $description     = DocBlock::description($reflectProperty->getDocComment());
-
-                if (empty($refSchemaName)) {
-                    $refSchemaName = $refClassName;
+                $name = $propAnnotation->getName();
+                if (!empty($name)) {
+                    $swgPropName = $name;
                 }
 
+                $propNodes[$swgPropName] = new Property($propData);
+                continue;
+            }
+
+            // Entity property
+            if ($propAnnotation instanceof ApiPropertyEntity) {
+
+                $name = $propAnnotation->getName();
+                if (!empty($name)) {
+                    $swgPropName = $name;
+                }
+
+                $propNodes[$swgPropName] = new Property($propData);
+                continue;
+            }
+
+            // Schema property
+            if ($propAnnotation instanceof ApiPropertySchema) {
+                $refSchemaName = $propAnnotation->getSchema();
 
                 $propData = [
                     'type'        => $propAnnotation->getType(),
                     'ref'         => sprintf('#/components/schemas/%s', $refSchemaName),
-                    'description' => $description
+                    'description' => $propAnnotation->getDescription()
                 ];
-            } else {
 
+                $name = $propAnnotation->getName();
+                if (!empty($name)) {
+                    $swgPropName = $name;
+                }
+
+                $propNodes[$swgPropName] = new Property($propData);
+                continue;
             }
-
-            $propNodes[$propertyName] = new Property($propData);
         }
 
         $data = [
@@ -210,6 +283,16 @@ class Swagger
 
         $this->schemas[$schemaName] = $schema;
         return $schema;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return string
+     */
+    private function transferPropertyType(string $type): string
+    {
+        return $type;
     }
 
     /**

@@ -4,6 +4,8 @@
 namespace Swoft\Swagger\Annotation\Parser;
 
 
+use PhpDocReader\AnnotationException;
+use ReflectionException;
 use Swoft\Annotation\Annotation\Mapping\AnnotationParser;
 use Swoft\Annotation\Annotation\Parser\Parser;
 use Swoft\Swagger\Annotation\Mapping\ApiPropertySchema;
@@ -25,6 +27,8 @@ class ApiPropertySchemaParser extends Parser
      *
      * @return array
      * @throws SwaggerException
+     * @throws AnnotationException
+     * @throws ReflectionException
      */
     public function parse(int $type, $annotationObject): array
     {
@@ -34,7 +38,7 @@ class ApiPropertySchemaParser extends Parser
             );
         }
 
-        ApiRegister::registerProperty($this->className, $this->propertyName, $annotationObject);
+        ApiRegister::registerPropertySchema($this->className, $this->propertyName, $annotationObject);
         return [];
     }
 }

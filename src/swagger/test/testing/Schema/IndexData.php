@@ -38,6 +38,8 @@ class IndexData extends Schema
     public $count = 0;
 
     /**
+     * User Info
+     *
      * @ApiPropertyEntity(name=User::class, fields={"name"})
      *
      * @var User
@@ -45,6 +47,8 @@ class IndexData extends Schema
     public $user;
 
     /**
+     * User list
+     *
      * @ApiPropertyEntity(User::class, unfields={"age"})
      *
      * @var User[]

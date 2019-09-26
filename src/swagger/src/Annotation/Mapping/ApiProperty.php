@@ -43,6 +43,9 @@ class ApiProperty
         if (isset($values['name'])) {
             $this->name = $values['name'];
         }
+        if (isset($values['description'])) {
+            $this->description = $values['description'];
+        }
         if (isset($values['required'])) {
             $this->required = $values['required'];
         }

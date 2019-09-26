@@ -4,6 +4,7 @@
 namespace Swoft\Swagger\Annotation\Parser;
 
 
+use ReflectionException;
 use Swoft\Annotation\Annotation\Mapping\AnnotationParser;
 use Swoft\Annotation\Annotation\Parser\Parser;
 use Swoft\Swagger\Annotation\Mapping\ApiProperty;
@@ -25,6 +26,7 @@ class ApiPropertyParser extends Parser
      *
      * @return array
      * @throws SwaggerException
+     * @throws ReflectionException
      */
     public function parse(int $type, $annotationObject): array
     {
