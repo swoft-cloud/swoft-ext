@@ -3,7 +3,6 @@
 
 namespace Swoft\Swagger;
 
-use PhpDocReader\AnnotationException;
 use ReflectionException;
 use ReflectionProperty;
 use Swoft\Bean\Annotation\Mapping\Bean;
@@ -27,7 +26,6 @@ use Swoft\Swagger\Node\MediaType;
 use Swoft\Swagger\Node\OpenApi;
 use Swoft\Swagger\Node\Operation;
 use Swoft\Swagger\Node\PathItem;
-use Swoft\Swagger\Node\Paths;
 use Swoft\Swagger\Node\Property;
 use Swoft\Swagger\Node\RequestBody;
 use Swoft\Swagger\Node\Response;
@@ -74,7 +72,6 @@ class Swagger
     }
 
     /**
-     * @throws AnnotationException
      * @throws ReflectionException
      * @throws SwaggerException
      */
@@ -87,7 +84,6 @@ class Swagger
 
     /**
      * @return OpenApi
-     * @throws AnnotationException
      * @throws ReflectionException
      * @throws SwaggerException
      */
@@ -109,7 +105,6 @@ class Swagger
 
     /**
      * @return Components
-     * @throws AnnotationException
      * @throws ReflectionException
      * @throws SwaggerException
      */
@@ -126,7 +121,9 @@ class Swagger
     }
 
     /**
+     * @return array
      * @throws ReflectionException
+     * @throws SwaggerException
      */
     private function createEntitySchema(): array
     {
@@ -154,8 +151,15 @@ class Swagger
                     continue;
                 }
 
+                $propType = $this->transferPropertyType($type);
+
+                // Array for entity will be to object
+                if ($propType == 'array') {
+                    $propType = 'object';
+                }
+
                 $propData = [
-                    'type'        => $this->transferPropertyType($type),
+                    'type'        => $propType,
                     'description' => $description,
                 ];
 
@@ -262,6 +266,7 @@ class Swagger
      *
      * @return void
      * @throws ReflectionException
+     * @throws SwaggerException
      */
     private function createProperty(
         string $className,
@@ -427,6 +432,7 @@ class Swagger
      * @param string $type
      *
      * @return string
+     * @throws SwaggerException
      */
     private function transferPropertyType(string $type): string
     {
@@ -468,7 +474,7 @@ class Swagger
     }
 
     /**
-     * @return Paths
+     * @return array
      * @throws SwaggerException
      */
     private function createPaths(): array
@@ -511,6 +517,7 @@ class Swagger
      * @param array $routeHandlers
      *
      * @return PathItem
+     * @throws SwaggerException
      */
     private function createPathItem(array $path, array $routeHandlers): PathItem
     {
@@ -530,9 +537,14 @@ class Swagger
      * @param array $handler
      *
      * @return Operation
+     * @throws SwaggerException
      */
     private function createOperation(array $path, array $handler): Operation
     {
+        $notRbMethods = [
+            'GET'
+        ];
+
         /* @var ApiOperation $operation */
         $operation = $path['operation'];
 
@@ -547,6 +559,10 @@ class Swagger
 
         $handlerKey = $handler['handler'];
         [$className, $methodName] = explode('@', $handlerKey);
+
+
+        $method = $handler['method'];
+        $method = strtoupper($method);
 
         $serverNodes = [];
         foreach ($servers as $server) {
@@ -568,8 +584,12 @@ class Swagger
             'operationId' => $operation->getOperationId(),
             'servers'     => $serverNodes,
             'responses'   => $responses,
-            'requestBody' => $this->createRequestBody($className, $methodName, $requestBodys)
         ];
+
+        // Add Request body
+        if (!in_array($method, $notRbMethods)) {
+            $data['requestBody'] = $this->createRequestBody($className, $methodName, $requestBodys);
+        }
 
         return new Operation($data);
     }
@@ -580,6 +600,7 @@ class Swagger
      * @param ApiRequestBody[] $requestBodys
      *
      * @return RequestBody
+     * @throws SwaggerException
      */
     private function createRequestBody(string $className, string $methodName, array $requestBodys): RequestBody
     {
@@ -615,6 +636,13 @@ class Swagger
         return new RequestBody($requestData);
     }
 
+    /**
+     * @param string $className
+     * @param string $method
+     *
+     * @return SchemaNode
+     * @throws SwaggerException
+     */
     private function createRequestBodySchema(string $className, string $method): SchemaNode
     {
         $required      = [];
@@ -636,10 +664,11 @@ class Swagger
                     continue;
                 }
 
-                $propData                 = [
+                $propData = [
                     'default' => $default,
                     'type'    => $this->transferValidatorType($propAnno)
                 ];
+
                 $propertyNodes[$propName] = new Property($propData);
             }
         }
