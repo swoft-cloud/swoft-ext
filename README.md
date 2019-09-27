@@ -2,6 +2,8 @@
 
 This repository is used to manage all swoft extension components.
 
+## [中文说明](README.zh-CN.md)
+
 ## IMPORTANT
 
 All components will **NOT** be modified in the original repository of ext component, **SHOULD ALWAYS** be modified in this repository, also commit and push to this repository, and then @swoft-bot would sync changes to the original repository of component by `git subtree push`, notice that this action needs triggered by the repositories owner.
