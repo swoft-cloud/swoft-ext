@@ -331,16 +331,13 @@ class Swagger
             $requireds[] = $name;
         }
 
-        $schemaKey     = md5($className . '-' . $propertyName);
-        $newSchemaName = $this->createDynamicSchema($refSchemaName, $schemaKey, $fields, $unfields);
+        $type = $propAnnotation->getType();
+        $desc = $propAnnotation->getDescription();
 
-        $propData = [
-            'type'        => $propAnnotation->getType(),
-            'ref'         => sprintf('#/components/schemas/%s', $newSchemaName),
-            'description' => $propAnnotation->getDescription()
-        ];
+        $schema = $this->createDynamicProperty($type, $desc, $refSchemaName, $fields, $unfields);
 
-        $propNodes[$name] = new Property($propData);
+        // Schema node
+        $propNodes[$name] = $schema;
     }
 
     /**
@@ -371,34 +368,33 @@ class Swagger
             $requireds[] = $name;
         }
 
-        $schemaKey     = md5($className . '-' . $propertyName);
-        $newSchemaName = $this->createDynamicSchema($refSchemaName, $schemaKey, $fields, $unfields);
+        $type = $propAnnotation->getType();
+        $desc = $propAnnotation->getDescription();
 
-        $propData = [
-            'type'        => $propAnnotation->getType(),
-            'ref'         => sprintf('#/components/schemas/%s', $newSchemaName),
-            'description' => $propAnnotation->getDescription()
-        ];
+        $schema = $this->createDynamicProperty($type, $desc, $refSchemaName, $fields, $unfields);
 
-        $propNodes[$name] = new Property($propData);
+        // Schema node
+        $propNodes[$name] = $schema;
     }
 
     /**
+     * @param string $type
+     * @param string $description
      * @param string $refSchemaName
-     * @param string $newSchemaName
      * @param array  $fields
      * @param array  $unfields
      *
-     * @return string
+     * @return SchemaNode
      * @throws ReflectionException
      * @throws SwaggerException
      */
-    private function createDynamicSchema(
+    private function createDynamicProperty(
+        string $type,
+        string $description,
         string $refSchemaName,
-        string $newSchemaName,
         array $fields,
         array $unfields
-    ): string {
+    ): SchemaNode {
         $refNewProps       = [];
         $refSchema         = $this->createSchema($refSchemaName);
         $refSchemaProps    = $refSchema->getProperties();
@@ -414,18 +410,13 @@ class Swagger
             $refNewProps[$refSchemaPropName] = $refSchemaProp;
         }
 
-        // Create new schema
-        $data = [
+        $propData = [
+            'type'       => $type,
             'properties' => $refNewProps,
-            'required'   => $refSchemaRequired
+            'required'   => $refSchemaRequired,
         ];
 
-        $schema        = new SchemaNode($data);
-        $newSchemaName = sprintf('%s_%s', $refSchemaName, $newSchemaName);
-
-        $this->dynamicSchemas[$newSchemaName] = $schema;
-
-        return $newSchemaName;
+        return new SchemaNode($propData);
     }
 
     /**

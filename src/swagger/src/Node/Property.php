@@ -52,6 +52,35 @@ class Property extends Node
     protected $enum = [];
 
     /**
+     * @var Property[]
+     */
+    protected $properties = [];
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDefault()
+    {
+        return $this->default;
+    }
+
+    /**
+     * @return Property[]
+     */
+    public function getProperties(): array
+    {
+        return $this->properties;
+    }
+
+    /**
      * @param string $type
      */
     public function setType(string $type): void
