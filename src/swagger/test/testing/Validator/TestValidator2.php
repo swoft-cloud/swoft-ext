@@ -18,13 +18,17 @@ use Swoft\Validator\Annotation\Mapping\Validator;
 class TestValidator2
 {
     /**
+     * Id params
+     *
      * @IsInt()
      *
      * @var int
      */
-    protected $id;
+    protected $id = 9;
 
     /**
+     * Title
+     *
      * @IsString()
      *
      * @var string
@@ -32,6 +36,8 @@ class TestValidator2
     protected $title = '';
 
     /**
+     * Content params
+     *
      * @IsString()
      *
      * @var string

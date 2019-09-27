@@ -33,6 +33,13 @@ use Swoft\Swagger\Node\RequestBody;
 use Swoft\Swagger\Node\Response;
 use Swoft\Swagger\Node\Schema as SchemaNode;
 use Swoft\Swagger\Node\Server;
+use Swoft\Validator\Annotation\Mapping\IsArray;
+use Swoft\Validator\Annotation\Mapping\IsBool;
+use Swoft\Validator\Annotation\Mapping\IsFloat;
+use Swoft\Validator\Annotation\Mapping\IsInt;
+use Swoft\Validator\Annotation\Mapping\IsString;
+use Swoft\Validator\ValidateRegister;
+use Swoft\Validator\ValidatorRegister;
 
 /**
  * Class Swagger
@@ -538,8 +545,8 @@ class Swagger
         /* @var ApiServer[] $servers */
         $servers = $path['servers'] ?? [];
 
-        $method = $handler['method'];
-        $method = strtolower($method);
+        $handlerKey = $handler['handler'];
+        [$className, $methodName] = explode('@', $handlerKey);
 
         $serverNodes = [];
         foreach ($servers as $server) {
@@ -561,18 +568,20 @@ class Swagger
             'operationId' => $operation->getOperationId(),
             'servers'     => $serverNodes,
             'responses'   => $responses,
-            'requestBody' => $this->createRequestBody($requestBodys)
+            'requestBody' => $this->createRequestBody($className, $methodName, $requestBodys)
         ];
 
         return new Operation($data);
     }
 
     /**
+     * @param string           $className
+     * @param string           $methodName
      * @param ApiRequestBody[] $requestBodys
      *
-     * @return array
+     * @return RequestBody
      */
-    private function createRequestBody(array $requestBodys): RequestBody
+    private function createRequestBody(string $className, string $methodName, array $requestBodys): RequestBody
     {
         $mediaTypes  = [];
         $description = '';
@@ -582,15 +591,17 @@ class Swagger
             $description = $requestBody->getDescription();
             $required    = $requestBody->isRequired();
             $contentType = $requestBody->getContentType();
-            if (empty($schema)) {
-                continue;
+            if (!empty($schema)) {
+                $mediaData = [
+                    'schema' => [
+                        '$ref' => sprintf('#/components/schemas/%s', $schema)
+                    ]
+                ];
+            } else {
+                $mediaData = [
+                    'schema' => $this->createRequestBodySchema($className, $methodName)
+                ];
             }
-
-            $mediaData = [
-                'schema' => [
-                    '$ref' => sprintf('#/components/schemas/%s', $schema)
-                ]
-            ];
 
             $mediaTypes[$contentType] = new MediaType($mediaData);
         }
@@ -602,6 +613,76 @@ class Swagger
         ];
 
         return new RequestBody($requestData);
+    }
+
+    private function createRequestBodySchema(string $className, string $method): SchemaNode
+    {
+        $required      = [];
+        $propertyNodes = [];
+        $validates     = ValidateRegister::getValidates($className, $method);
+        foreach ($validates as $validatorName => $validate) {
+            $fields     = $validate['fields'] ?? [];
+            $unfields   = $validate['unfields'] ?? [];
+            $validator  = ValidatorRegister::getValidator($validatorName);
+            $properties = $validator['properties'] ?? [];
+
+            foreach ($properties as $propName => $property) {
+                $default  = $property['type']['default'] ?? null;
+                $propAnno = $property['type']['annotation'];
+
+                $notFields  = !empty($fields) && !in_array($propName, $fields);
+                $isUnfields = !empty($unfields) && in_array($propName, $unfields);
+                if ($notFields || $isUnfields) {
+                    continue;
+                }
+
+                $propData                 = [
+                    'default' => $default,
+                    'type'    => $this->transferValidatorType($propAnno)
+                ];
+                $propertyNodes[$propName] = new Property($propData);
+            }
+        }
+
+        $data = [
+            'required'   => $required,
+            'properties' => $propertyNodes
+        ];
+
+        return new SchemaNode($data);
+    }
+
+    /**
+     * @param $annotation
+     *
+     * @return string
+     * @throws SwaggerException
+     */
+    private function transferValidatorType($annotation): string
+    {
+        if ($annotation instanceof IsString) {
+            return 'string';
+        }
+
+        if ($annotation instanceof IsInt) {
+            return 'integer';
+        }
+
+        if ($annotation instanceof IsArray) {
+            return 'array';
+        }
+
+        if ($annotation instanceof IsBool) {
+            return 'boolean';
+        }
+
+        if ($annotation instanceof IsFloat) {
+            return 'number';
+        }
+
+        throw new SwaggerException(
+            sprintf('%s validate type is not supported!', get_class($annotation))
+        );
     }
 
     /**

@@ -14,7 +14,7 @@ class MediaType extends Node
     /**
      * @param array $schema
      */
-    public function setSchema(array $schema): void
+    public function setSchema($schema): void
     {
         $this->schema = $schema;
     }
