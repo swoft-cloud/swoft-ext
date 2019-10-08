@@ -3,6 +3,7 @@
 
 namespace SwoftTest\Swagger\Testing\Schema;
 
+use Swoft\Swagger\Annotation\Mapping\ApiProperty;
 use Swoft\Swagger\Schema;
 
 /**
@@ -13,26 +14,46 @@ use Swoft\Swagger\Schema;
 abstract class ResponseSchema extends Schema
 {
     /**
+     * Response status
+     *
+     * @ApiProperty()
+     *
      * @var int
      */
     public $status = 200;
 
     /**
+     * Response code
+     *
+     * @ApiProperty()
+     *
      * @var int
      */
     public $code = 0;
 
     /**
+     * Message
+     *
+     * @ApiProperty()
+     *
      * @var string
      */
     public $message = '';
 
     /**
+     * Server time
+     *
+     * @ApiProperty()
+     *
      * @var int
      */
     public $serverTime = 0;
 
     /**
+     * Response data
+     *
+     * @ApiProperty()
+     *
      * @var object
      */
     public $data;
