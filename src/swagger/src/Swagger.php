@@ -44,10 +44,20 @@ use Swoft\Validator\ValidatorRegister;
  *
  * @since 2.0
  *
- * @Bean()
+ * @Bean(name="swagger")
  */
 class Swagger
 {
+    /**
+     * JSON
+     */
+    public const JSON = 'json';
+
+    /**
+     * YAML
+     */
+    public const YAML = 'yaml';
+
     /**
      * @var SchemaNode[]
      */
@@ -64,6 +74,16 @@ class Swagger
     private $schemaDefinitions = [];
 
     /**
+     * @var string
+     */
+    private $type = self::JSON;
+
+    /**
+     * @var string
+     */
+    private $file = '@base/doc/swagger.json';
+
+    /**
      * Init
      */
     public function init(): void
@@ -78,8 +98,12 @@ class Swagger
     public function gen(): void
     {
         $openapi = $this->createRootNode();
+        $json    = $openapi->toJson();
 
-        var_dump($openapi->toJson());
+        if ($this->type == self::JSON) {
+            var_dump($json);
+            return;
+        }
     }
 
     /**
