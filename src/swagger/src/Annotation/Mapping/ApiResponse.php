@@ -4,6 +4,7 @@
 namespace Swoft\Swagger\Annotation\Mapping;
 
 use Doctrine\Common\Annotations\Annotation\Target;
+use Swoft\Swagger\ContentType;
 
 /**
  * Class ApiResponse
@@ -23,12 +24,12 @@ class ApiResponse
     /**
      * @var string
      */
-    private $contentType = 'application/json';
+    private $contentType = ContentType::JSON;
 
     /**
      * @var string
      */
-    private $charset = 'UTF-8';
+    private $charset = 'utf-8';
 
     /**
      * @var string

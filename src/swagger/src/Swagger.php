@@ -746,12 +746,16 @@ class Swagger
             $contentType = $response->getContentType();
             $schema      = $response->getSchema();
             $description = $response->getDescription();
+            $charset     = $response->getCharset();
 
             $mediaData = [
                 'schema' => [
                     '$ref' => sprintf('#/components/schemas/%s', $schema)
                 ]
             ];
+
+            // Add charset
+            $contentType = sprintf('%s;charset=%s', $contentType, $charset);
 
             // MediaTypes
             $mediaTypes[$contentType] = new MediaType($mediaData);

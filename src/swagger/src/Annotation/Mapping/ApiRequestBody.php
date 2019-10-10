@@ -4,6 +4,7 @@
 namespace Swoft\Swagger\Annotation\Mapping;
 
 use Doctrine\Common\Annotations\Annotation\Target;
+use Swoft\Swagger\ContentType;
 
 /**
  * Class ApiRequestBody
@@ -28,7 +29,7 @@ class ApiRequestBody
     /**
      * @var string
      */
-    private $contentType = 'application/json';
+    private $contentType = ContentType::JSON;
 
     /**
      * @var bool
