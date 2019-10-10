@@ -56,6 +56,8 @@ class IndexData extends Schema
     public $list = [];
 
     /**
+     * Other data
+     *
      * @ApiPropertySchema()
      *
      * @var IndexOther

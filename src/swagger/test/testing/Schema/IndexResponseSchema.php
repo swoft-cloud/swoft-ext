@@ -16,6 +16,8 @@ use Swoft\Swagger\Annotation\Mapping\ApiSchema;
 class IndexResponseSchema extends ResponseSchema
 {
     /**
+     * Response data
+     *
      * @ApiPropertySchema()
      *
      * @var IndexData

@@ -22,6 +22,11 @@ class Schema extends Node
     protected $properties = [];
 
     /**
+     * @var string
+     */
+    protected $description = '';
+
+    /**
      * @param string $type
      */
     public function setType(string $type): void
@@ -59,5 +64,21 @@ class Schema extends Node
     public function getProperties(): array
     {
         return $this->properties;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
     }
 }

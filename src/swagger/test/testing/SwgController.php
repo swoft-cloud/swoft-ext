@@ -10,7 +10,6 @@ use Swoft\Swagger\Annotation\Mapping\ApiRequestBody;
 use Swoft\Swagger\Annotation\Mapping\ApiResponse;
 use Swoft\Swagger\Annotation\Mapping\ApiServer;
 use Swoft\Validator\Annotation\Mapping\Validate;
-use SwoftTest\Swagger\Testing\Schema\IndexRequestSchema;
 use SwoftTest\Swagger\Testing\Schema\IndexResponseSchema;
 use SwoftTest\Swagger\Testing\Validator\TestValidator;
 use SwoftTest\Swagger\Testing\Validator\TestValidator2;

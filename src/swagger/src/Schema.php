@@ -6,7 +6,6 @@ namespace Swoft\Swagger;
 
 use InvalidArgumentException;
 use Swoft\Bean\Concern\PrototypeTrait;
-use SwoftTest\Swagger\Testing\Schema\ResponseSchema;
 
 /**
  * Class Schema

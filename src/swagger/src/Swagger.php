@@ -101,7 +101,7 @@ class Swagger
         $json    = $openapi->toJson();
 
         if ($this->type == self::JSON) {
-            var_dump($json);
+            file_put_contents('/Users/stelin/swoft/swoft/resource/dist/doc/swagger.json', $json);
             return;
         }
     }
@@ -435,9 +435,10 @@ class Swagger
         }
 
         $propData = [
-            'type'       => $type,
-            'properties' => $refNewProps,
-            'required'   => $refSchemaRequired,
+            'type'        => $type,
+            'properties'  => $refNewProps,
+            'required'    => $refSchemaRequired,
+            'description' => $description
         ];
 
         return new SchemaNode($propData);
@@ -503,7 +504,6 @@ class Swagger
             $handler                               = $route['handler'];
             $handlerRoutes[$handler]['handlers'][] = $route;
             $handlerRoutes[$handler]['path']       = $route['path'];
-
         }
 
         $paths         = [];
@@ -656,6 +656,7 @@ class Swagger
      * @param string $method
      *
      * @return SchemaNode
+     * @throws ReflectionException
      * @throws SwaggerException
      */
     private function createRequestBodySchema(string $className, string $method): SchemaNode
@@ -664,10 +665,11 @@ class Swagger
         $propertyNodes = [];
         $validates     = ValidateRegister::getValidates($className, $method);
         foreach ($validates as $validatorName => $validate) {
-            $fields     = $validate['fields'] ?? [];
-            $unfields   = $validate['unfields'] ?? [];
-            $validator  = ValidatorRegister::getValidator($validatorName);
-            $properties = $validator['properties'] ?? [];
+            $fields        = $validate['fields'] ?? [];
+            $unfields      = $validate['unfields'] ?? [];
+            $validator     = ValidatorRegister::getValidator($validatorName);
+            $properties    = $validator['properties'] ?? [];
+            $propClassName = $validator['class'];
 
             foreach ($properties as $propName => $property) {
                 $default  = $property['type']['default'] ?? null;
@@ -680,8 +682,9 @@ class Swagger
                 }
 
                 $propData = [
-                    'default' => $default,
-                    'type'    => $this->transferValidatorType($propAnno)
+                    'default'     => $default,
+                    'type'        => $this->transferValidatorType($propAnno),
+                    'description' => DocBlock::getPropertyDescription($propClassName, $propName)
                 ];
 
                 $propertyNodes[$propName] = new Property($propData);

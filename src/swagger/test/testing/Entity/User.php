@@ -19,6 +19,8 @@ use Swoft\Db\Eloquent\Model;
 class User extends Model
 {
     /**
+     * ID
+     *
      * @Id(incrementing=true)
      *
      * @Column(name="id", prop="id")
@@ -27,18 +29,24 @@ class User extends Model
     private $id;
 
     /**
+     * name
+     *
      * @Column()
      * @var string|null
      */
     private $name;
 
     /**
+     * password
+     *
      * @Column(name="password", hidden=true)
      * @var string|null
      */
     private $pwd;
 
     /**
+     * Age
+     *
      * @Column()
      *
      * @var int|null
@@ -46,6 +54,8 @@ class User extends Model
     private $age;
 
     /**
+     * User Desc
+     *
      * @Column(name="user_desc", prop="udesc")
      *
      * @var string|null

@@ -242,7 +242,6 @@ class ApiRegister
         }
 
         // Parse php document
-        $phpReader       = new PhpDocReader();
         $reflectProperty = new ReflectionProperty($className, $propertyName);
 
         // Reset description
