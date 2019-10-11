@@ -1,9 +1,8 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Swoft\Amqp;
 
+use Closure;
 use Swoft\Amqp\Connection\Connection;
 use Swoft\Amqp\Connection\ConnectionManager;
 use Swoft\Amqp\Exception\AMQPException;
@@ -11,23 +10,26 @@ use Swoft\Bean\BeanFactory;
 use Throwable;
 
 /**
- * Class Amqp.
+ * Class Amqp
  *
  * @since   2.0
  *
- * @method static push(string $message, array $prop = [], string $route = '')
- * @method static pop()
- * @method static consume(Closure $callback = null)
+ * @method static Connection channel(string $channel = null)
+ * @method static void push(string $message, array $prop = [], string $route = '')
+ * @method static string|null pop()
+ * @method static void listen(Closure $callback = null)
+ *
+ * @package Swoft\Amqp
  */
 class Amqp
 {
+
     /**
-     * connection.
+     * connection
      *
      * @param string $pool
      *
      * @return Connection
-     *
      * @throws AMQPException
      */
     public static function connection(string $pool = Pool::DEFAULT_POOL): Connection
@@ -37,7 +39,7 @@ class Amqp
             $conManager = BeanFactory::getBean(ConnectionManager::class);
 
             /* @var Pool $amqpPool */
-            $amqpPool = BeanFactory::getBean($pool);
+            $amqpPool   = BeanFactory::getBean($pool);
             $connection = $amqpPool->getConnection();
 
             $connection->setRelease(true);
@@ -59,13 +61,12 @@ class Amqp
     }
 
     /**
-     * __callStatic.
+     * __callStatic
      *
      * @param string $method
      * @param array  $arguments
      *
      * @return mixed
-     *
      * @throws AMQPException
      */
     public static function __callStatic(string $method, array $arguments)
@@ -74,4 +75,5 @@ class Amqp
 
         return $connection->{$method}(...$arguments);
     }
+
 }
