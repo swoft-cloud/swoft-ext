@@ -1,33 +1,20 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Swoft\Amqp\Connection;
 
-use Exception;
-use PhpAmqpLib\Connection\AMQPSocketConnection;
 use Swoft\Bean\Annotation\Mapping\Bean;
 
 /**
- * Class SocketConnection.
+ * Class SocketConnection
  *
  * @since   2.0
  * @Bean(scope=Bean::PROTOTYPE)
+ *
+ * @package Swoft\Amqp\Connection
  */
 class SocketConnection extends Connection
 {
-    /**
-     * connect.
-     *
-     * @param $auths
-     * @param $options
-     *
-     * @return mixed
-     *
-     * @throws Exception
-     */
-    public function connect($auths, $options)
+    public function create(): void
     {
-        return AMQPSocketConnection::create_connection($auths, $options);
     }
 }

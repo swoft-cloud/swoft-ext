@@ -1,29 +1,28 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Swoft\Amqp\Connection;
 
 use Closure;
-use ErrorException;
 use Exception;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPSocketConnection;
 use PhpAmqpLib\Connection\AMQPSSLConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
-use Swoft\Amqp\AmqpDb;
+use Swoft\Amqp\Client;
 use Swoft\Amqp\Contract\ConnectionInterface;
 use Swoft\Amqp\Exception\AMQPException;
 use Swoft\Amqp\Pool;
 use Swoft\Bean\BeanFactory;
 use Swoft\Connection\Pool\AbstractConnection;
+use Swoft\Stdlib\Helper\Arr;
 
 /**
- * Class Connection.
+ * Class Connection
  *
  * @since   2.0
+ *
+ * @package Swoft\Amqp\Connection
  */
 class Connection extends AbstractConnection implements ConnectionInterface
 {
@@ -38,38 +37,28 @@ class Connection extends AbstractConnection implements ConnectionInterface
     protected $channel;
 
     /**
-     * @var string
+     * @var Client
      */
-    protected $exchange;
-
-    /**
-     * @var string
-     */
-    protected $queue;
-
-    /**
-     * @var AmqpDb
-     */
-    protected $amqpDb;
+    protected $client;
 
     /**
      * @param Pool   $pool
-     * @param AmqpDb $amqpDb
+     * @param Client $client
      */
-    public function initialize(Pool $pool, AmqpDb $amqpDb)
+    public function initialize(Pool $pool, Client $client)
     {
-        $this->pool = $pool;
-        $this->amqpDb = $amqpDb;
+        $this->pool     = $pool;
+        $this->client   = $client;
         $this->lastTime = time();
 
         $this->id = $this->pool->getConnectionId();
     }
 
     /**
-     * create.
+     * create
      *
      * @throws AMQPException
-     * @throws AMQPTimeoutException
+     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      */
     public function create(): void
     {
@@ -77,40 +66,87 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * createClient.
+     * createClient
      *
      * @throws AMQPException
-     * @throws AMQPTimeoutException
+     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      */
     public function createClient(): void
     {
-        $auths = $this->amqpDb->getAuths();
-        $options = $this->amqpDb->getOptions();
-        $exchange = $this->amqpDb->getExchange();
-        $queue = $this->amqpDb->getQueue();
-        $route = $this->amqpDb->getRoute();
+        $auth['host']     = $this->client->getHost();
+        $auth['port']     = $this->client->getPort();
+        $auth['user']     = $this->client->getUser();
+        $auth['password'] = $this->client->getPassword();
+        $auth['vhost']    = $this->client->getVhost();
+
+        $setting = $this->client->getSetting();
+
         try {
-            $this->connection = $this->connect($auths, $options);
-            $this->channel = $this->connection->channel();
+            $this->connection = $this->connect([$auth], $setting['connect'] ?? []);
         } catch (Exception $e) {
             throw new AMQPException(
                 sprintf('RabbitMQ connect error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
             );
         }
 
-        //TODO: move to connector
-        $this->declareQueue($queue);
-        $this->declareExchange($exchange);
-        $this->bind($route);
+        $this->channel();
     }
 
     /**
-     * reconnect.
+     * channel
+     *
+     * @param string|null $channel
+     *
+     * @return Connection
+     * @throws AMQPException
+     */
+    public function channel($channelId = 'default'): Connection
+    {
+        $channels = $this->client->getChannels();
+        $exchange = $this->client->getExchange();
+        $queue    = $this->client->getQueue();
+
+        if (!isset($channels['default'])) {
+            if ($exchange && $queue) {
+                $channels['default']['exchange'] = $exchange;
+                $channels['default']['queue']    = $queue;
+                $this->client->setChannels($channels);
+            } else {
+                $channels['default'] = Arr::first($channels);
+            }
+        }
+
+        if (isset($channels[$channelId])) {
+            if (!isset($channels[$channelId]['exchange'])) {
+                throw new AMQPException('RabbitMQ connect error is Exchange empty');
+            }
+            if (!isset($channels[$channelId]['queue'])) {
+                throw new AMQPException('RabbitMQ connect error is Queue empty');
+            }
+            $this->client->setExchange($channels[$channelId]['exchange']);
+            $this->client->setQueue($channels[$channelId]['queue']);
+        } else {
+            throw new AMQPException('RabbitMQ connect error is Channel has not exists');
+        }
+
+        $channelKeys = array_keys($channels);
+        $channelIds  = array_flip($channelKeys);
+
+        $this->channel = $this->connection->channel($channelIds[$channelId] + 1);
+
+        $this->declareQueue();
+        $this->declareExchange();
+        $this->bind();
+
+        return $this;
+    }
+
+    /**
+     * reconnect
      *
      * @return bool
-     *
      * @throws AMQPException
-     * @throws AMQPTimeoutException
+     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      */
     public function reconnect(): bool
     {
@@ -126,9 +162,9 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * close.
+     * close
      *
-     * @throws Exception
+     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      */
     public function close(): void
     {
@@ -137,7 +173,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * release.
+     * release
      *
      * @param bool $force
      */
@@ -151,28 +187,29 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * declareExchange.
-     *
-     * @param array $exchange
+     * declare exchange
      *
      * @throws AMQPException
      */
-    public function declareExchange(array $exchange): void
+    protected function declareExchange(): void
     {
+        $exchange = $this->client->getExchange();
+        $type     = $this->client->getType();
+        $setting  = $this->client->getSetting();
+
         try {
             $this->channel->exchange_declare(
-                $exchange['name'],
-                $exchange['type'],
-                $exchange['passive'] ?? false,
-                $exchange['durable'] ?? true,
-                $exchange['auto_delete'] ?? false,
-                $exchange['internal'] ?? false,
-                $exchange['nowait'] ?? false,
-                $exchange['arguments'] ?? [],
-                $exchange['ticket'] ?? null
+                $exchange,
+                $type,
+                $setting['passive'] ?? false,
+                $setting['durable'] ?? true,
+                $setting['auto_delete'] ?? false,
+                $setting['internal'] ?? false,
+                $setting['nowait'] ?? false,
+                $setting['arguments'] ?? [],
+                $setting['ticket'] ?? null
             );
-            $this->exchange = $exchange['name'];
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             throw new AMQPException(
                 sprintf('RabbitMQ declare exchange error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
             );
@@ -180,27 +217,27 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * declareQueue.
-     *
-     * @param array $queue
+     * declare queue
      *
      * @throws AMQPException
      */
-    public function declareQueue(array $queue): void
+    protected function declareQueue(): void
     {
+        $queue   = $this->client->getQueue();
+        $setting = $this->client->getSetting();
+
         try {
             $this->channel->queue_declare(
-                $queue['name'],
-                $queue['passive'] ?? false,
-                $queue['durable'] ?? true,
-                $queue['exclusive'] ?? false,
-                $queue['auto_delete'] ?? false,
-                $queue['nowait'] ?? false,
-                $queue['arguments'] ?? [],
-                $queue['ticket'] ?? null
+                $queue,
+                $setting['passive'] ?? false,
+                $setting['durable'] ?? true,
+                $setting['exclusive'] ?? false,
+                $setting['auto_delete'] ?? false,
+                $setting['nowait'] ?? false,
+                $setting['arguments'] ?? [],
+                $setting['ticket'] ?? null
             );
-            $this->queue = $queue['name'];
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             throw new AMQPException(
                 sprintf('RabbitMQ declare queue error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
             );
@@ -208,24 +245,27 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * bind queue and exchange.
-     *
-     * @param array $route
+     * bind
      *
      * @throws AMQPException
      */
-    public function bind(array $route): void
+    protected function bind(): void
     {
+        $exchange = $this->client->getExchange();
+        $queue    = $this->client->getQueue();
+        $route    = $this->client->getRoute();
+        $setting  = $this->client->getSetting();
+
         try {
             $this->channel->queue_bind(
-                $this->queue,
-                $this->exchange,
-                $route['key'] ?? '',
-                $route['nowait'] ?? false,
-                $route['arguments'] ?? [],
-                $route['ticket'] ?? null
+                $queue,
+                $exchange,
+                $route,
+                $setting['nowait'] ?? false,
+                $setting['arguments'] ?? [],
+                $setting['ticket'] ?? null
             );
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             throw new AMQPException(
                 sprintf('RabbitMQ bind queue and exchange error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
             );
@@ -233,55 +273,66 @@ class Connection extends AbstractConnection implements ConnectionInterface
     }
 
     /**
-     * push message to RabbitMQ.
+     * push
      *
-     * @param string $message
-     * @param array  $prop
-     * @param string $route
+     * @param string $body
+     * @param array  $properties
+     * @param string $routeKey
+     *
+     * @throws \PhpAmqpLib\Exception\AMQPConnectionClosedException
      */
     public function push(string $message, array $prop = [], string $route = ''): void
     {
-        $body = new AMQPMessage($message, $prop);
-        $this->channel->basic_publish($body, $this->exchange, $route);
+        $exchange = $this->client->getExchange();
+        $body     = new AMQPMessage($message, $prop);
+        $this->channel->basic_publish($body, $exchange, $route);
         $this->release();
     }
 
     /**
-     * pop the first message from RabbitMQ.
+     * pull
      *
      * @return string|null
-     *
-     * @throws AMQPTimeoutException
+     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      */
-    public function pop(): ?string
+    public function pull(): ?string
     {
+        $queue = $this->client->getQueue();
         /* @var AMQPMessage $message */
-        $message = $this->channel->basic_get($this->queue, true);
+        $message = $this->channel->basic_get($queue, true);
         $this->release();
 
         return $message ? $message->body : null;
     }
 
     /**
-     * listen the queue from RabbitMQ.
+     * listen
      *
      * @param Closure|null $callback
      *
-     * @throws ErrorException
+     * @return string
+     * @throws \ErrorException
+     * @throws \PhpAmqpLib\Exception\AMQPOutOfBoundsException
+     * @throws \PhpAmqpLib\Exception\AMQPRuntimeException
+     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      */
-    public function consume(Closure $callback = null): void
+    public function listen(Closure $callback = null): void
     {
-        //get the consume config
-        $consume = $this->amqpDb->getConsume();
+        $queue   = $this->client->getQueue();
+        $setting = $this->client->getSetting();
+        $consume = $setting['consume'] ?? [];
+
+        //consume the message
         $this->channel->basic_consume(
-            $this->queue,
+            $queue,
             $consume['consumer_tag'] ?? '',
             $consume['no_local'] ?? false,
             $consume['no_ack'] ?? false,
             $consume['exclusive'] ?? false,
             $consume['nowait'] ?? false,
             function (AMQPMessage $message) use ($callback, $consume) {
-                $cancel = is_array($consume['cancel_tag']) ? in_array($message->body, $consume['cancel_tag']) : $message->body == $consume['cancel_tag'];
+                $cancelTag = $consume['cancel_tag'] ?? [];
+                $cancel    = is_array($cancelTag) ? in_array($message->body, $cancelTag) : $message->body == $cancelTag;
                 $this->channel->basic_ack($message->delivery_info['delivery_tag']);
                 if ($cancel) {
                     $this->channel->basic_cancel($message->delivery_info['consumer_tag']);
@@ -289,11 +340,36 @@ class Connection extends AbstractConnection implements ConnectionInterface
                 !empty($callback) && $callback($message);
             }
         );
-        //wait for queue
+
+        //wait for message
         while ($this->channel->is_consuming()) {
             $this->channel->wait();
         }
 
         $this->release();
+    }
+
+    /**
+     * @return AMQPSocketConnection|AMQPSSLConnection|AMQPStreamConnection
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
+     * @return AMQPChannel
+     */
+    public function getChannel(): AMQPChannel
+    {
+        return $this->channel;
+    }
+
+    /**
+     * @return Client
+     */
+    public function getClient(): Client
+    {
+        return $this->client;
     }
 }

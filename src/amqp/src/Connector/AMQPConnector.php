@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Swoft\Amqp\Connector;
 
@@ -9,10 +7,12 @@ use Swoft\Amqp\Contract\ConnectorInterface;
 use Swoft\Bean\Annotation\Mapping\Bean;
 
 /**
- * Class AMQPConnector.
+ * Class AMQPConnector
  *
  * @since   2.0
  * @Bean()
+ *
+ * @package Swoft\Amqp\Connector
  */
 class AMQPConnector implements ConnectorInterface
 {
