@@ -6,6 +6,7 @@ namespace Swoft\Swagger\Annotation\Parser;
 
 use Swoft\Annotation\Annotation\Mapping\AnnotationParser;
 use Swoft\Annotation\Annotation\Parser\Parser;
+use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Log\Helper\CLog;
 use Swoft\Swagger\Annotation\Mapping\ApiSchema;
 use Swoft\Swagger\ApiRegister;
@@ -36,6 +37,7 @@ class ApiSchemaParser extends Parser
         }
 
         ApiRegister::registerSchema($this->className, $annotationObject);
-        return [];
+
+        return [$this->className, $this->className, Bean::PROTOTYPE, ''];
     }
 }
