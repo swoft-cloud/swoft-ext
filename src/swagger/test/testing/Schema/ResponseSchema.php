@@ -45,7 +45,7 @@ abstract class ResponseSchema extends Schema
      *
      * @ApiProperty()
      *
-     * @var int
+     * @var float
      */
     public $serverTime = 0;
 
