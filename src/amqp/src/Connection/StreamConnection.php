@@ -2,28 +2,27 @@
 
 namespace Swoft\Amqp\Connection;
 
+use Exception;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Swoft\Bean\Annotation\Mapping\Bean;
 
 /**
  * Class StreamConnection
  *
- * @since   2.0
- * @Bean(scope=Bean::PROTOTYPE)
+ * @since 2.0
  *
- * @package Swoft\Amqp\Connection
+ * @Bean(scope=Bean::PROTOTYPE)
  */
 class StreamConnection extends Connection
 {
     /**
-     * connect
-     * @param $auths
-     * @param $options
+     * @param array $auths
+     * @param array $options
      *
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
-    public function connect($auths, $options)
+    public function connect(array $auths, array $options)
     {
         return AMQPStreamConnection::create_connection($auths, $options);
     }

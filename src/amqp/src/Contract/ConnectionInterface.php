@@ -5,9 +5,7 @@ namespace Swoft\Amqp\Contract;
 /**
  * Interface ConnectionInterface
  *
- * @since   2.0
- *
- * @package Swoft\Amqp\Contract
+ * @since 2.0
  */
 interface ConnectionInterface
 {

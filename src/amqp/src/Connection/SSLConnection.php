@@ -7,10 +7,9 @@ use Swoft\Bean\Annotation\Mapping\Bean;
 /**
  * Class SSLConnection
  *
- * @since   2.0
- * @Bean(scope=Bean::PROTOTYPE)
+ * @since 2.0
  *
- * @package Swoft\Amqp\Connection
+ * @Bean(scope=Bean::PROTOTYPE)
  */
 class SSLConnection extends Connection
 {

@@ -3,11 +3,16 @@
 namespace Swoft\Amqp\Connection;
 
 use Closure;
+use ErrorException;
 use Exception;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPSocketConnection;
 use PhpAmqpLib\Connection\AMQPSSLConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Exception\AMQPConnectionClosedException;
+use PhpAmqpLib\Exception\AMQPOutOfBoundsException;
+use PhpAmqpLib\Exception\AMQPRuntimeException;
+use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
 use Swoft\Amqp\Client;
 use Swoft\Amqp\Contract\ConnectionInterface;
@@ -15,14 +20,14 @@ use Swoft\Amqp\Exception\AMQPException;
 use Swoft\Amqp\Pool;
 use Swoft\Bean\BeanFactory;
 use Swoft\Connection\Pool\AbstractConnection;
+use Swoft\Log\Helper\Log;
 use Swoft\Stdlib\Helper\Arr;
+use Throwable;
 
 /**
  * Class Connection
  *
- * @since   2.0
- *
- * @package Swoft\Amqp\Connection
+ * @since 2.0
  */
 class Connection extends AbstractConnection implements ConnectionInterface
 {
@@ -58,7 +63,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
      * create
      *
      * @throws AMQPException
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @throws AMQPTimeoutException
      */
     public function create(): void
     {
@@ -69,7 +74,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
      * createClient
      *
      * @throws AMQPException
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @throws AMQPTimeoutException
      */
     public function createClient(): void
     {
@@ -83,6 +88,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
 
         try {
             $this->connection = $this->connect([$auth], $setting['connect'] ?? []);
+            $this->connection = $this->client->getConnector()->connect();
         } catch (Exception $e) {
             throw new AMQPException(
                 sprintf('RabbitMQ connect error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
@@ -95,7 +101,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
     /**
      * channel
      *
-     * @param string|null $channel
+     * @param string $channelId
      *
      * @return Connection
      * @throws AMQPException
@@ -145,8 +151,6 @@ class Connection extends AbstractConnection implements ConnectionInterface
      * reconnect
      *
      * @return bool
-     * @throws AMQPException
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      */
     public function reconnect(): bool
     {
@@ -164,7 +168,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
     /**
      * close
      *
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @throws Exception
      */
     public function close(): void
     {
@@ -209,9 +213,10 @@ class Connection extends AbstractConnection implements ConnectionInterface
                 $setting['arguments'] ?? [],
                 $setting['ticket'] ?? null
             );
-        } catch (Exception $exception) {
+        } catch (Exception $e) {
             throw new AMQPException(
-                sprintf('RabbitMQ declare exchange error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
+                sprintf('RabbitMQ declare exchange error is %s file=%s line=%d', $e->getMessage(), $e->getFile(),
+                    $e->getLine())
             );
         }
     }
@@ -237,9 +242,10 @@ class Connection extends AbstractConnection implements ConnectionInterface
                 $setting['arguments'] ?? [],
                 $setting['ticket'] ?? null
             );
-        } catch (Exception $exception) {
+        } catch (Exception $e) {
             throw new AMQPException(
-                sprintf('RabbitMQ declare queue error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
+                sprintf('RabbitMQ declare queue error is %s file=%s line=%d', $e->getMessage(), $e->getFile(),
+                    $e->getLine())
             );
         }
     }
@@ -265,9 +271,10 @@ class Connection extends AbstractConnection implements ConnectionInterface
                 $setting['arguments'] ?? [],
                 $setting['ticket'] ?? null
             );
-        } catch (Exception $exception) {
+        } catch (Exception $e) {
             throw new AMQPException(
-                sprintf('RabbitMQ bind queue and exchange error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
+                sprintf('RabbitMQ bind queue and exchange error is %s file=%s line=%d', $e->getMessage(), $e->getFile(),
+                    $e->getLine())
             );
         }
     }
@@ -275,11 +282,9 @@ class Connection extends AbstractConnection implements ConnectionInterface
     /**
      * push
      *
-     * @param string $body
-     * @param array  $properties
-     * @param string $routeKey
-     *
-     * @throws \PhpAmqpLib\Exception\AMQPConnectionClosedException
+     * @param string $message
+     * @param array  $prop
+     * @param string $route
      */
     public function push(string $message, array $prop = [], string $route = ''): void
     {
@@ -293,7 +298,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
      * pull
      *
      * @return string|null
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @throws AMQPTimeoutException
      */
     public function pull(): ?string
     {
@@ -310,11 +315,8 @@ class Connection extends AbstractConnection implements ConnectionInterface
      *
      * @param Closure|null $callback
      *
-     * @return string
-     * @throws \ErrorException
-     * @throws \PhpAmqpLib\Exception\AMQPOutOfBoundsException
-     * @throws \PhpAmqpLib\Exception\AMQPRuntimeException
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @return void
+     * @throws ErrorException
      */
     public function listen(Closure $callback = null): void
     {

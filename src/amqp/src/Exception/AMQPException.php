@@ -7,9 +7,7 @@ use Exception;
 /**
  * Class AMQPException
  *
- * @since   2.0
- *
- * @package Swoft\Amqp\Exception
+ * @since 2.0
  */
 class AMQPException extends Exception
 {
