@@ -24,8 +24,6 @@ class SwooleTracker
      * @param string $path
      * @param string $serviceName
      * @param string $serverIp
-     * @param string $traceId
-     * @param string $spanId
      *
      * @return object|null \StatsCenter_Tick
      * @throws Throwable
@@ -34,8 +32,6 @@ class SwooleTracker
         string $path,
         string $serviceName,
         string $serverIp,
-        string $traceId,
-        string $spanId
     ): ?object {
         if (class_exists(Stats::class) === false) {
             CLog::error('Stats::class not found, Please check swoole_tracker extend');
@@ -43,7 +39,7 @@ class SwooleTracker
         }
 
         try {
-            $tick = Stats::beforeExecRpc($path, $serviceName, $serverIp, $traceId, $spanId);
+            $tick = Stats::beforeExecRpc($path, $serviceName, $serverIp);
 
             return $tick;
         } catch (Throwable $e) {
