@@ -9,11 +9,11 @@ use Swoft\Swoole\Tracker\Middleware\SwooleTrackerMiddleware;
 use Swoft\Swoole\Tracker\SwooleTracker;
 
 /**
- * Class DashboardTest
+ * Class SwooleTrackerTest
  *
  * @since 2.0
  */
-class DashboardTest extends TestCase
+class SwooleTrackerTest extends TestCase
 {
     public function testStatus()
     {
