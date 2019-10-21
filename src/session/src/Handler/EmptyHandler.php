@@ -10,6 +10,14 @@ use Swoft\Session\Contract\SessionHandlerInterface;
 class EmptyHandler implements SessionHandlerInterface
 {
     /**
+     * @return bool
+     */
+    public static function isSupported(): bool
+    {
+        return true;
+    }
+
+    /**
      * Close the session
      *
      * @return bool The return value (usually TRUE on success, FALSE on failure).
@@ -89,14 +97,6 @@ class EmptyHandler implements SessionHandlerInterface
      *                 Note this value is returned internally to PHP for processing.
      */
     public function write(string $id, string $data): bool
-    {
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function isSupported(): bool
     {
         return true;
     }

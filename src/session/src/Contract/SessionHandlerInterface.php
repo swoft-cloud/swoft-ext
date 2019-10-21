@@ -11,41 +11,9 @@ namespace Swoft\Session\Contract;
 interface SessionHandlerInterface
 {
     /**
-     * Close the session
-     *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.close.php
      * @return bool
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
      */
-    public function close(): bool;
-
-    /**
-     * Destroy a session
-     *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.destroy.php
-     *
-     * @param string $sessionId The session ID being destroyed.
-     *
-     * @return bool
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
-     */
-    public function destroy(string $sessionId): bool;
-
-    /**
-     * Cleanup old sessions
-     *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.gc.php
-     *
-     * @param int $maxLifetime Sessions that have not updated for
-     *                         the last max lifetime seconds will be removed.
-     *
-     * @return bool
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
-     */
-    public function gc(int $maxLifetime): bool;
+    public static function isSupported(): bool;
 
     /**
      * Initialize session
@@ -60,6 +28,16 @@ interface SessionHandlerInterface
      * Note this value is returned internally to PHP for processing.
      */
     public function open(string $savePath, string $name): bool;
+
+    /**
+     * Close the session, you can save data.
+     *
+     * @link  https://php.net/manual/en/sessionhandlerinterface.close.php
+     * @return bool
+     * The return value (usually TRUE on success, FALSE on failure).
+     * Note this value is returned internally to PHP for processing.
+     */
+    public function close(): bool;
 
     /**
      * Read session data
@@ -94,7 +72,29 @@ interface SessionHandlerInterface
     public function write(string $sessionId, string $sessionData): bool;
 
     /**
+     * Destroy a session
+     *
+     * @link  https://php.net/manual/en/sessionhandlerinterface.destroy.php
+     *
+     * @param string $sessionId The session ID being destroyed.
+     *
      * @return bool
+     * The return value (usually TRUE on success, FALSE on failure).
+     * Note this value is returned internally to PHP for processing.
      */
-    public static function isSupported(): bool;
+    public function destroy(string $sessionId): bool;
+
+    /**
+     * Cleanup old sessions
+     *
+     * @link  https://php.net/manual/en/sessionhandlerinterface.gc.php
+     *
+     * @param int $maxLifetime Sessions that have not updated for
+     *                         the last max lifetime seconds will be removed.
+     *
+     * @return bool
+     * The return value (usually TRUE on success, FALSE on failure).
+     * Note this value is returned internally to PHP for processing.
+     */
+    public function gc(int $maxLifetime): bool;
 }
