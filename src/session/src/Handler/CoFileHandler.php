@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Swoft\Session\Handler;
+namespace Swoft\Http\Session\Handler;
 
 use RuntimeException;
 use Swoft\Co;
@@ -29,7 +29,15 @@ class CoFileHandler extends FileHandler
      */
     public function read(string $id): string
     {
-        return Co::readFile($this->getSessionFile($id));
+        $file = $this->getSessionFile($id);
+
+        // If data has been expired
+        if (file_exists($file) && (filemtime($file) + $this->expireTime) < time()) {
+            unlink($file);
+            return '';
+        }
+
+        return Co::readFile($file);
     }
 
     /**

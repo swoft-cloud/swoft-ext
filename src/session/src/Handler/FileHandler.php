@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Swoft\Session\Handler;
+namespace Swoft\Http\Session\Handler;
 
-use Swoft\Session\Concern\AbstractHandler;
+use Swoft\Http\Session\Concern\AbstractHandler;
 use Swoft\Stdlib\Helper\Dir;
 use function file_exists;
 use function file_get_contents;
@@ -24,15 +24,20 @@ class FileHandler extends AbstractHandler
     private $savePath = '/tmp';
 
     /**
-     * {@inheritDoc}
+     * Init $savePath directory
      */
-    public function open(string $savePath, string $sessionName): bool
+    public function init(): void
     {
         if (!is_dir($this->savePath)) {
             Dir::make($this->savePath);
         }
+    }
 
-        $this->savePath = $savePath;
+    /**
+     * {@inheritDoc}
+     */
+    public function open(string $savePath, string $sessionName): bool
+    {
         return true;
     }
 
@@ -43,7 +48,15 @@ class FileHandler extends AbstractHandler
      */
     public function read(string $id): string
     {
-        return (string)file_get_contents($this->getSessionFile($id));
+        $file = $this->getSessionFile($id);
+
+        // If data has been expired
+        if (file_exists($file) && (filemtime($file) + $this->expireTime) < time()) {
+            unlink($file);
+            return '';
+        }
+
+        return (string)file_get_contents($file);
     }
 
     /**
@@ -105,8 +118,24 @@ class FileHandler extends AbstractHandler
      *
      * @return string
      */
-    public function getSessionFile(string $id): string
+    protected function getSessionFile(string $id): string
     {
         return $this->savePath . '/' . $this->prefix . $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSavePath(): string
+    {
+        return $this->savePath;
+    }
+
+    /**
+     * @param string $savePath
+     */
+    public function setSavePath(string $savePath): void
+    {
+        $this->savePath = $savePath;
     }
 }

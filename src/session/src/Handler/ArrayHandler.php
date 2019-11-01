@@ -2,36 +2,20 @@
 
 namespace Swoft\Http\Session\Handler;
 
-use Swoft\Redis\Pool;
 use Swoft\Http\Session\Concern\AbstractHandler;
-use function class_exists;
+use function time;
 
 /**
- * Class RedisHandler
+ * Class ArrayHandler
  *
  * @since 2.0.7
  */
-class RedisHandler extends AbstractHandler
+class ArrayHandler extends AbstractHandler
 {
     /**
-     * @var Pool
+     * @var array
      */
-    private $redis;
-
-    /**
-     * The prefix for session key
-     *
-     * @var string
-     */
-    protected $prefix = 'swoft_sess:';
-
-    /**
-     * @return bool
-     */
-    public static function isSupported(): bool
-    {
-        return class_exists(Pool::class);
-    }
+    private $data = [];
 
     /**
      * {@inheritDoc}
@@ -46,6 +30,7 @@ class RedisHandler extends AbstractHandler
      */
     public function close(): bool
     {
+        $this->data = [];
         return true;
     }
 
@@ -54,9 +39,8 @@ class RedisHandler extends AbstractHandler
      */
     public function read(string $sessionId): string
     {
-        $sessKey = $this->getSessionKey($sessionId);
-
-        return (string)$this->redis->get($sessKey);
+        // TODO handle expire
+        return $this->data[$sessionId] ?? '';
     }
 
     /**
@@ -64,9 +48,12 @@ class RedisHandler extends AbstractHandler
      */
     public function write(string $sessionId, string $sessionData): bool
     {
-        $sessKey = $this->getSessionKey($sessionId);
+        $this->data[$sessionId] = [
+            't' => time(),
+            'v' => $sessionData,
+        ];
 
-        return (bool)$this->redis->set($sessKey, $sessionData, $this->getExpireTime());
+        return true;
     }
 
     /**
@@ -74,7 +61,12 @@ class RedisHandler extends AbstractHandler
      */
     public function destroy(string $sessionId): bool
     {
-        return (int)$this->redis->del($sessionId) === 1;
+        if (isset($this->data[$sessionId])) {
+            unset($this->data[$sessionId]);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -83,13 +75,5 @@ class RedisHandler extends AbstractHandler
     public function gc(int $maxLifetime): bool
     {
         return true;
-    }
-
-    /**
-     * @param Pool $redis
-     */
-    public function setRedis(Pool $redis): void
-    {
-        $this->redis = $redis;
     }
 }

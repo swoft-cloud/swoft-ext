@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Swoft\Session\Handler;
+namespace Swoft\Http\Session\Handler;
 
-use Swoft\Session\Concern\AbstractHandler;
+use Swoft\Http\Session\Concern\AbstractHandler;
 use Swoft\Swlib\MemTable;
 use Swoole\Table;
 use function class_exists;
@@ -37,16 +37,7 @@ class MemTableHandler extends AbstractHandler
     }
 
     /**
-     * Initialize session
-     *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.open.php
-     *
-     * @param string $savePath The path where to store/retrieve the session.
-     * @param string $name     The session name.
-     *
-     * @return bool
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
+     * {@inheritDoc}
      */
     public function open(string $savePath, string $name): bool
     {
@@ -66,12 +57,7 @@ class MemTableHandler extends AbstractHandler
     }
 
     /**
-     * Close the session
-     *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.close.php
-     * @return bool
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
+     * {@inheritDoc}
      */
     public function close(): bool
     {
@@ -83,16 +69,7 @@ class MemTableHandler extends AbstractHandler
     }
 
     /**
-     * Read session data
-     *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.read.php
-     *
-     * @param string $sessionId The session id to read data for.
-     *
-     * @return string
-     * Returns an encoded string of the read data.
-     * If nothing was read, it must return an empty string.
-     * Note this value is returned internally to PHP for processing.
+     * {@inheritDoc}
      */
     public function read(string $sessionId): string
     {
@@ -103,20 +80,7 @@ class MemTableHandler extends AbstractHandler
     }
 
     /**
-     * Write session data
-     *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.write.php
-     *
-     * @param string $sessionId   The session id.
-     * @param string $sessionData The encoded session data. This data is the
-     *                            result of the PHP internally encoding
-     *                            the $_SESSION super-global to a serialized
-     *                            string and passing it as this parameter.
-     *                            Please note sessions use an alternative serialization method.
-     *
-     * @return bool
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
+     * {@inheritDoc}
      */
     public function write(string $sessionId, string $sessionData): bool
     {
@@ -127,15 +91,7 @@ class MemTableHandler extends AbstractHandler
     }
 
     /**
-     * Destroy a session
-     *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.destroy.php
-     *
-     * @param string $sessionId The session ID being destroyed.
-     *
-     * @return bool
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
+     * {@inheritDoc}
      */
     public function destroy(string $sessionId): bool
     {
@@ -143,16 +99,7 @@ class MemTableHandler extends AbstractHandler
     }
 
     /**
-     * Cleanup old sessions
-     *
-     * @link  https://php.net/manual/en/sessionhandlerinterface.gc.php
-     *
-     * @param int $maxLifetime Sessions that have not updated for
-     *                         the last max lifetime seconds will be removed.
-     *
-     * @return bool
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
+     * {@inheritDoc}
      */
     public function gc(int $maxLifetime): bool
     {

@@ -11,9 +11,10 @@
   "license": "Apache-2.0",
   "require": {
     "php": ">7.1.0",
-    "symfony/expression-language": "~4.3",
+    "nesbot/carbon": "^2.0",
     "filp/whoops": "^2.4",
     "php-amqplib/php-amqplib": "^2.9",
+    "symfony/expression-language": "~4.3",
     "text/template": "~2.6"
   },
   "require-dev": {
