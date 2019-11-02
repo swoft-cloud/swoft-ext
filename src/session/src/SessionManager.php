@@ -8,8 +8,8 @@ use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Contract\HandlerInterface;
 use Swoft\Exception\SwoftException;
 use Swoft\Http\Session\Concern\AbstractHandler;
-use Swoft\Stdlib\Helper\JsonHelper;
 use Swoft\Stdlib\Helper\Str;
+use function array_merge;
 use function context;
 use function function_exists;
 
@@ -26,16 +26,20 @@ class SessionManager
     private $name = HttpSession::SESSION_NAME;
 
     /**
+     * @var bool
+     */
+    private $enable = false;
+
+    /**
      * @var array
      */
     protected $cookieParams = [
         'path'        => '/',
-        'name'        => HttpSession::SESSION_NAME,
         'domain'      => null,
         'secure'      => false,
         'httpOnly'    => true,
-        'lifetime'    => 86400,
-        'autoRefresh' => false,
+        // 'lifetime'    => 86400,
+        // 'autoRefresh' => false,
     ];
 
     /**
@@ -82,10 +86,7 @@ class SessionManager
      */
     public function createSession(string $sessionId): HttpSession
     {
-        $handler = $this->getHandler();
-        $content = $handler->read($sessionId);
-
-        return HttpSession::new(JsonHelper::decode($content), $handler);
+        return HttpSession::new($sessionId, $this->handler);
     }
 
     /**
@@ -140,5 +141,37 @@ class SessionManager
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnable(): bool
+    {
+        return $this->enable;
+    }
+
+    /**
+     * @param bool $enable
+     */
+    public function setEnable(bool $enable): void
+    {
+        $this->enable = $enable;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCookieParams(): array
+    {
+        return $this->cookieParams;
+    }
+
+    /**
+     * @param array $cookieParams
+     */
+    public function setCookieParams(array $cookieParams): void
+    {
+        $this->cookieParams = array_merge($this->cookieParams, $cookieParams);
     }
 }

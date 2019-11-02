@@ -8,9 +8,11 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Exception\SwoftException;
+use Swoft\Http\Message\Cookie;
 use Swoft\Http\Message\Request;
 use Swoft\Http\Message\Response;
 use Swoft\Http\Server\Contract\MiddlewareInterface;
+use Swoole\Coroutine;
 use function context;
 use function random_int;
 use function round;
@@ -24,11 +26,6 @@ use function round;
  */
 class SessionMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var bool
-     */
-    private $enable = false;
-
     /**
      * @var int
      */
@@ -51,8 +48,8 @@ class SessionMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // If not enabled
-        if (!$this->enable) {
+        // If not enabled session
+        if (!$this->manager->isEnable()) {
             return $handler->handle($request);
         }
 
@@ -63,14 +60,16 @@ class SessionMiddleware implements MiddlewareInterface
         context()->set(HttpSession::CONTEXT_KEY, $session);
 
         // Garbage collection
-        $this->collectGarbage($session);
+        $this->collectGarbage();
 
         // Processing ...
         $response = $handler->handle($request);
 
+        // Add cookie to response
         $this->addCookieToResponse($response, $session);
 
-        $this->storageSession();
+        // $this->storageSession($session);
+        $session->saveData();
 
         return $response;
     }
@@ -99,41 +98,32 @@ class SessionMiddleware implements MiddlewareInterface
     /**
      * Remove the garbage from the session if necessary.
      *
-     * @param HttpSession $session
+     * param HttpSession $session
      *
      * @return void
      * @throws Exception
      */
-    protected function collectGarbage(HttpSession $session): void
+    protected function collectGarbage(): void
     {
         $max = $this->randomMax;
 
+        // Gc handle on new coroutine
         if (random_int(1, $max) === round($max / 2)) {
-            $this->manager->gc();
+            Coroutine::create(function () {
+                $this->manager->gc();
+            });
         }
     }
 
     /**
-     * @param HttpSession $session
+     * @param ResponseInterface|Response $response
+     * @param HttpSession                $session
      */
-    protected function storageSession(HttpSession $session): void
+    private function addCookieToResponse(ResponseInterface $response, HttpSession $session): void
     {
-        $this->manager->storageSession($session);
-    }
+        $cookie = Cookie::new($this->manager->getCookieParams());
+        $cookie->setValue($session->getSessionId());
 
-    /**
-     * @return bool
-     */
-    public function isEnable(): bool
-    {
-        return $this->enable;
-    }
-
-    /**
-     * @param bool $enable
-     */
-    public function setEnable(bool $enable): void
-    {
-        $this->enable = $enable;
+        $response->setCookie($this->manager->getName(), $cookie);
     }
 }

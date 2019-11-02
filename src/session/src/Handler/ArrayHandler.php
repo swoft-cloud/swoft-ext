@@ -30,7 +30,7 @@ class ArrayHandler extends AbstractHandler
      */
     public function close(): bool
     {
-        $this->data = [];
+        // $this->data = [];
         return true;
     }
 

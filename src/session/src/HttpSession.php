@@ -2,10 +2,14 @@
 
 namespace Swoft\Http\Session;
 
+use ArrayAccess;
+use ArrayIterator;
+use IteratorAggregate;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Contract\SessionInterface;
 use Swoft\Http\Session\Contract\SessionHandlerInterface;
-use Swoft\Stdlib\Helper\JsonHelper;
+use Swoft\Stdlib\Helper\PhpHelper;
+use function array_merge;
 use function bean;
 
 /**
@@ -14,15 +18,26 @@ use function bean;
  * @since 2.0.7
  * @Bean(scope=Bean::PROTOTYPE)
  */
-class HttpSession implements \ArrayAccess, SessionInterface
+class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
 {
     // use DataPropertyTrait;
 
     /**
-     * Key name for storage cookies/headers/context
+     * Key name for storage cookies/headers
      */
     public const SESSION_NAME = 'SWOFT_SESSION_ID';
-    public const CONTEXT_KEY  = '_SWOFT_SESSION';
+
+    /**
+     * Key name for storage context
+     */
+    public const CONTEXT_KEY = '_SWOFT_SESSION';
+
+    /**
+     * Flash data key name
+     */
+    public const FLASH_KEY = '__flash';
+    public const FLASH_OLD = '__flash_old';
+    public const FLASH_NEW = '__flash_new';
 
     /**
      * @var array
@@ -40,59 +55,168 @@ class HttpSession implements \ArrayAccess, SessionInterface
     private $sessionId = '';
 
     /**
-     * @param array                   $data
+     * @param string                  $sessionId
      * @param SessionHandlerInterface $handler
      *
      * @return static
      */
-    public static function new(array $data, SessionHandlerInterface $handler): self
+    public static function new(string $sessionId, SessionHandlerInterface $handler): self
     {
         /** @var self $self */
         $self = bean(static::class);
 
         // Initial properties
-        $self->data    = $data;
-        $self->handler = $handler;
+        $self->sessionId = $sessionId;
+        $self->handler   = $handler;
 
         return $self;
     }
 
-    public function get($key, $default=null)
+    /**
+     * Load session data from handler
+     */
+    public function loadData(): void
     {
-
+        $sessionData = $this->handler->read($this->sessionId);
+        $this->data  = PhpHelper::unserialize($sessionData);
     }
 
-    public function getMulti($keys)
-    {}
+    /**
+     * Save new session data
+     */
+    public function saveData(): void
+    {
+        $sessionData = PhpHelper::serialize($this->data);
 
+        $this->handler->write($this->sessionId, $sessionData);
+    }
+
+    /*************************************************************
+     * Session data operate
+     ************************************************************/
+
+    /**
+     * @param string $key
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    public function get(string $key, $default = null)
+    {
+        // Load latest data
+        $this->loadData();
+
+        return $this->data[$key] ?? $default;
+    }
+
+    // public function getMulti(array $keys): array
+    // {
+    // }
+
+    /**
+     * @param string $key
+     * @param mixed  $value
+     */
     public function set(string $key, $value): void
-    {}
+    {
+        // Load latest data
+        $this->loadData();
 
+        $this->data[$key] = $value;
+
+        // Save new session data
+        $this->saveData();
+    }
+
+    /**
+     * @param array $data
+     */
     public function setMulti(array $data): void
-    {}
+    {
+        // Load latest data
+        $this->loadData();
+
+        $this->data = array_merge($this->data, $data);
+
+        // Save new session data
+        $this->saveData();
+    }
 
     /**
      * @param $key
+     *
      * @return bool
      */
     public function has(string $key): bool
     {
-        return true;
+        // Load latest data
+        $this->loadData();
+
+        return isset($this->data[$key]);
     }
 
     /**
      * @param $key
-     * @return mixed
+     *
+     * @return bool
      */
-    public function delete($key)
-    {}
+    public function delete(string $key): bool
+    {
+        // Load latest data
+        $this->loadData();
 
-    public function remove($key)
-    {}
+        if (isset($this->data[$key])) {
+            unset($this->data[$key]);
 
+            // Save new session data
+            $this->saveData();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function remove(string $key): bool
+    {
+        return $this->delete($key);
+    }
+
+    /**
+     * @return bool
+     */
+    public function destroy(): bool
+    {
+        return $this->handler->destroy($this->sessionId);
+    }
+
+    /**
+     * Clear all data
+     */
+    public function clear(): void
+    {
+        $this->data = [];
+        $this->handler->write($this->sessionId, '');
+    }
+
+    public function save(): void
+    {
+        $this->saveData();
+    }
+
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
-        return [];
+        $this->loadData();
+
+        return $this->data;
     }
 
     /**
@@ -100,159 +224,29 @@ class HttpSession implements \ArrayAccess, SessionInterface
      */
     public function toString(): string
     {
-        if ($this->sessionId) {
-            $value = $this->handler->read($this->sessionId);
+        return $this->handler->read($this->sessionId);
+    }
 
-            return JsonHelper::encode($value);
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * @param bool $refresh
+     *
+     * @return array
+     */
+    public function getData(bool $refresh = false): array
+    {
+        if ($refresh) {
+            $this->loadData();
         }
 
-        return '';
-    }
-
-    public function clear(): void
-    {
-    }
-
-    /*************************************************************
-     * Session data operate
-     ************************************************************/
-
-    /**
-     * Flash data name
-     *
-     * __flash.old
-     * __flash.new
-     *
-     * @var string
-     */
-    protected $flashName = '__flash';
-
-    /**
-     * 设置闪存消息(存储后只能使用一次，即在第一次获取后将被删除)
-     * @param  string $name 名称
-     * @param  mixed $value 值
-     * @return self
-     */
-    public function setFlash($name,$value)
-    {
-
-    }
-
-    /**
-     * 获取闪存消息(默认在获取后将被删除)
-     * @author inhere
-     * @date   2015-09-27
-     * @param  string $name 名称
-     * @param  mixed $default 默认值
-     * @param bool $del 在获取后是否删除它
-     * @return mixed|null
-     */
-    public function getFlash($name, $default=null, $del=true)
-    {
-
-    }
-
-    /**
-     * @param array $flash
-     * @return Session
-     */
-    public function setFlashs(array $flash)
-    {
-        return $this->set($this->flashName, $flash);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFlashs()
-    {
-        return $this->get($this->flashName);
-    }
-
-    /**
-     * @return Session
-     */
-    public function clearFlash()
-    {
-        return $this->set($this->flashName,[]);
-    }
-    /*************************************************************
-     * Session data operate
-     ************************************************************/
-
-    /**
-     * Whether a offset exists
-     *
-     * @link  https://php.net/manual/en/arrayaccess.offsetexists.php
-     *
-     * @param mixed $offset <p>
-     *                      An offset to check for.
-     *                      </p>
-     *
-     * @return bool true on success or false on failure.
-     * </p>
-     * <p>
-     * The return value will be casted to boolean if non-boolean was returned.
-     * @since 5.0.0
-     */
-    public function offsetExists($offset)
-    {
-        // TODO: Implement offsetExists() method.
-    }
-
-    /**
-     * Offset to retrieve
-     * @link  https://php.net/manual/en/arrayaccess.offsetget.php
-     * @param mixed $offset <p>
-     *                      The offset to retrieve.
-     *                      </p>
-     * @return mixed Can return all value types.
-     * @since 5.0.0
-     */
-    public function offsetGet($offset)
-    {
-        return $this->get($offset);
-    }
-
-    /**
-     * Offset to set
-     * @link  https://php.net/manual/en/arrayaccess.offsetset.php
-     * @param mixed $offset <p>
-     *                      The offset to assign the value to.
-     *                      </p>
-     * @param mixed $value  <p>
-     *                      The value to set.
-     *                      </p>
-     * @return void
-     * @since 5.0.0
-     */
-    public function offsetSet($offset, $value)
-    {
-        // TODO: Implement offsetSet() method.
-    }
-
-    /**
-     * Offset to unset
-     * @link  https://php.net/manual/en/arrayaccess.offsetunset.php
-     * @param mixed $offset <p>
-     *                      The offset to unset.
-     *                      </p>
-     * @return void
-     * @since 5.0.0
-     */
-    public function offsetUnset($offset)
-    {
-        // TODO: Implement offsetUnset() method.
-    }
-
-    /**
-     * Defined by IteratorAggregate interface
-     * Returns an iterator for this object, for use with foreach
-     * @return \ArrayIterator
-     */
-    public function getIterator()
-    {
-        return new \ArrayIterator($this->getAll());
+        return $this->data;
     }
 
     /**
@@ -263,4 +257,153 @@ class HttpSession implements \ArrayAccess, SessionInterface
         return $this->sessionId;
     }
 
+    /*************************************************************
+     * Flash data operate
+     ************************************************************/
+
+    /**
+     * Set flash message.
+     * - can only be used once after storage, ie will be deleted after the first acquisition
+     *
+     * @param string $name
+     * @param mixed  $value
+     *
+     * @return void
+     */
+    public function setFlash(string $name, $value): void
+    {
+        // Load latest data
+        $this->loadData();
+
+        // Add flash value
+        $this->data[self::FLASH_NEW][$name] = $value;
+
+        // Save new session data
+        $this->saveData();
+    }
+
+    /**
+     * Get flash message. (Will be deleted after getting it)
+     *
+     * @param string $name
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    public function getFlash(string $name, $default = null)
+    {
+        // Load latest data
+        $this->loadData();
+
+        // Exist flash value
+        if (isset($this->data[self::FLASH_NEW][$name])) {
+            $value = $this->data[self::FLASH_NEW][$name];
+
+            $this->data[self::FLASH_OLD][$name] = $value;
+
+            // Save new session data.
+            $this->saveData();
+
+            return $value;
+        }
+
+        return $default;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
+    public function setFlashes(array $data): void
+    {
+        // Load latest data
+        $this->loadData();
+
+        $old = $this->data[self::FLASH_NEW];
+
+        $this->data[self::FLASH_NEW] = $data;
+        $this->data[self::FLASH_OLD] = $old;
+
+        // Save new session data.
+        $this->saveData();
+    }
+
+    /**
+     * @return array
+     */
+    public function getFlashes(): array
+    {
+        // Load latest data
+        $this->loadData();
+
+        return $this->data[self::FLASH_NEW] ?? [];
+    }
+
+    /**
+     * @return void
+     */
+    public function clearFlashes(): void
+    {
+        // Load latest data
+        $this->loadData();
+
+        unset($this->data[self::FLASH_NEW], $this->data[self::FLASH_OLD]);
+
+        // Save new session data
+        $this->saveData();
+    }
+
+    /*************************************************************
+     * Array access operate
+     ************************************************************/
+
+    /**
+     * {@inheritDoc}
+     */
+    public function offsetExists($offset): bool
+    {
+        return $this->has($offset);
+    }
+
+    /**
+     * Offset to retrieve
+     *
+     * {@inheritDoc}
+     */
+    public function offsetGet($offset)
+    {
+        return $this->get($offset);
+    }
+
+    /**
+     * Offset to set
+     *
+     * {@inheritDoc}
+     */
+    public function offsetSet($offset, $value): void
+    {
+        $this->set($offset, $value);
+    }
+
+    /**
+     * Offset to unset
+     *
+     * {@inheritDoc}
+     */
+    public function offsetUnset($offset): void
+    {
+        $this->remove($offset);
+    }
+
+    /**
+     * Defined by IteratorAggregate interface
+     * Returns an iterator for this object, for use with foreach
+     *
+     * @return ArrayIterator
+     */
+    public function getIterator(): ArrayIterator
+    {
+        return new ArrayIterator($this->getData());
+    }
 }
