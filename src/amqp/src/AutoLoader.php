@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Swoft\Amqp;
 
@@ -15,14 +13,6 @@ use function dirname;
  */
 final class AutoLoader extends SwoftComponent
 {
-    /**
-     * @return bool
-     */
-    public function enable(): bool
-    {
-        return true;
-    }
-
     /**
      * Get namespace and dirs.
      *
