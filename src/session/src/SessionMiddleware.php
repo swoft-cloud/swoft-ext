@@ -8,7 +8,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
-use Swoft\Exception\SwoftException;
 use Swoft\Http\Message\Cookie;
 use Swoft\Http\Message\Request;
 use Swoft\Http\Message\Response;
@@ -47,7 +46,6 @@ class SessionMiddleware implements MiddlewareInterface
      * @param RequestHandlerInterface|Response $handler
      *
      * @return ResponseInterface
-     * @throws SwoftException
      * @throws Exception
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -134,8 +132,12 @@ class SessionMiddleware implements MiddlewareInterface
      */
     private function addCookieToResponse(ResponseInterface $response, HttpSession $session): void
     {
-        $cookie = Cookie::new($this->manager->getCookieParams());
-        $cookie->setValue($session->getSessionId());
+        $cookie = ''; // clear cookies
+
+        if ($session->isOpened()) {
+            $cookie = Cookie::new($this->manager->getCookieParams());
+            $cookie->setValue($session->getSessionId());
+        }
 
         $response->setCookie($this->manager->getName(), $cookie);
     }

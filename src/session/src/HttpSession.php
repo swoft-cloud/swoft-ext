@@ -47,6 +47,11 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
     private $data = [];
 
     /**
+     * @var bool
+     */
+    private $closed = false;
+
+    /**
      * @var SessionHandlerInterface
      */
     private $handler;
@@ -92,7 +97,10 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
     public function loadData(): void
     {
         $sessionData = $this->handler->read($this->sessionId);
-        $this->data  = PhpHelper::unserialize($sessionData);
+
+        if ($sessionData) {
+            $this->data = PhpHelper::unserialize($sessionData);
+        }
     }
 
     /**
@@ -100,9 +108,11 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
      */
     public function saveData(): void
     {
-        $sessionData = PhpHelper::serialize($this->data);
+        if (!$this->closed) {
+            $sessionData = PhpHelper::serialize($this->data);
 
-        $this->handler->write($this->sessionId, $sessionData);
+            $this->handler->write($this->sessionId, $sessionData);
+        }
     }
 
     /*************************************************************
@@ -206,6 +216,9 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
      */
     public function destroy(): bool
     {
+        $this->data   = [];
+        $this->closed = true;
+
         return $this->handler->destroy($this->sessionId);
     }
 
@@ -218,9 +231,20 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
         $this->handler->write($this->sessionId, '');
     }
 
-    public function save(): void
+    /**
+     * @return bool
+     */
+    public function isOpened(): bool
     {
-        $this->saveData();
+        return !$this->closed;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isClosed(): bool
+    {
+        return $this->closed;
     }
 
     /**

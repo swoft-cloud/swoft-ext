@@ -81,12 +81,11 @@ class FileHandler extends AbstractHandler
     public function destroy(string $id): bool
     {
         $file = $this->getSessionFile($id);
-
         if (file_exists($file)) {
-            unlink($file);
+            return unlink($file);
         }
 
-        return true;
+        return false;
     }
 
     /**
