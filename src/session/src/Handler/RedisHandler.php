@@ -2,8 +2,8 @@
 
 namespace Swoft\Http\Session\Handler;
 
-use Swoft\Redis\Pool;
 use Swoft\Http\Session\Concern\AbstractHandler;
+use Swoft\Redis\Pool;
 use function class_exists;
 
 /**
@@ -36,22 +36,6 @@ class RedisHandler extends AbstractHandler
     /**
      * {@inheritDoc}
      */
-    public function open(string $savePath, string $name): bool
-    {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function close(): bool
-    {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function read(string $sessionId): string
     {
         $sessKey = $this->getSessionKey($sessionId);
@@ -66,7 +50,7 @@ class RedisHandler extends AbstractHandler
     {
         $sessKey = $this->getSessionKey($sessionId);
 
-        return (bool)$this->redis->set($sessKey, $sessionData, $this->getExpireTime());
+        return (bool)$this->redis->set($sessKey, $sessionData, $this->expireTime);
     }
 
     /**
@@ -75,6 +59,22 @@ class RedisHandler extends AbstractHandler
     public function destroy(string $sessionId): bool
     {
         return (int)$this->redis->del($sessionId) === 1;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function open(string $savePath, string $name): bool
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function close(): bool
+    {
+        return true;
     }
 
     /**

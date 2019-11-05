@@ -85,7 +85,9 @@ abstract class AbstractHandler implements SessionHandlerInterface
      */
     public function setExpireTime(int $expireTime): void
     {
-        $this->expireTime = $expireTime;
+        if ($expireTime > 1) {
+            $this->expireTime = $expireTime;
+        }
     }
 
     /**

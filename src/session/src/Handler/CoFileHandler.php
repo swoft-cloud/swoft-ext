@@ -30,9 +30,12 @@ class CoFileHandler extends FileHandler
     public function read(string $id): string
     {
         $file = $this->getSessionFile($id);
+        if (!file_exists($file)) {
+            return '';
+        }
 
         // If data has been expired
-        if (file_exists($file) && (filemtime($file) + $this->expireTime) < time()) {
+        if (filemtime($file) + $this->expireTime < time()) {
             unlink($file);
             return '';
         }

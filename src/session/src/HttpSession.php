@@ -5,12 +5,14 @@ namespace Swoft\Http\Session;
 use ArrayAccess;
 use ArrayIterator;
 use IteratorAggregate;
+use RuntimeException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Contract\SessionInterface;
 use Swoft\Http\Session\Contract\SessionHandlerInterface;
 use Swoft\Stdlib\Helper\PhpHelper;
 use function array_merge;
 use function bean;
+use function context;
 
 /**
  * Class Session
@@ -70,6 +72,18 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
         $self->handler   = $handler;
 
         return $self;
+    }
+
+    /**
+     * @return static
+     */
+    public static function current(): self
+    {
+        if (context()->has(self::CONTEXT_KEY)) {
+            return context()->get(self::CONTEXT_KEY);
+        }
+
+        throw new RuntimeException('http session is not started');
     }
 
     /**

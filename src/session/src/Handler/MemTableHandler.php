@@ -15,8 +15,8 @@ use function time;
  */
 class MemTableHandler extends AbstractHandler
 {
-    public const TIME_FIELD = 'ctime';
-    public const DATA_FIELD = 'data';
+    public const TIME_FIELD = 't';
+    public const DATA_FIELD = 'd';
 
     /**
      * @var MemTable
@@ -47,8 +47,7 @@ class MemTableHandler extends AbstractHandler
         ]);
 
         $ok = $this->table->create();
-
-        if ($this->dataFile) {
+        if ($ok && $this->dataFile) {
             $this->table->setDbFile($this->dataFile);
             $this->table->restore();
         }
@@ -73,10 +72,20 @@ class MemTableHandler extends AbstractHandler
      */
     public function read(string $sessionId): string
     {
-        /** @var string|false $data */
-        $data = $this->table->get($sessionId, self::DATA_FIELD);
+        /** @var array|false $row */
+        $row = $this->table->get($sessionId);
+        if ($row === false) {
+            return '';
+        }
 
-        return $data === false ? '' : $data;
+        // check data expire
+        $expireTime = $this->expireTime + $row[self::TIME_FIELD];
+        if ($expireTime < time()) {
+            $this->table->del($sessionId);
+            return '';
+        }
+
+        return $row[self::DATA_FIELD];
     }
 
     /**

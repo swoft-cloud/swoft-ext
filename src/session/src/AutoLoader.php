@@ -5,6 +5,8 @@ namespace Swoft\Http\Session;
 use Swoft\Helper\ComposerJSON;
 use Swoft\Http\Session\Handler\FileHandler;
 use Swoft\SwoftComponent;
+use function alias;
+use function bean;
 use function dirname;
 
 /**
@@ -37,8 +39,14 @@ class AutoLoader extends SwoftComponent
     public function beans(): array
     {
         return [
+            'sessionManager' => [
+                'class'   => SessionManager::class,
+                'handler' => bean('sessionHandler'),
+            ],
             'sessionHandler' => [
-                'class' => FileHandler::class,
+                'class'    => FileHandler::class,
+                // For storage session files
+                'savePath' => alias('@runtime/sessions')
             ],
         ];
     }

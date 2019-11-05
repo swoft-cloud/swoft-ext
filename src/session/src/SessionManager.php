@@ -3,14 +3,11 @@
 namespace Swoft\Http\Session;
 
 use Exception;
-use RuntimeException;
 use Swoft\Bean\Annotation\Mapping\Bean;
-use Swoft\Bean\Contract\HandlerInterface;
-use Swoft\Exception\SwoftException;
 use Swoft\Http\Session\Concern\AbstractHandler;
+use Swoft\Http\Session\Contract\SessionHandlerInterface;
 use Swoft\Stdlib\Helper\Str;
 use function array_merge;
-use function context;
 use function function_exists;
 
 /**
@@ -28,16 +25,23 @@ class SessionManager
     /**
      * @var bool
      */
-    private $enable = false;
+    private $enable = true;
+
+    /**
+     * The lifetime for sessions
+     *
+     * @var int
+     */
+    private $lifetime = 1800;
 
     /**
      * @var array
      */
     protected $cookieParams = [
-        'path'        => '/',
-        'domain'      => null,
-        'secure'      => false,
-        'httpOnly'    => true,
+        'path'     => '/',
+        'domain'   => '',
+        'secure'   => false,
+        'httpOnly' => true,
         // 'lifetime'    => 86400,
         // 'autoRefresh' => false,
     ];
@@ -45,7 +49,7 @@ class SessionManager
     /**
      * The session handler class or bean name
      *
-     * @var AbstractHandler|HandlerInterface
+     * @var AbstractHandler|SessionHandlerInterface
      */
     private $handler;
 
@@ -55,26 +59,13 @@ class SessionManager
      * @return string
      * @throws Exception
      */
-    public function createSid(string $prefix = 'sess_'): string
+    public function createSid(string $prefix = ''): string
     {
         if (function_exists('session_create_id')) {
             return session_create_id($prefix);
         }
 
         return $prefix . Str::randomToken();
-    }
-
-    /**
-     * @return HttpSession
-     * @throws SwoftException
-     */
-    public function getSession(): HttpSession
-    {
-        if (context()->has(HttpSession::CONTEXT_KEY)) {
-            return context()->get(HttpSession::CONTEXT_KEY);
-        }
-
-        throw new RuntimeException('http session instance is not exists');
     }
 
     /**
@@ -104,7 +95,7 @@ class SessionManager
      */
     public function gc(): void
     {
-        $this->handler->gc($this->handler->getExpireTime());
+        $this->handler->gc($this->lifetime);
     }
 
     /*************************************************************
@@ -112,17 +103,17 @@ class SessionManager
      ************************************************************/
 
     /**
-     * @return AbstractHandler|HandlerInterface
+     * @return AbstractHandler|SessionHandlerInterface
      */
-    public function getHandler(): HandlerInterface
+    public function getHandler(): SessionHandlerInterface
     {
         return $this->handler;
     }
 
     /**
-     * @param HandlerInterface $handler
+     * @param SessionHandlerInterface $handler
      */
-    public function setHandler(HandlerInterface $handler): void
+    public function setHandler(SessionHandlerInterface $handler): void
     {
         $this->handler = $handler;
     }
@@ -173,5 +164,21 @@ class SessionManager
     public function setCookieParams(array $cookieParams): void
     {
         $this->cookieParams = array_merge($this->cookieParams, $cookieParams);
+    }
+
+    /**
+     * @return int
+     */
+    public function getLifetime(): int
+    {
+        return $this->lifetime;
+    }
+
+    /**
+     * @param int $lifetime
+     */
+    public function setLifetime(int $lifetime): void
+    {
+        $this->lifetime = $lifetime;
     }
 }

@@ -74,6 +74,14 @@ class ArrayHandler extends AbstractHandler
      */
     public function gc(int $maxLifetime): bool
     {
+        $curTime = time();
+
+        foreach ($this->data as $sid => $item) {
+            if (($item['t'] + $maxLifetime) < $curTime) {
+                unset($this->data[$sid]);
+            }
+        }
+
         return true;
     }
 }

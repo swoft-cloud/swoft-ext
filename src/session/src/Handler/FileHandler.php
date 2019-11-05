@@ -21,7 +21,7 @@ class FileHandler extends AbstractHandler
     /**
      * @var string
      */
-    private $savePath = '/tmp';
+    private $savePath = '/tmp/swoft-sessions';
 
     /**
      * Init $savePath directory
@@ -49,9 +49,12 @@ class FileHandler extends AbstractHandler
     public function read(string $id): string
     {
         $file = $this->getSessionFile($id);
+        if (!file_exists($file)) {
+            return '';
+        }
 
         // If data has been expired
-        if (file_exists($file) && (filemtime($file) + $this->expireTime) < time()) {
+        if (filemtime($file) + $this->expireTime < time()) {
             unlink($file);
             return '';
         }
@@ -65,7 +68,7 @@ class FileHandler extends AbstractHandler
      *
      * @return bool
      */
-    public function write(string $id, string $data):bool
+    public function write(string $id, string $data): bool
     {
         return file_put_contents($this->getSessionFile($id), $data) !== false;
     }
@@ -80,7 +83,7 @@ class FileHandler extends AbstractHandler
         $file = $this->getSessionFile($id);
 
         if (file_exists($file)) {
-            @unlink($file);
+            unlink($file);
         }
 
         return true;
@@ -93,8 +96,10 @@ class FileHandler extends AbstractHandler
      */
     public function gc(int $maxLifetime): bool
     {
+        $curTime = time();
+
         foreach (glob("{$this->savePath}/{$this->prefix}*") as $file) {
-            if (file_exists($file) && (filemtime($file) + $maxLifetime) < time()) {
+            if (file_exists($file) && (filemtime($file) + $maxLifetime) < $curTime) {
                 unlink($file);
             }
         }

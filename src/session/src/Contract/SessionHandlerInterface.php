@@ -5,7 +5,7 @@ namespace Swoft\Http\Session\Contract;
 /**
  * Class SessionHandlerInterface
  *
- * @see \SessionHandlerInterface
+ * @see   \SessionHandlerInterface
  * @since 2.0.7
  */
 interface SessionHandlerInterface

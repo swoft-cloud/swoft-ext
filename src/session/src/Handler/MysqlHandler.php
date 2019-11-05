@@ -5,7 +5,7 @@ namespace Swoft\Http\Session\Handler;
 use Swoft\Http\Session\Concern\AbstractHandler;
 
 /**
- * Class MysqlHandler
+ * Class MysqlHandler TODO
  *
  * @since 2.0.7
  */

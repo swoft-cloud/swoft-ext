@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Swoft\Bean\Annotation\Mapping\Bean;
+use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Exception\SwoftException;
 use Swoft\Http\Message\Cookie;
 use Swoft\Http\Message\Request;
@@ -27,11 +28,14 @@ use function round;
 class SessionMiddleware implements MiddlewareInterface
 {
     /**
+     * Probably interval how often garbage collection
+     *
      * @var int
      */
     private $randomMax = 10;
 
     /**
+     * @Inject("sessionManager")
      * @var SessionManager
      */
     private $manager;
@@ -60,7 +64,7 @@ class SessionMiddleware implements MiddlewareInterface
         context()->set(HttpSession::CONTEXT_KEY, $session);
 
         // Garbage collection
-        $this->collectGarbage();
+        $this->collectGarbage($this->randomMax);
 
         // Processing ...
         $response = $handler->handle($request);
@@ -78,11 +82,10 @@ class SessionMiddleware implements MiddlewareInterface
      * @param Request $request
      *
      * @return HttpSession
+     * @throws Exception
      */
     protected function startSession(Request $request): HttpSession
     {
-        /** @var SessionManager $manager */
-        // $manager = bean('sessionManager');
         $keyName = $this->manager->getName();
 
         // Find from cookies
@@ -91,24 +94,34 @@ class SessionMiddleware implements MiddlewareInterface
             $sessionId = $request->getHeaderLine($keyName);
         }
 
-        // Session::bindCo($sessionId);
+        // Not exists, will start new session
+        if (!$sessionId) {
+            $sessionId = $this->manager->createSid();
+        }
+
+        // TODO Session::bindCo($sessionId) bind?
         return $this->manager->createSession($sessionId);
     }
 
     /**
      * Remove the garbage from the session if necessary.
      *
-     * param HttpSession $session
+     * @param int $randomMax
      *
      * @return void
      * @throws Exception
      */
-    protected function collectGarbage(): void
+    protected function collectGarbage(int $randomMax): void
     {
-        $max = $this->randomMax;
+        // Aways do GC
+        if ($randomMax < 1) {
+            Coroutine::create(function () {
+                $this->manager->gc();
+            });
+        }
 
-        // Gc handle on new coroutine
-        if (random_int(1, $max) === round($max / 2)) {
+        // GC handle on new coroutine
+        if (random_int(1, $randomMax) === round($randomMax / 2)) {
             Coroutine::create(function () {
                 $this->manager->gc();
             });
