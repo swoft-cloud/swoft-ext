@@ -4,6 +4,7 @@ namespace Swoft\Http\Session;
 
 use Exception;
 use Swoft\Bean\Annotation\Mapping\Bean;
+use Swoft\Http\Message\Cookie;
 use Swoft\Http\Session\Concern\AbstractHandler;
 use Swoft\Http\Session\Contract\SessionHandlerInterface;
 use Swoft\Stdlib\Helper\Str;
@@ -28,7 +29,7 @@ class SessionManager
     private $enable = true;
 
     /**
-     * The lifetime for sessions
+     * The max lifetime for sessions GC
      *
      * @var int
      */
@@ -36,18 +37,19 @@ class SessionManager
 
     /**
      * @var array
+     * @see Cookie::DEFAULTS
      */
     protected $cookieParams = [
         'path'     => '/',
         'domain'   => '',
         'secure'   => false,
         'httpOnly' => true,
-        // 'lifetime'    => 86400,
+        'expires'  => 86400,
         // 'autoRefresh' => false,
     ];
 
     /**
-     * The session handler class or bean name
+     * The session handler
      *
      * @var AbstractHandler|SessionHandlerInterface
      */

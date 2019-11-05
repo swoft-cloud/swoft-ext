@@ -8,7 +8,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
-use Swoft\Http\Message\Cookie;
 use Swoft\Http\Message\Request;
 use Swoft\Http\Message\Response;
 use Swoft\Http\Server\Contract\MiddlewareInterface;
@@ -132,12 +131,8 @@ class SessionMiddleware implements MiddlewareInterface
      */
     private function addCookieToResponse(ResponseInterface $response, HttpSession $session): void
     {
-        $cookie = ''; // clear cookies
-
-        if ($session->isOpened()) {
-            $cookie = Cookie::new($this->manager->getCookieParams());
-            $cookie->setValue($session->getSessionId());
-        }
+        $cookie = $this->manager->getCookieParams();
+        $cookie = $session->buildCookie($cookie);
 
         $response->setCookie($this->manager->getName(), $cookie);
     }

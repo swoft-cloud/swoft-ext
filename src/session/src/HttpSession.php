@@ -13,6 +13,7 @@ use Swoft\Stdlib\Helper\PhpHelper;
 use function array_merge;
 use function bean;
 use function context;
+use function time;
 
 /**
  * Class Session
@@ -47,6 +48,8 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
     private $data = [];
 
     /**
+     * Mark session is destroyed
+     *
      * @var bool
      */
     private $closed = false;
@@ -132,10 +135,6 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
 
         return $this->data[$key] ?? $default;
     }
-
-    // public function getMulti(array $keys): array
-    // {
-    // }
 
     /**
      * @param string $key
@@ -293,6 +292,25 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
     public function getSessionId(): string
     {
         return $this->sessionId;
+    }
+
+    /**
+     * @param array $cookie
+     *
+     * @return array
+     */
+    public function buildCookie(array $cookie): array
+    {
+        $cookie['value'] = $this->getSessionId();
+
+        if ($this->isClosed()) {
+            $cookie['value']   = '';
+            $cookie['expires'] = -60;
+        } elseif (isset($cookie['expires']) && $cookie['expires'] > 0) {
+            $cookie['expires'] += time();
+        }
+
+        return $cookie;
     }
 
     /*************************************************************
