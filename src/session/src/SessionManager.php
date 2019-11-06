@@ -44,7 +44,7 @@ class SessionManager
         'domain'   => '',
         'secure'   => false,
         'httpOnly' => true,
-        'expires'  => 86400,
+        'expires'  => 43200,
         // 'autoRefresh' => false,
     ];
 

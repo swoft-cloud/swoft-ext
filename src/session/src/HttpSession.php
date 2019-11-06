@@ -33,14 +33,14 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
     /**
      * Key name for storage context
      */
-    public const CONTEXT_KEY = '_SWOFT_SESSION';
+    public const CONTEXT_KEY = '__SWOFT_SESSION';
 
     /**
      * Flash data key name
      */
-    public const FLASH_KEY = '__flash';
-    public const FLASH_OLD = '__flash_old';
-    public const FLASH_NEW = '__flash_new';
+    public const FLASH_KEY = '__FLASH';
+    public const FLASH_OLD = '__FLASH_OLD';
+    public const FLASH_NEW = '__FLASH_NEW';
 
     /**
      * @var array
