@@ -54,7 +54,7 @@ class Crontab
     {
         Timer::tick($this->tickTime * 1000, function () {
             // All task
-            $tasks = CrontabRegister::getCronTasks();
+            $tasks = CrontabRegister::getCronTasks(time());
 
             // Push task to channel
             foreach ($tasks as $task) {

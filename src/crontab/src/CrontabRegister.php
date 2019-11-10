@@ -68,10 +68,9 @@ class CrontabRegister
     /**
      * @return array
      */
-    public static function getCronTasks(): array
+    public static function getCronTasks($time): array
     {
         $tasks = [];
-        $time  = time();
         foreach (self::$crontabs as $crontab) {
             ['class' => $className, 'method' => $methodName, 'cron' => $cron] = $crontab;
             if (!CrontabExpression::parseObj($cron, $time)) {
