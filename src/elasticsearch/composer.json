@@ -11,7 +11,10 @@
   "license": "Apache-2.0",
   "require": {
     "php": ">7.1",
-    "swoft/stdlib": "~2.0.0"
+    "swoft/stdlib": "~2.0.0",
+    "swoft/connection-pool": "~2.0.0",
+    "elasticsearch/elasticsearch": "^7.3",
+    "composer/ca-bundle": "^1.2"
   },
   "autoload": {
     "psr-4": {
