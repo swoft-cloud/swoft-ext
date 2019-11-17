@@ -11,9 +11,9 @@
   "license": "Apache-2.0",
   "require": {
     "php": ">7.1.0",
-    "symfony/expression-language": "~4.3",
     "filp/whoops": "^2.4",
     "php-amqplib/php-amqplib": "^2.9",
+    "symfony/expression-language": "~4.3",
     "text/template": "~2.6"
   },
   "require-dev": {
@@ -21,33 +21,35 @@
     "swoft/swoole-ide-helper": "dev-master"
   },
   "replace": {
+    "swoft/amqp": "self.version",
+    "swoft/apollo": "self.version",
     "swoft/breaker": "self.version",
     "swoft/consul": "self.version",
-    "swoft/limiter": "self.version",
-    "swoft/apollo": "self.version",
-    "swoft/session": "self.version",
     "swoft/crontab": "self.version",
+    "swoft/limiter": "self.version",
+    "swoft/session": "self.version",
     "swoft/swoole-tracker": "self.version",
+    "swoft/view": "self.version",
     "swoft/whoops": "self.version"
   },
   "autoload": {
     "psr-4": {
-      "Swoft\\Breaker\\": "src/breaker/src/",
-      "Swoft\\Consul\\": "src/consul/src/",
-      "Swoft\\Limiter\\": "src/limiter/src/",
       "Swoft\\Amqp\\": "src/amqp/src/",
       "Swoft\\Apollo\\": "src/apollo/src/",
+      "Swoft\\Breaker\\": "src/breaker/src/",
+      "Swoft\\Consul\\": "src/consul/src/",
+      "Swoft\\Crontab\\": "src/crontab/src/",
+      "Swoft\\Devtool\\": "src/devtool/src/",
       "Swoft\\Elasticsearch\\": "src/elasticsearch/src/",
+      "Swoft\\Http\\Session\\": "src/session/src/",
       "Swoft\\Grpc\\": "src/grpc/src/",
+      "Swoft\\Limiter\\": "src/limiter/src/",
       "Swoft\\Kafka\\": "src/kafka/src/",
       "Swoft\\Swagger\\": "src/swagger/src/",
-      "Swoft\\Devtool\\": "src/devtool/src/",
-      "Swoft\\View\\": "src/view/src/",
-      "Swoft\\Zipkin\\": "src/zipkin/src/",
-      "Swoft\\Session\\": "src/session/src/",
-      "Swoft\\Crontab\\": "src/crontab/src/",
       "Swoft\\Swoole\\Tracker\\": "src/swoole-tracker/src/",
-      "Swoft\\Whoops\\": "src/whoops/src/"
+      "Swoft\\View\\": "src/view/src/",
+      "Swoft\\Whoops\\": "src/whoops/src/",
+      "Swoft\\Zipkin\\": "src/zipkin/src/"
     },
     "files": [
     ]

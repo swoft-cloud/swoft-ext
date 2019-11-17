@@ -29,8 +29,6 @@
       "SwoftTest\\Amqp\\Testing\\": "test/testing/"
     }
   },
-  "repositories": {
-  },
   "scripts": {
     "test": "./vendor/bin/phpunit -c phpunit.xml"
   }

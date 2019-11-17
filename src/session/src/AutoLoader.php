@@ -1,9 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace Swoft\Amqp;
+namespace Swoft\Http\Session;
 
 use Swoft\Helper\ComposerJSON;
+use Swoft\Http\Session\Handler\FileHandler;
 use Swoft\SwoftComponent;
+use function alias;
+use function bean;
 use function dirname;
 
 /**
@@ -11,21 +14,9 @@ use function dirname;
  *
  * @since 2.0
  */
-final class AutoLoader extends SwoftComponent
+class AutoLoader extends SwoftComponent
 {
     /**
-     * Get namespace and dirs.
-     *
-     * @return bool
-     */
-    public function enable(): bool
-    {
-        return true;
-    }
-
-    /**
-     * Get namespace and dirs
-     *
      * @return array
      */
     public function getPrefixDirs(): array
@@ -36,8 +27,6 @@ final class AutoLoader extends SwoftComponent
     }
 
     /**
-     * Metadata information for the component
-     *
      * @return array
      */
     public function metadata(): array
@@ -47,11 +36,18 @@ final class AutoLoader extends SwoftComponent
         return ComposerJSON::open($jsonFile)->getMetadata();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function beans(): array
     {
-        return [];
+        return [
+            'sessionManager' => [
+                'class'   => SessionManager::class,
+                'handler' => bean('sessionHandler'),
+            ],
+            'sessionHandler' => [
+                'class'    => FileHandler::class,
+                // For storage session files
+                'savePath' => alias('@runtime/sessions')
+            ],
+        ];
     }
 }
