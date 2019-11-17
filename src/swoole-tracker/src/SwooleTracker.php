@@ -5,6 +5,7 @@ namespace Swoft\Swoole\Tracker;
 
 
 use SwooleTracker\Stats;
+use SwooleTracker\Tick;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Log\Helper\CLog;
 use Throwable;
@@ -18,65 +19,65 @@ use Throwable;
  */
 class SwooleTracker
 {
-	/**
-	 * Start this request analysis link tracking
-	 *
-	 * @param string $path
-	 * @param string $serviceName
-	 * @param string $serverIp
-	 * @param string $traceId
-	 * @param string $spanId
-	 *
-	 * @return \SwooleTracker\Tick|null
-	 * @throws Throwable
-	 */
-	public function startRpcAnalysis(
-		string $path,
-		string $serviceName,
-		string $serverIp,
-		string $traceId,
-		string $spanId
-	): ?\SwooleTracker\Tick {
-		if (class_exists(Stats::class) === false) {
-			CLog::error('Stats::class not found, Please check swoole_tracker extend');
-			return null;
-		}
+    /**
+     * Start this request analysis link tracking
+     *
+     * @param string $path
+     * @param string $serviceName
+     * @param string $serverIp
+     * @param string $traceId
+     * @param string $spanId
+     *
+     * @return Tick|null
+     * @throws Throwable
+     */
+    public function startRpcAnalysis(
+        string $path,
+        string $serviceName,
+        string $serverIp,
+        string $traceId,
+        string $spanId
+    ) {
+        if (class_exists(Stats::class) === false) {
+            CLog::error('Stats::class not found, Please check swoole_tracker extend');
+            return null;
+        }
 
-		try {
-			$tick = Stats::beforeExecRpc($path, $serviceName, $serverIp, $traceId, $spanId);
+        try {
+            $tick = Stats::beforeExecRpc($path, $serviceName, $serverIp, $traceId, $spanId);
 
-			return $tick;
-		} catch (Throwable $e) {
-			CLog::error(__FUNCTION__ . ' ' . $e->getMessage());
-		}
+            return $tick;
+        } catch (Throwable $e) {
+            CLog::error(__FUNCTION__ . ' ' . $e->getMessage());
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * End this analysis link tracking
-	 *
-	 * @param object $tick \SwooleTracker\Tick
-	 * @param bool   $isSuccess
-	 * @param int    $errno
-	 *
-	 * @return void
-	 */
-	public function endRpcAnalysis($tick, bool $isSuccess, int $errno): void
-	{
-		if (empty($tick)) {
-			return;
-		}
-		if (class_exists(Stats::class) === false) {
-			return;
-		}
+    /**
+     * End this analysis link tracking
+     *
+     * @param object $tick Tick
+     * @param bool   $isSuccess
+     * @param int    $errno
+     *
+     * @return void
+     */
+    public function endRpcAnalysis($tick, bool $isSuccess, int $errno): void
+    {
+        if (empty($tick)) {
+            return;
+        }
+        if (class_exists(Stats::class) === false) {
+            return;
+        }
 
-		try {
-			Stats::afterExecRpc($tick, $isSuccess, $errno);
-		} catch (Throwable $e) {
-			CLog::error(__FUNCTION__ . ' ' . $e->getMessage());
-		}
-	}
+        try {
+            Stats::afterExecRpc($tick, $isSuccess, $errno);
+        } catch (Throwable $e) {
+            CLog::error(__FUNCTION__ . ' ' . $e->getMessage());
+        }
+    }
 
 
 }
