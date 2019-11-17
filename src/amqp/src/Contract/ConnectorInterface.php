@@ -1,13 +1,13 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Swoft\Amqp\Contract;
 
 /**
- * Interface ConnectorInterface.
+ * Interface ConnectorInterface
  *
  * @since   2.0
+ *
+ * @package Swoft\Amqp\Contract
  */
 interface ConnectorInterface
 {
@@ -15,7 +15,7 @@ interface ConnectorInterface
      * @param array $config
      * @param array $option
      *
-     * @return object
+     * @return Object
      */
     public function connect(array $config, array $option);
 }

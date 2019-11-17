@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Swoft\Amqp;
 
@@ -12,42 +10,37 @@ use Swoft\Bean\BeanFactory;
 use Swoft\Connection\Pool\AbstractPool;
 use Throwable;
 
-/**
- * Class Pool.
- *
- * @since   2.0
- */
 class Pool extends AbstractPool
 {
     /**
-     * Default pool.
+     * Default pool
      */
     const DEFAULT_POOL = 'amqp.pool';
 
     /**
-     * @var AmqpDb
+     * @var Client
      */
-    protected $amqpDb;
+    protected $client;
 
     /**
      * @return ConnectionInterface
-     *
-     * @throws AMQPException
+     * @throws Exception\RedisException
+     * @throws ReflectionException
+     * @throws ContainerException
      */
     public function createConnection(): ConnectionInterface
     {
-        return $this->amqpDb->createConnection($this);
+        return $this->client->createConnection($this);
     }
 
     /**
-     * call magic method.
+     * call magic method
      *
      * @param string $name
      * @param array  $arguments
      *
      * @return Connection
-     *
-     * @throws AMQPException
+     * @throws RedisException
      */
     public function __call(string $name, array $arguments)
     {
@@ -67,7 +60,7 @@ class Pool extends AbstractPool
 
         // Not instanceof Connection
         if (!$connection instanceof Connection) {
-            throw new AMQPException(
+            throw new RedisException(
                 sprintf('%s is not instanceof %s', get_class($connection), Connection::class)
             );
         }

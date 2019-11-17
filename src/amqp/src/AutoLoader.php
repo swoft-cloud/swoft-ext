@@ -7,7 +7,7 @@ use Swoft\SwoftComponent;
 use function dirname;
 
 /**
- * class AutoLoader.
+ * Class AutoLoader
  *
  * @since 2.0
  */
@@ -15,6 +15,16 @@ final class AutoLoader extends SwoftComponent
 {
     /**
      * Get namespace and dirs.
+     *
+     * @return bool
+     */
+    public function enable(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get namespace and dirs
      *
      * @return array
      */
@@ -26,19 +36,19 @@ final class AutoLoader extends SwoftComponent
     }
 
     /**
-     * Metadata information for the component.
+     * Metadata information for the component
      *
      * @return array
      */
     public function metadata(): array
     {
-        $jsonFile = dirname(__DIR__).'/composer.json';
+        $jsonFile = dirname(__DIR__) . '/composer.json';
 
         return ComposerJSON::open($jsonFile)->getMetadata();
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function beans(): array
     {
