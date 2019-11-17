@@ -24,9 +24,7 @@ class Pool extends AbstractPool
 
     /**
      * @return ConnectionInterface
-     * @throws Exception\RedisException
-     * @throws ReflectionException
-     * @throws ContainerException
+     * @throws AMQPException
      */
     public function createConnection(): ConnectionInterface
     {
@@ -40,7 +38,7 @@ class Pool extends AbstractPool
      * @param array  $arguments
      *
      * @return Connection
-     * @throws RedisException
+     * @throws AMQPException
      */
     public function __call(string $name, array $arguments)
     {

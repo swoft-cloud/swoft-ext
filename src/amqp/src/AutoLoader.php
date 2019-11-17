@@ -52,6 +52,14 @@ final class AutoLoader extends SwoftComponent
      */
     public function beans(): array
     {
-        return [];
+        return [
+            'amqp'      => [
+                'class' => Client::class
+            ],
+            'amqp.pool' => [
+                'class'  => Pool::class,
+                'client' => bean('amqp')
+            ]
+        ];
     }
 }

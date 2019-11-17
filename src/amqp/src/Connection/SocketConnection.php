@@ -7,10 +7,9 @@ use Swoft\Bean\Annotation\Mapping\Bean;
 /**
  * Class SocketConnection
  *
- * @since   2.0
- * @Bean(scope=Bean::PROTOTYPE)
+ * @since 2.0
  *
- * @package Swoft\Amqp\Connection
+ * @Bean(scope=Bean::PROTOTYPE)
  */
 class SocketConnection extends Connection
 {

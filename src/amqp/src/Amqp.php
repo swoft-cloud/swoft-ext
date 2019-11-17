@@ -18,12 +18,9 @@ use Throwable;
  * @method static void push(string $message, array $prop = [], string $route = '')
  * @method static string|null pop()
  * @method static void listen(Closure $callback = null)
- *
- * @package Swoft\Amqp
  */
 class Amqp
 {
-
     /**
      * connection
      *
@@ -75,5 +72,4 @@ class Amqp
 
         return $connection->{$method}(...$arguments);
     }
-
 }

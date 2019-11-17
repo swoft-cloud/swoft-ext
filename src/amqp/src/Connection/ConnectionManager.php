@@ -10,10 +10,9 @@ use Swoft\Concern\ArrayPropertyTrait;
 /**
  * Class ConnectionManager
  *
- * @since   2.0
- * @Bean()
+ * @since 2.0
  *
- * @package Swoft\Amqp\Connection
+ * @Bean()
  */
 class ConnectionManager
 {
@@ -56,7 +55,6 @@ class ConnectionManager
         $key = sprintf('%d.%d', Co::tid(), Co::id());
 
         $connections = $this->get($key, []);
-        var_dump('=========release============');
         foreach ($connections as $connection) {
             if ($connection instanceof ConnectionInterface) {
                 $connection->release();

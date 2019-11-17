@@ -15,9 +15,7 @@ use Swoft\Stdlib\Helper\Arr;
 /**
  * Class Client
  *
- * @since   2.0
- *
- * @package Swoft\Amqp
+ * @since 2.0
  */
 class Client
 {
@@ -126,9 +124,7 @@ class Client
      * @param Pool $pool
      *
      * @return Connection
-     * @throws RedisException
-     * @throws ReflectionException
-     * @throws ContainerException
+     * @throws AMQPException
      */
     public function createConnection(Pool $pool): Connection
     {
@@ -141,9 +137,7 @@ class Client
 
     /**
      * @return Connection
-     * @throws RedisException
-     * @throws ReflectionException
-     * @throws ContainerException
+     * @throws AMQPException
      */
     public function getConnection(): Connection
     {
@@ -159,9 +153,7 @@ class Client
 
     /**
      * @return ConnectorInterface
-     * @throws RedisException
-     * @throws ReflectionException
-     * @throws ContainerException
+     * @throws AMQPException
      */
     public function getConnector(): ConnectorInterface
     {
@@ -177,8 +169,6 @@ class Client
 
     /**
      * @return array
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function defaultConnectors(): array
     {
@@ -191,8 +181,6 @@ class Client
 
     /**
      * @return array
-     * @throws ReflectionException
-     * @throws ContainerException
      */
     public function defaultConnections(): array
     {
