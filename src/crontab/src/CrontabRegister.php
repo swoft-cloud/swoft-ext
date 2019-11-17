@@ -66,9 +66,11 @@ class CrontabRegister
     }
 
     /**
+     * @param int $time
+     *
      * @return array
      */
-    public static function getCronTasks($time): array
+    public static function getCronTasks(int $time): array
     {
         $tasks = [];
         foreach (self::$crontabs as $crontab) {
@@ -82,6 +84,7 @@ class CrontabRegister
                 $methodName
             ];
         }
+
         return $tasks;
     }
 }
