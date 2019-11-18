@@ -4,7 +4,9 @@
 namespace Swoft\Apollo;
 
 
+use Swoft\Helper\ComposerJSON;
 use Swoft\SwoftComponent;
+use function dirname;
 
 /**
  * Class AutoLoader
@@ -28,9 +30,11 @@ class AutoLoader extends SwoftComponent
     /**
      * @return array
      */
-    public function metadata(): array
+    protected function metadata(): array
     {
-        return [];
+        $jsonFile = dirname(__DIR__) . '/composer.json';
+
+        return ComposerJSON::open($jsonFile)->getMetadata();
     }
 
     /**
