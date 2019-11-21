@@ -71,6 +71,32 @@ class SessionManager
     }
 
     /**
+     * Open session
+     *
+     * @return bool
+     */
+    public function open(): bool
+    {
+        if ($this->enable) {
+            return $this->handler->open('', $this->name);
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function close(): bool
+    {
+        if ($this->enable) {
+            return $this->handler->close();
+        }
+
+        return false;
+    }
+
+    /**
      * Create session instance
      *
      * @param string $sessionId
