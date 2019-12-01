@@ -8,6 +8,7 @@ use Swoft\Http\Message\Cookie;
 use Swoft\Http\Session\Concern\AbstractHandler;
 use Swoft\Http\Session\Contract\SessionHandlerInterface;
 use Swoft\Stdlib\Helper\Str;
+use Swoole\Coroutine;
 use function array_merge;
 use function function_exists;
 
@@ -116,6 +117,16 @@ class SessionManager
         $sessionData = $session->toString();
 
         $this->handler->write($session->getSessionId(), $sessionData);
+    }
+
+    /**
+     * Async garbage collection
+     */
+    public function asyncGc(): void
+    {
+        Coroutine::create(function () {
+            $this->handler->gc($this->lifetime);
+        });
     }
 
     /**
