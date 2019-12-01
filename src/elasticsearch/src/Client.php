@@ -12,11 +12,11 @@ namespace Swoft\Elasticsearch;
 class Client
 {
 
-    const DRIVER_DEFAULT = 1;
+    public const DRIVER_DEFAULT = 1;
 
-    const DRIVER_BASIC = 2;
+    public const DRIVER_BASIC = 2;
 
-    const DRIVER_SECRET = 3;
+    public const DRIVER_SECRET = 3;
 
     /**
      * @var int
@@ -64,7 +64,7 @@ class Client
     private $retries = 0;
 
     /**
-     * @var string |
+     * @var string
      */
     private $ssl = '';
 
@@ -147,5 +147,4 @@ class Client
     {
         return $this->ssl;
     }
-
 }

@@ -16,7 +16,7 @@ use Swoft\Connection\Pool\Contract\ConnectionInterface;
 class Pool extends AbstractPool
 {
 
-    const DEFAULT_POOL = 'elasticsearch.pool';
+    public const DEFAULT_POOL = 'elasticsearch.pool';
 
     /**
      * @var Client

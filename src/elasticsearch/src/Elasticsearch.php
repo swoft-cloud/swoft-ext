@@ -165,16 +165,18 @@ class Elasticsearch
     public static function connection(string $pool = Pool::DEFAULT_POOL): ConnectionInstance
     {
         try {
-            /** @var ConnectionManager $manager */
-            $manager = BeanFactory::getBean(ConnectionManager::class);
+            /** @var ConnectionManager $conManager */
+            $conManager = BeanFactory::getBean(ConnectionManager::class);
 
             /** @var Pool $elasticsearchPool */
             $elasticsearchPool = BeanFactory::getBean($pool);
+
             /** @var Connection $connection */
             $connection = $elasticsearchPool->getConnection();
 
             $connection->setRelease(true);
-            $manager->setConnection($connection);
+
+            $conManager->setConnection($connection);
         } catch (Exception $e) {
             throw new ElasticsearchException(
                 sprintf('Pool error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())

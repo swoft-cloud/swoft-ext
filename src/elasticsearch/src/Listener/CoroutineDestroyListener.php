@@ -2,27 +2,25 @@
 
 namespace Swoft\Elasticsearch\Listener;
 
-use Swoft\Elasticsearch\Connection\ConnectionManager;
-use ReflectionException;
+
 use Swoft\Bean\BeanFactory;
-use Swoft\Bean\Exception\ContainerException;
+use Swoft\Elasticsearch\Connection\ConnectionManager;
 use Swoft\Event\Annotation\Mapping\Listener;
 use Swoft\Event\EventHandlerInterface;
 use Swoft\Event\EventInterface;
 use Swoft\SwoftEvent;
 
 /**
- * Class CoroutineDestoryListener
+ * Class CoroutineDestroyListener
  *
- * @since 2.0
+ * @since 2.8
  *
  * @Listener(event=SwoftEvent::COROUTINE_DESTROY)
  */
-class CoroutineDestoryListener implements EventHandlerInterface
+class CoroutineDestroyListener implements EventHandlerInterface
 {
     /**
      * @param EventInterface $event
-     *
      */
     public function handle(EventInterface $event): void
     {
