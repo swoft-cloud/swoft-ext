@@ -3,6 +3,7 @@
 namespace Swoft\Elasticsearch\Connection;
 
 use Elasticsearch\ClientBuilder;
+use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Bean\BeanFactory;
 use Swoft\Connection\Pool\AbstractConnection;
@@ -13,6 +14,7 @@ use Swoft\Elasticsearch\Client;
  * Class Connection
  *
  * @since   2.8
+ * @Bean()
  */
 class Connection extends AbstractConnection
 {

@@ -19,6 +19,7 @@ use Swoft\Elasticsearch\Exception\ElasticsearchException;
  *
  * @since 2.8
  *
+ * @Bean()
  * @method bool ping(array $params)
  * @method callable|array rankEval(array $params)
  * @method callable|array get(array $params)
