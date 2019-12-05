@@ -149,7 +149,7 @@ use Swoft\Bean\Annotation\Mapping\Bean;
  * @method callable|array tasksTasksList(array $params = [])
  * @method callable|array tasksCancel(array $params = [])
  *
- * @package Jcsp\Elasticsearch\Connection
+ * @package Swoft\Elasticsearch\Connection
  */
 class ConnectionInstance
 {

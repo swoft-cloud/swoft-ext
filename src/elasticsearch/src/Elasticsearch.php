@@ -166,10 +166,10 @@ class Elasticsearch
     {
         try {
             /** @var ConnectionManager $manager */
-            $manager = BeanFactory::getBean(ConnectionManager::class);
+            $manager = bean(ConnectionManager::class);
 
             /** @var Pool $elasticsearchPool */
-            $elasticsearchPool = BeanFactory::getBean($pool);
+            $elasticsearchPool = bean($pool);
             /** @var Connection $connection */
             $connection = $elasticsearchPool->getConnection();
 
@@ -200,5 +200,4 @@ class Elasticsearch
 
         return $instance->$name(...$arguments);
     }
-
 }

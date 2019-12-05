@@ -7,7 +7,7 @@ use Swoft\Stdlib\Collection as SwoftCollection;
 /**
  * Class Collection
  *
- * @package Jcsp\Elasticsearch\Eloquent
+ * @package Swoft\Elasticsearch\Eloquent
  */
 class Collection extends SwoftCollection
 {
