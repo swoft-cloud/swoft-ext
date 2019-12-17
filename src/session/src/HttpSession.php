@@ -83,6 +83,24 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
     }
 
     /**
+     * @param array $data
+     *
+     * @return SessionInterface|self
+     */
+    public static function newFromArray(array $data): SessionInterface
+    {
+        /** @var self $self */
+        $self = bean(static::class);
+
+        // Initial properties
+        $self->sessionId = $data['sessionId'];
+        // Reset data
+        $self->data = $data['data'];
+
+        return $self;
+    }
+
+    /**
      * @return static
      */
     public static function current(): self
