@@ -83,6 +83,24 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
     }
 
     /**
+     * @param array $data
+     *
+     * @return SessionInterface|self
+     */
+    public static function newFromArray(array $data): SessionInterface
+    {
+        /** @var self $self */
+        $self = bean(static::class);
+
+        // Initial properties
+        $self->sessionId = $data['sessionId'];
+        // Reset data
+        $self->data = $data['data'];
+
+        return $self;
+    }
+
+    /**
      * @return static
      */
     public static function current(): self
@@ -109,13 +127,15 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
     /**
      * Save new session data
      */
-    public function saveData(): void
+    public function saveData(): bool
     {
         if (!$this->closed) {
             $sessionData = PhpHelper::serialize($this->data);
 
-            $this->handler->write($this->sessionId, $sessionData);
+            return $this->handler->write($this->sessionId, $sessionData);
         }
+
+        return false;
     }
 
     /*************************************************************
@@ -139,8 +159,10 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
     /**
      * @param string $key
      * @param mixed  $value
+     *
+     * @return bool
      */
-    public function set(string $key, $value): void
+    public function set(string $key, $value): bool
     {
         // Load latest data
         $this->loadData();
@@ -148,13 +170,15 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
         $this->data[$key] = $value;
 
         // Save new session data
-        $this->saveData();
+        return $this->saveData();
     }
 
     /**
      * @param array $data
+     *
+     * @return bool
      */
-    public function setMulti(array $data): void
+    public function setMulti(array $data): bool
     {
         // Load latest data
         $this->loadData();
@@ -162,7 +186,7 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
         $this->data = array_merge($this->data, $data);
 
         // Save new session data
-        $this->saveData();
+        return $this->saveData();
     }
 
     /**
@@ -188,13 +212,10 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
         // Load latest data
         $this->loadData();
 
+        // Delete and rewrite
         if (isset($this->data[$key])) {
             unset($this->data[$key]);
-
-            // Save new session data
-            $this->saveData();
-
-            return true;
+            return $this->saveData();
         }
 
         return false;

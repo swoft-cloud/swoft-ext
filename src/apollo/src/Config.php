@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
-
 namespace Swoft\Apollo;
-
 
 use Swoft\Apollo\Contract\ConfigInterface;
 use Swoft\Apollo\Exception\ApolloException;

@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 namespace Swoft\Apollo;
 
 use Swoft\Apollo\Exception\ApolloException;
@@ -49,11 +48,23 @@ class Apollo
     private $clusterName = '';
 
     /**
-     * Seconds
+     * The http request timeout. seconds
      *
      * @var int
      */
     private $timeout = 6;
+
+    /**
+     * @var bool
+     */
+    private $enableSSL = false;
+
+    /**
+     * The swoole http client options
+     *
+     * @var array
+     */
+    private $httpOptions = [];
 
     /**
      * @param string $uri
@@ -73,12 +84,18 @@ class Apollo
                 $uri   = sprintf('%s?%s', $uri, $query);
             }
 
+            $httpSetting = $this->httpOptions;
+            // Add http timeout
+            $httpSetting['timeout'] = $timeout;
+
+            // Create http client
+            $client = new Client($this->host, $this->port, $this->enableSSL);
+            $client->set($httpSetting);
+
             // Request
-            $client = new Client($this->host, $this->port);
-            $client->set(['timeout' => $timeout]);
             $client->get($uri);
             $body   = $client->body;
-            $status = $client->statusCode;
+            $status = (int)$client->statusCode;
             $client->close();
 
             // Not update empty body
@@ -86,15 +103,9 @@ class Apollo
                 $body = JsonHelper::decode($body, true);
             }
 
-            if ($status == -1 || $status == -2 || $status == -3) {
-                throw new ApolloException(
-                    sprintf(
-                        'Request timeout!(host=%s, port=%d timeout=%d)',
-                        $this->host,
-                        $this->port,
-                        $this->timeout
-                    )
-                );
+            if ($status === -1 || $status === -2 || $status === -3) {
+                throw new ApolloException(sprintf('Request timeout!(host=%s, port=%d timeout=%d)', $this->host,
+                        $this->port, $this->timeout));
             }
 
             if ($status != self::SUCCESS && $status != self::NOT_MODIFIED) {
@@ -106,7 +117,7 @@ class Apollo
         }
 
         // Not update return empty
-        if ($status == self::NOT_MODIFIED) {
+        if ($status === self::NOT_MODIFIED) {
             return [];
         }
 
@@ -151,5 +162,21 @@ class Apollo
     public function getClusterName(): string
     {
         return $this->clusterName;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHttpOptions(): array
+    {
+        return $this->httpOptions;
+    }
+
+    /**
+     * @param array $httpOptions
+     */
+    public function setHttpOptions(array $httpOptions): void
+    {
+        $this->httpOptions = $httpOptions;
     }
 }
