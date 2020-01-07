@@ -11,7 +11,6 @@ use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Http\Message\Request;
 use Swoft\Http\Message\Response;
 use Swoft\Http\Server\Contract\MiddlewareInterface;
-use Swoole\Coroutine;
 use function context;
 use function random_int;
 use function round;
@@ -70,7 +69,6 @@ class SessionMiddleware implements MiddlewareInterface
         $this->addCookieToResponse($response, $session);
 
         // $this->storageSession($session);
-        $session->saveData();
 
         return $response;
     }
@@ -111,17 +109,13 @@ class SessionMiddleware implements MiddlewareInterface
     protected function collectGarbage(int $randomMax): void
     {
         // Aways do GC
-        if ($randomMax < 1) {
-            Coroutine::create(function () {
-                $this->manager->gc();
-            });
+        if ($randomMax < 2) {
+            $this->manager->asyncGc();
         }
 
         // GC handle on new coroutine
         if (random_int(1, $randomMax) === round($randomMax / 2)) {
-            Coroutine::create(function () {
-                $this->manager->gc();
-            });
+            $this->manager->asyncGc();
         }
     }
 
@@ -129,7 +123,7 @@ class SessionMiddleware implements MiddlewareInterface
      * @param ResponseInterface|Response $response
      * @param HttpSession                $session
      */
-    private function addCookieToResponse(ResponseInterface $response, HttpSession $session): void
+    protected function addCookieToResponse(ResponseInterface $response, HttpSession $session): void
     {
         $cookie = $this->manager->getCookieParams();
         $cookie = $session->buildCookie($cookie);

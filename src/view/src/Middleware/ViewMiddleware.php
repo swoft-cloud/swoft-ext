@@ -16,6 +16,7 @@ use Swoft\Stdlib\Contract\Arrayable;
 use Swoft\View\Renderer;
 use Swoft\View\ViewRegister;
 use Throwable;
+use function bean;
 use function context;
 use function current;
 use function is_object;
@@ -67,10 +68,10 @@ class ViewMiddleware implements MiddlewareInterface
             }
 
             /* @var Renderer $view */
-            $renderer = \bean('view');
+            $renderer = bean('view');
             $content  = $renderer->render($template, $data, $layout);
 
-            return $response->withContent($content)->withContentType(ContentType::KEY, $contentType);
+            return $response->withContent($content)->withContentType($contentType);
         }
 
         return $response;

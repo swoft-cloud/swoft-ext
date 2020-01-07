@@ -1,17 +1,20 @@
 {
     "name": "swoft/session",
     "type": "library",
-    "version": "v2.0.7",
+    "version": "v2.0.8",
     "keywords": [
         "php",
         "swoole",
         "swoft",
+        "swoft-component",
+        "http-session",
         "session"
     ],
     "description": "Http session component for swoft",
     "license": "Apache-2.0",
     "require": {
-        "swoft/http-message": "~2.0.0"
+        "swoft/http-message": "~2.0.0",
+        "swoft/stdlib": "~2.0.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.5"
@@ -26,7 +29,5 @@
             "SwoftTest\\Http\\Session\\Unit\\": "test/unit/",
             "SwoftTest\\Http\\Session\\Testing\\": "test/testing/"
         }
-    },
-    "scripts": {
     }
 }
