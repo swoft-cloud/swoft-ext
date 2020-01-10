@@ -35,8 +35,8 @@ class SwooleTracker
         string $path,
         string $serviceName,
         string $serverIp,
-        string $traceId,
-        string $spanId
+        string $traceId = '',
+        string $spanId = ''
     ) {
         if (class_exists(Stats::class) === false) {
             CLog::error('Stats::class not found, Please check swoole_tracker extend');
@@ -57,15 +57,15 @@ class SwooleTracker
     /**
      * End this analysis link tracking
      *
-     * @param object $tick Tick
-     * @param bool   $isSuccess
-     * @param int    $errno
+     * @param Tick $tick Tick
+     * @param bool $isSuccess
+     * @param int  $errno
      *
      * @return void
      */
     public function endRpcAnalysis($tick, bool $isSuccess, int $errno): void
     {
-        if (empty($tick)) {
+        if ($tick === null) {
             return;
         }
         if (class_exists(Stats::class) === false) {

@@ -7,7 +7,7 @@ use Exception;
 /**
  * Class ElasticsearchException
  *
- * @since   2.0
+ * @since 2.8
  *
  * @package Swoft\Elasticsearch\Exception
  */

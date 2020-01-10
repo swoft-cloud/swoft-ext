@@ -2,10 +2,8 @@
 
 namespace Swoft\Elasticsearch\Listener;
 
-use Swoft\Elasticsearch\Connection\ConnectionManager;
-use ReflectionException;
 use Swoft\Bean\BeanFactory;
-use Swoft\Bean\Exception\ContainerException;
+use Swoft\Elasticsearch\Connection\ConnectionManager;
 use Swoft\Event\Annotation\Mapping\Listener;
 use Swoft\Event\EventHandlerInterface;
 use Swoft\Event\EventInterface;
@@ -28,6 +26,7 @@ class CoroutineDeferListener implements EventHandlerInterface
     {
         /* @var ConnectionManager $conManager */
         $conManager = BeanFactory::getBean(ConnectionManager::class);
+
         $conManager->release();
     }
 }

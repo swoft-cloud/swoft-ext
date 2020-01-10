@@ -30,7 +30,7 @@ class SwooleTrackerMiddleware implements MiddlewareInterface
      *
      * @var SwooleTracker
      */
-    private $swoleTracker;
+    private $swooleTracker;
 
     /**
      * @param ServerRequestInterface|Request $request
@@ -78,7 +78,7 @@ class SwooleTrackerMiddleware implements MiddlewareInterface
         $traceId = context()->get('traceid', $request->getHeaderLine('traceid'));
         $spanId  = context()->get('spanid', $request->getHeaderLine('spanid'));
 
-        $tick = $this->swoleTracker->startRpcAnalysis($path, $appName, $ip, $traceId, $spanId);
+        $tick = $this->swooleTracker->startRpcAnalysis($path, $appName, $ip, $traceId, $spanId);
 
         return $tick;
     }
@@ -92,7 +92,7 @@ class SwooleTrackerMiddleware implements MiddlewareInterface
     private function endNormalAnalysis($tick, int $responseCode): void
     {
         if (isset($tick)) {
-            $this->swoleTracker->endRpcAnalysis(
+            $this->swooleTracker->endRpcAnalysis(
                 $tick,
                 $responseCode === 200,
                 $responseCode
@@ -109,7 +109,7 @@ class SwooleTrackerMiddleware implements MiddlewareInterface
     private function endExceptionAnalysis($tick, int $errno): void
     {
         if (isset($tick)) {
-            $this->swoleTracker->endRpcAnalysis(
+            $this->swooleTracker->endRpcAnalysis(
                 $tick,
                 false,
                 $errno

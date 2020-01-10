@@ -2,18 +2,24 @@
 
 namespace Swoft\Elasticsearch\Connection;
 
-use Elasticsearch\Common\Exceptions\ElasticsearchException as ElasticsearchExceptionInterface;
 use Elasticsearch\Client;
+use Elasticsearch\Namespaces\CatNamespace;
+use Elasticsearch\Namespaces\ClusterNamespace;
+use Elasticsearch\Namespaces\IndicesNamespace;
+use Elasticsearch\Namespaces\IngestNamespace;
+use Elasticsearch\Namespaces\NodesNamespace;
+use Elasticsearch\Namespaces\SnapshotNamespace;
+use Elasticsearch\Namespaces\TasksNamespace;
 use Exception;
-use Swoft\Elasticsearch\Exception\ElasticsearchException;
 use Swoft\Bean\Annotation\Mapping\Bean;
+use Swoft\Elasticsearch\Exception\ElasticsearchException;
 
 /**
  * Class ConnectionInstance
  *
- * @since   2.0
- * @Bean()
+ * @since 2.8
  *
+ * @Bean()
  * @method bool ping(array $params)
  * @method callable|array rankEval(array $params)
  * @method callable|array get(array $params)
@@ -305,7 +311,8 @@ class ConnectionInstance
      *
      * @param array $methods
      *
-     * @return |null
+     * @return mixed
+     * @throws ElasticsearchException
      */
     public function command(array $methods)
     {
@@ -326,9 +333,10 @@ class ConnectionInstance
             $exception = new ElasticsearchException(
                 sprintf('ElasticSearch command error(%s)', $message)
             );
+
             $error     = json_decode($message, true);
+
             if (isset($error['error']['reason'])) {
-                $message = $error['error']['reason'];
                 $exception->setResponse($error);
             }
 
@@ -339,12 +347,12 @@ class ConnectionInstance
     }
 
     /**
-     * __call
+     * Magic method __call
      *
      * @param string $method
      * @param array  $arguments
      *
-     * @return |null
+     * @return mixed
      * @throws ElasticsearchException
      */
     public function __call(string $method, array $arguments)
