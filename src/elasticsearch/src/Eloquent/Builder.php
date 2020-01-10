@@ -4,18 +4,26 @@ namespace Swoft\Elasticsearch\Eloquent;
 
 use Closure;
 use Exception;
+use Jcsp\Core\Pagination\LengthAwarePaginator;
 use Swoft\Elasticsearch\Elasticsearch;
 use Swoft\Elasticsearch\Exception\ElasticsearchException;
+use Swoft\Elasticsearch\Pool;
+use Swoft\Stdlib\Helper\Arr;
 
 /**
  * Class Builder
  *
  * @since   2.0
  *
- * @package Jcsp\Elasticsearch\Eloquent
+ * @package Swoft\Elasticsearch\Eloquent
  */
 class Builder
 {
+
+    /**
+     * @var string
+     */
+    protected $pool = '';
 
     /**
      * @var string
@@ -35,12 +43,30 @@ class Builder
     /**
      * @var array
      */
+    protected $select = [];
+
+    /**
+     * @var array
+     */
     protected $query = [];
 
     /**
      * @var array
      */
     private $queryIndices = [0, 0];
+
+    /**
+     * @var array
+     */
+    private $sort = [];
+
+    /**
+     * @var array
+     */
+    private $limit = [
+        'from' => 0,
+        'size' => 0,
+    ];
 
     /**
      * @var array
@@ -81,15 +107,39 @@ class Builder
         $this->type            = $model->getType();
         $this->createTimeField = $model->getCreateTimeField();
         $this->updateTimeField = $model->getUpdateTimeField();
+        $this->pool            = $model->getPool();
+        $this->pool            = !empty($this->pool) ? $this->pool : Pool::DEFAULT_POOL;
+
         unset($model);
     }
 
-    //public function select(array $fields): Builder
-    //{
-    //    $this->fields = $fields;
-    //
-    //    return $this;
-    //}
+    /**
+     * select
+     *
+     * @param array $fields
+     *
+     * @return Builder
+     */
+    public function select(array $fields): Builder
+    {
+        $this->fields = $fields;
+
+        return $this;
+    }
+
+    /**
+     * setPool
+     *
+     * @param string $pool
+     *
+     * @return Builder
+     */
+    public function setPool(string $pool = Pool::DEFAULT_POOL): Builder
+    {
+        $this->pool = $pool;
+
+        return $this;
+    }
 
     /**
      * index
@@ -325,17 +375,23 @@ class Builder
     /**
      * get
      *
-     * @return \Jcsp\Elasticsearch\Eloquent\Collection
+     * @return \Swoft\Elasticsearch\Eloquent\Collection
+     * @throws ElasticsearchException
      */
     public function get(): Collection
     {
-        $data = Elasticsearch::search([
+        $this->limit['size'] = $this->limit['size'] > 0 ? $this->limit['size'] : $this->count();
+
+        $data = Elasticsearch::connection($this->pool)->search([
             'index' => $this->index,
             'type'  => $this->type,
             'body'  => [
-                'query' => $this->parseJson($this->query),
-                'sort'  => [$this->createTimeField => ['order' => 'asc']],
+                '_source' => $this->fields,
+                'query'   => $this->parseJson($this->query),
+                'sort'    => $this->sort,
             ],
+            'from'  => $this->limit['from'],
+            'size'  => $this->limit['size'],
         ]);
 
         $result = [];
@@ -357,15 +413,17 @@ class Builder
      * first
      *
      * @return Model|null
+     * @throws ElasticsearchException
      */
     public function first(): ?Model
     {
-        $data = Elasticsearch::search([
+        $data = Elasticsearch::connection($this->pool)->search([
             'index' => $this->index,
             'type'  => $this->type,
             'body'  => [
-                'query' => $this->parseJson($this->query),
-                'sort'  => [$this->createTimeField => ['order' => 'asc']],
+                '_source' => $this->fields,
+                'query'   => $this->parseJson($this->query),
+                'sort'    => $this->sort,
             ],
             'from'  => 0,
             'size'  => 1,
@@ -391,19 +449,21 @@ class Builder
      * @param int $page
      * @param int $size
      *
-     * @return Pagination
+     * @return LengthAwarePaginator
+     * @throws ElasticsearchException
      */
-    public function paginate(int $page = 1, int $size = 10): Pagination
+    public function paginate(int $page = 1, int $size = 10): LengthAwarePaginator
     {
         $page  = $page < 1 ? 1 : intval($page);
         $size  = $size < 1 ? 1 : intval($size);
         $from  = ($page - 1) * $size;
-        $data  = Elasticsearch::search([
+        $data  = Elasticsearch::connection($this->pool)->search([
             'index' => $this->index,
             'type'  => $this->type,
             'body'  => [
-                'query' => $this->parseJson($this->query),
-                'sort'  => [$this->createTimeField => ['order' => 'asc']],
+                '_source' => $this->fields,
+                'query'   => $this->parseJson($this->query),
+                'sort'    => $this->sort,
             ],
             'from'  => $from,
             'size'  => $size,
@@ -421,7 +481,7 @@ class Builder
             array_push($list, $model);
         }
 
-        return Pagination::create($list, $total, $size, $page);
+        return LengthAwarePaginator::create($list, $total, $size, $page);
     }
 
     /**
@@ -432,7 +492,7 @@ class Builder
     public function count(): int
     {
         try {
-            $data  = Elasticsearch::count([
+            $data  = Elasticsearch::connection($this->pool)->count([
                 'index' => $this->index,
                 'type'  => $this->type,
                 'body'  => [
@@ -448,17 +508,50 @@ class Builder
     }
 
     /**
+     * orderBy
+     *
+     * @param string $field
+     * @param string $sort
+     *
+     * @return Builder
+     */
+    public function orderBy(string $field, string $sort = 'asc'): Builder
+    {
+        $sort = in_array(strtolower($sort), ['asc', 'desc']) ? strtolower($sort) : 'asc';
+        array_push($this->sort, [$field => ['order' => $sort]]);
+
+        return $this;
+    }
+
+    /**
+     * limit
+     *
+     * @param int $from
+     * @param int $size
+     *
+     * @return Builder
+     */
+    public function limit(int $from = 0, int $size = 10): Builder
+    {
+        $this->limit['from'] = $from > 0 ? $from : 0;
+        $this->limit['size'] = $size > 0 ? $size : 10;
+
+        return $this;
+    }
+
+    /**
      * create
      *
      * @param array $value
      *
      * @return Model
+     * @throws ElasticsearchException
      */
     public function create(array $value): Model
     {
-        $value[$this->createTimeField] = $value[$this->updateTimeField] = time();
+        $value[$this->createTimeField] = $value[$this->updateTimeField] = date('Y-m-d H:i:s');
 
-        $data = Elasticsearch::index([
+        $data = Elasticsearch::connection($this->pool)->index([
             'index' => $this->index,
             'type'  => $this->type,
             'body'  => $value,
@@ -491,12 +584,12 @@ class Builder
     {
         $body = [];
         foreach ($values as $value) {
-            $value[$this->createTimeField] = $value[$this->updateTimeField] = time();
+            $value[$this->createTimeField] = $value[$this->updateTimeField] = date('Y-m-d H:i:s');
             array_push($body, ['index' => ['_index' => $this->index, '_type' => $this->type]]);
             array_push($body, $value);
         }
 
-        $data = Elasticsearch::bulk(['body' => $body]);
+        $data = Elasticsearch::connection($this->pool)->bulk(['body' => $body]);
         if (!isset($data['errors']) || $data['errors'] !== false) {
             throw new ElasticsearchException('elasticsearch builder error: insert failed.');
         }
@@ -527,9 +620,9 @@ class Builder
     public function update(string $id, array $value): bool
     {
         try {
-            $value[$this->updateTimeField] = time();
+            $value[$this->updateTimeField] = date('Y-m-d H:i:s');
 
-            $data = Elasticsearch::update([
+            $data = Elasticsearch::connection($this->pool)->update([
                 'index' => $this->index,
                 'type'  => $this->type,
                 'id'    => $id,
@@ -558,7 +651,7 @@ class Builder
     public function delete(string $id): bool
     {
         try {
-            $data = Elasticsearch::delete([
+            $data = Elasticsearch::connection($this->pool)->delete([
                 'index' => $this->index,
                 'type'  => $this->type,
                 'id'    => $id,

@@ -154,6 +154,8 @@ use Swoft\Elasticsearch\Exception\ElasticsearchException;
  * @method callable|array tasksGet(array $params = [])
  * @method callable|array tasksTasksList(array $params = [])
  * @method callable|array tasksCancel(array $params = [])
+ *
+ * @package Swoft\Elasticsearch\Connection
  */
 class ConnectionInstance
 {

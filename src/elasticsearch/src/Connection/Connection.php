@@ -2,19 +2,24 @@
 
 namespace Swoft\Elasticsearch\Connection;
 
+use Elasticsearch\Client as ElasticSearchClient;
 use Elasticsearch\ClientBuilder;
+use Exception;
+use Swoft\Elasticsearch\Client;
+use Swoft\Elasticsearch\Exception\ElasticsearchException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Bean\BeanFactory;
 use Swoft\Connection\Pool\AbstractConnection;
 use Swoft\Connection\Pool\Contract\PoolInterface;
-use Swoft\Elasticsearch\Client;
 
 /**
  * Class Connection
  *
- * @since   2.8
- * @Bean()
+ * @since   2.0
+ * @Bean(scope=Bean::PROTOTYPE)
+ *
+ * @package Swoft\Elasticsearch\Connection
  */
 class Connection extends AbstractConnection
 {
@@ -115,21 +120,20 @@ class Connection extends AbstractConnection
         if (!empty($ssl)) {
             $builder->setSSLVerification($ssl);
         }
-
         switch ($driver) {
+            default:
             case Client::DRIVER_DEFAULT:
                 $builder->setHosts($hosts);
                 break;
             case Client::DRIVER_BASIC:
-                $builder->setElasticCloudId($cloudId)->setBasicAuthentication($user, $pass);
+                $builder->setElasticCloudId($cloudId)
+                    ->setBasicAuthentication($user, $pass);
                 break;
             case Client::DRIVER_SECRET:
-                $builder->setElasticCloudId($cloudId)->setApiKey($user, $pass);
+                $builder->setElasticCloudId($cloudId)
+                    ->setApiKey($user, $pass);
                 break;
         }
-
-        $logger = bean('logger');
-        $builder->setLogger($logger);
 
         $elasticsearch = $builder->build();
         $this->instance->setElasticsearch($elasticsearch);
