@@ -2,12 +2,14 @@
 
 namespace Swoft\Elasticsearch;
 
+use Swoft\Elasticsearch\Connection\ConnectionManager;
 use Swoft\Helper\ComposerJSON;
 use Swoft\SwoftComponent;
 use function dirname;
 
 /**
  * class AutoLoader
+ *
  * @since 2.0
  */
 final class AutoLoader extends SwoftComponent
@@ -39,7 +41,7 @@ final class AutoLoader extends SwoftComponent
      */
     public function metadata(): array
     {
-        $jsonFile = dirname(__DIR__) . '/composer.json';
+        $jsonFile = dirname(__DIR__).'/composer.json';
 
         return ComposerJSON::open($jsonFile)->getMetadata();
     }

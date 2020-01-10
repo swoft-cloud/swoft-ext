@@ -12,7 +12,7 @@ use Swoft\Stdlib\Helper\StringHelper;
  *
  * @since   2.0
  *
- * @package Jcsp\Elasticsearch\Eloquent
+ * @package Swoft\Elasticsearch\Eloquent
  */
 class Model implements Arrayable
 {
@@ -63,39 +63,6 @@ class Model implements Arrayable
 
         $this->_index  = $index;
         $this->_source = $data;
-    }
-
-    /**
-     * query
-     *
-     * @return Builder
-     */
-    public static function query(): Builder
-    {
-        return new Builder(static::class);
-    }
-
-    /**
-     * index
-     *
-     * @return string
-     * @throws ElasticsearchException
-     */
-    public static function index(): string
-    {
-        $className = static::class;
-        $shortName = explode('\\', $className);
-        $class     = StringHelper::snake(array_pop($shortName));
-        if (!$class) {
-            throw new ElasticsearchException('elasticsearch model error: class name is empty.');
-        }
-
-        return $class;
-    }
-
-    public static function type()
-    {
-
     }
 
     /**
@@ -227,24 +194,12 @@ class Model implements Arrayable
     }
 
     /**
-     * create
-     *
-     * @param array $data
-     *
-     * @return Model
-     * @throws ElasticsearchException
-     */
-    public function create(array $data): Model
-    {
-        return self::query()->create($data);
-    }
-
-    /**
      * update
      *
      * @param array $data
      *
      * @return bool
+     * @throws ElasticsearchException
      */
     public function update(array $data): bool
     {
@@ -258,6 +213,7 @@ class Model implements Arrayable
      * delete
      *
      * @return bool
+     * @throws ElasticsearchException
      */
     public function delete(): bool
     {
@@ -285,6 +241,48 @@ class Model implements Arrayable
     public function __get(string $name)
     {
         return $this->_source[$name] ?? null;
+    }
+
+    /**
+     * query
+     *
+     * @return Builder
+     * @throws ElasticsearchException
+     */
+    public static function query(): Builder
+    {
+        return new Builder(static::class);
+    }
+
+    /**
+     * index
+     *
+     * @return string
+     * @throws ElasticsearchException
+     */
+    public static function index(): string
+    {
+        $className = static::class;
+        $shortName = explode('\\', $className);
+        $class     = StringHelper::snake(array_pop($shortName));
+        if (!$class) {
+            throw new ElasticsearchException('elasticsearch model error: class name is empty.');
+        }
+
+        return $class;
+    }
+
+    /**
+     * create
+     *
+     * @param array $value
+     *
+     * @return Model
+     * @throws ElasticsearchException
+     */
+    public static function create(array $value): Model
+    {
+        return self::query()->create($value);
     }
 
 }

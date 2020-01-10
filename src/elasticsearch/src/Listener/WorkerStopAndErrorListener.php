@@ -47,7 +47,7 @@ class WorkerStopAndErrorListener implements EventSubscriberInterface
         foreach ($pools as $pool) {
             $count = $pool->close();
 
-            CLog::info('Close %d redis connection on %s!', $count, $event->getName());
+            CLog::info('Close %d elasticsearch connection on %s!', $count, $event->getName());
         }
     }
 }

@@ -19,7 +19,7 @@ use Swoft\Connection\Pool\Contract\PoolInterface;
  * @since   2.0
  * @Bean(scope=Bean::PROTOTYPE)
  *
- * @package Jcsp\Elasticsearch\Connection
+ * @package Swoft\Elasticsearch\Connection
  */
 class Connection extends AbstractConnection
 {
