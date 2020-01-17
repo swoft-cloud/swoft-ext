@@ -23,6 +23,7 @@ class HalfOpenState extends AbstractState
 
     /**
      * Check status
+     *
      * @throws BreakerException
      */
     public function check(): void

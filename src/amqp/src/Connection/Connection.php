@@ -9,9 +9,6 @@ use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPSocketConnection;
 use PhpAmqpLib\Connection\AMQPSSLConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Exception\AMQPConnectionClosedException;
-use PhpAmqpLib\Exception\AMQPOutOfBoundsException;
-use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
 use Swoft\Amqp\Client;
@@ -90,9 +87,8 @@ class Connection extends AbstractConnection implements ConnectionInterface
             $this->connection = $this->connect([$auth], $setting['connect'] ?? []);
             $this->connection = $this->client->getConnector()->connect();
         } catch (Exception $e) {
-            throw new AMQPException(
-                sprintf('RabbitMQ connect error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
-            );
+            throw new AMQPException(sprintf('RabbitMQ connect error is %s file=%s line=%d', $e->getMessage(),
+                    $e->getFile(), $e->getLine()));
         }
 
         $this->channel();
@@ -202,22 +198,12 @@ class Connection extends AbstractConnection implements ConnectionInterface
         $setting  = $this->client->getSetting();
 
         try {
-            $this->channel->exchange_declare(
-                $exchange,
-                $type,
-                $setting['passive'] ?? false,
-                $setting['durable'] ?? true,
-                $setting['auto_delete'] ?? false,
-                $setting['internal'] ?? false,
-                $setting['nowait'] ?? false,
-                $setting['arguments'] ?? [],
-                $setting['ticket'] ?? null
-            );
+            $this->channel->exchange_declare($exchange, $type, $setting['passive'] ?? false,
+                $setting['durable'] ?? true, $setting['auto_delete'] ?? false, $setting['internal'] ?? false,
+                $setting['nowait'] ?? false, $setting['arguments'] ?? [], $setting['ticket'] ?? null);
         } catch (Exception $e) {
-            throw new AMQPException(
-                sprintf('RabbitMQ declare exchange error is %s file=%s line=%d', $e->getMessage(), $e->getFile(),
-                    $e->getLine())
-            );
+            throw new AMQPException(sprintf('RabbitMQ declare exchange error is %s file=%s line=%d', $e->getMessage(),
+                    $e->getFile(), $e->getLine()));
         }
     }
 
@@ -232,21 +218,12 @@ class Connection extends AbstractConnection implements ConnectionInterface
         $setting = $this->client->getSetting();
 
         try {
-            $this->channel->queue_declare(
-                $queue,
-                $setting['passive'] ?? false,
-                $setting['durable'] ?? true,
-                $setting['exclusive'] ?? false,
-                $setting['auto_delete'] ?? false,
-                $setting['nowait'] ?? false,
-                $setting['arguments'] ?? [],
-                $setting['ticket'] ?? null
-            );
+            $this->channel->queue_declare($queue, $setting['passive'] ?? false, $setting['durable'] ?? true,
+                $setting['exclusive'] ?? false, $setting['auto_delete'] ?? false, $setting['nowait'] ?? false,
+                $setting['arguments'] ?? [], $setting['ticket'] ?? null);
         } catch (Exception $e) {
-            throw new AMQPException(
-                sprintf('RabbitMQ declare queue error is %s file=%s line=%d', $e->getMessage(), $e->getFile(),
-                    $e->getLine())
-            );
+            throw new AMQPException(sprintf('RabbitMQ declare queue error is %s file=%s line=%d', $e->getMessage(),
+                    $e->getFile(), $e->getLine()));
         }
     }
 
@@ -263,19 +240,11 @@ class Connection extends AbstractConnection implements ConnectionInterface
         $setting  = $this->client->getSetting();
 
         try {
-            $this->channel->queue_bind(
-                $queue,
-                $exchange,
-                $route,
-                $setting['nowait'] ?? false,
-                $setting['arguments'] ?? [],
-                $setting['ticket'] ?? null
-            );
+            $this->channel->queue_bind($queue, $exchange, $route, $setting['nowait'] ?? false,
+                $setting['arguments'] ?? [], $setting['ticket'] ?? null);
         } catch (Exception $e) {
-            throw new AMQPException(
-                sprintf('RabbitMQ bind queue and exchange error is %s file=%s line=%d', $e->getMessage(), $e->getFile(),
-                    $e->getLine())
-            );
+            throw new AMQPException(sprintf('RabbitMQ bind queue and exchange error is %s file=%s line=%d',
+                    $e->getMessage(), $e->getFile(), $e->getLine()));
         }
     }
 
@@ -325,13 +294,8 @@ class Connection extends AbstractConnection implements ConnectionInterface
         $consume = $setting['consume'] ?? [];
 
         //consume the message
-        $this->channel->basic_consume(
-            $queue,
-            $consume['consumer_tag'] ?? '',
-            $consume['no_local'] ?? false,
-            $consume['no_ack'] ?? false,
-            $consume['exclusive'] ?? false,
-            $consume['nowait'] ?? false,
+        $this->channel->basic_consume($queue, $consume['consumer_tag'] ?? '', $consume['no_local'] ?? false,
+            $consume['no_ack'] ?? false, $consume['exclusive'] ?? false, $consume['nowait'] ?? false,
             function (AMQPMessage $message) use ($callback, $consume) {
                 $cancelTag = $consume['cancel_tag'] ?? [];
                 $cancel    = is_array($cancelTag) ? in_array($message->body, $cancelTag) : $message->body == $cancelTag;
@@ -340,8 +304,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
                     $this->channel->basic_cancel($message->delivery_info['consumer_tag']);
                 }
                 !empty($callback) && $callback($message);
-            }
-        );
+            });
 
         //wait for message
         while ($this->channel->is_consuming()) {

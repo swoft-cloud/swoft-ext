@@ -8,7 +8,6 @@ use Jcsp\Core\Pagination\LengthAwarePaginator;
 use Swoft\Elasticsearch\Elasticsearch;
 use Swoft\Elasticsearch\Exception\ElasticsearchException;
 use Swoft\Elasticsearch\Pool;
-use Swoft\Stdlib\Helper\Arr;
 
 /**
  * Class Builder
@@ -202,7 +201,7 @@ class Builder
                 $count = count($this->queryIndices);
                 if (is_array($value)) {
                     if (count($value) != 3 || !in_array($value[1], $this->operate)) {
-                        throw new ElasticsearchException('elasticsearch builder error: '.$this->index.' '.json_encode($value));
+                        throw new ElasticsearchException('elasticsearch builder error: ' . $this->index . ' ' . json_encode($value));
                     }
                     foreach ($this->queryIndices as $queryKey => $queryIndex) {
                         if (!isset($query[$queryIndex])) {
@@ -228,13 +227,15 @@ class Builder
                 }
                 $this->queryIndices[$count - 1]++;
             }
-        } else if ($conditions instanceof Closure) {
-            $callback           = $conditions;
-            $count              = count($this->queryIndices);
-            $this->queryIndices = array_pad($this->queryIndices, $count + 2, 0);
-            $callback($this);
-            $this->queryIndices = array_slice($this->queryIndices, 0, $count, false);
-            $this->queryIndices[$count - 1]++;
+        } else {
+            if ($conditions instanceof Closure) {
+                $callback           = $conditions;
+                $count              = count($this->queryIndices);
+                $this->queryIndices = array_pad($this->queryIndices, $count + 2, 0);
+                $callback($this);
+                $this->queryIndices = array_slice($this->queryIndices, 0, $count, false);
+                $this->queryIndices[$count - 1]++;
+            }
         }
 
         return $this;
@@ -260,7 +261,7 @@ class Builder
             foreach ($conditions as $key => $value) {
                 if (is_array($value)) {
                     if (count($value) != 3 || !in_array($value[1], $this->operate)) {
-                        throw new ElasticsearchException('elasticsearch builder error: '.$this->index.' '.json_encode($value));
+                        throw new ElasticsearchException('elasticsearch builder error: ' . $this->index . ' ' . json_encode($value));
                     }
                     foreach ($this->queryIndices as $queryKey => $queryIndex) {
                         if (!isset($query[$queryIndex])) {
@@ -286,17 +287,19 @@ class Builder
                 }
                 $this->queryIndices[$count - 1]++;
             }
-        } else if ($conditions instanceof Closure) {
-            $callback = $conditions;
-            $count    = count($this->queryIndices);
+        } else {
+            if ($conditions instanceof Closure) {
+                $callback = $conditions;
+                $count    = count($this->queryIndices);
 
-            $this->queryIndices[$count - 2]++;
-            $this->queryIndices[$count - 1] = 0;
+                $this->queryIndices[$count - 2]++;
+                $this->queryIndices[$count - 1] = 0;
 
-            $this->queryIndices = array_pad($this->queryIndices, $count + 2, 0);
-            $callback($this);
-            $this->queryIndices = array_slice($this->queryIndices, 0, $count, false);
-            $this->queryIndices[$count - 1]++;
+                $this->queryIndices = array_pad($this->queryIndices, $count + 2, 0);
+                $callback($this);
+                $this->queryIndices = array_slice($this->queryIndices, 0, $count, false);
+                $this->queryIndices[$count - 1]++;
+            }
         }
 
         return $this;

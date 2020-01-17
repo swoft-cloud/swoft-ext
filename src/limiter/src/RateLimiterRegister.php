@@ -35,9 +35,8 @@ class RateLimiterRegister
     public static function registerRateLimiter(string $className, string $method, RateLimiter $rateLimiter): void
     {
         if (isset(self::$rateLimiters[$className][$method])) {
-            throw new RateLImiterException(
-                sprintf('`@RateLImiter` must be only one on method(%s->%s)!', $className, $method)
-            );
+            throw new RateLImiterException(sprintf('`@RateLImiter` must be only one on method(%s->%s)!', $className,
+                    $method));
         }
 
         $rlConfig = [];

@@ -84,7 +84,7 @@ class Response
         if (empty($this->body)) {
             return $this->body;
         }
-        
+
         return JsonHelper::decode($this->body, true);
     }
 }

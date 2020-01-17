@@ -76,7 +76,7 @@ class BreakerTest extends TestCase
         $this->assertTrue($breaker->isOpen());
 
         // Sleep
-        Coroutine::sleep($breaker->getRetryTime()+1);
+        Coroutine::sleep($breaker->getRetryTime() + 1);
         $this->getBreakerBean()->method2('swoft', 1);
         $this->getBreakerBean()->method2('swoft', 1);
         $this->getBreakerBean()->method2('swoft', 1);

@@ -37,9 +37,7 @@ class BreakerRegister
     public static function registerBreaker(string $className, string $method, BreakerAnnotation $breaker)
     {
         if (isset(self::$breakers[$className][$method])) {
-            throw new BreakerException(
-                sprintf('`@Breaker` must be only one on method(%s->%s)!', $className, $method)
-            );
+            throw new BreakerException(sprintf('`@Breaker` must be only one on method(%s->%s)!', $className, $method));
         }
 
         self::$breakers[$className][$method] = $breaker;

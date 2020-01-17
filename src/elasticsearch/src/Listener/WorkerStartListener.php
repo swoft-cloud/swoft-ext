@@ -3,9 +3,9 @@
 
 namespace Swoft\Elasticsearch\Listener;
 
-use Swoft\Elasticsearch\Pool;
 use Swoft\Bean\BeanFactory;
 use Swoft\Connection\Pool\Exception\ConnectionPoolException;
+use Swoft\Elasticsearch\Pool;
 use Swoft\Event\Annotation\Mapping\Listener;
 use Swoft\Event\EventHandlerInterface;
 use Swoft\Event\EventInterface;

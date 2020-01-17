@@ -4,10 +4,8 @@
 namespace Swoft\Elasticsearch\Listener;
 
 
-use Swoft\Elasticsearch\Pool;
-use ReflectionException;
 use Swoft\Bean\BeanFactory;
-use Swoft\Bean\Exception\ContainerException;
+use Swoft\Elasticsearch\Pool;
 use Swoft\Event\Annotation\Mapping\Subscriber;
 use Swoft\Event\EventInterface;
 use Swoft\Event\EventSubscriberInterface;

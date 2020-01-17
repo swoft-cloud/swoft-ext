@@ -10,9 +10,9 @@ use Swoft\Aop\Annotation\Mapping\PointAnnotation;
 use Swoft\Aop\Point\ProceedingJoinPoint;
 use Swoft\Aop\Proxy;
 use Swoft\Bean\Annotation\Mapping\Inject;
+use Swoft\Limiter\Annotation\Mapping\RateLimiter;
 use Swoft\Limiter\RateLimter;
 use Throwable;
-use Swoft\Limiter\Annotation\Mapping\RateLimiter;
 
 /**
  * Class LimiterAspect

@@ -55,9 +55,9 @@ class KV implements KVInterface
             'default'
         ];
 
-        $params = array(
+        $params = [
             'query' => OptionsResolver::resolve($options, $availableOptions),
-        );
+        ];
 
         return $this->consul->get($this->prefix . $key, $params);
     }
@@ -73,10 +73,10 @@ class KV implements KVInterface
      */
     public function put(string $key, string $value, array $options = []): Response
     {
-        $params = array(
+        $params = [
             'body'  => (string)$value,
             'query' => OptionsResolver::resolve($options, ['dc', 'flags', 'cas', 'acquire', 'release']),
-        );
+        ];
 
         return $this->consul->put($this->prefix . $key, $params);
     }
@@ -91,9 +91,9 @@ class KV implements KVInterface
      */
     public function delete(string $key, array $options = []): Response
     {
-        $params = array(
+        $params = [
             'query' => OptionsResolver::resolve($options, ['dc', 'recurse']),
-        );
+        ];
 
         return $this->consul->delete($this->prefix . $key, $params);
     }

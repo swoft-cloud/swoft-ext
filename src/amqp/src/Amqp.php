@@ -42,16 +42,13 @@ class Amqp
             $connection->setRelease(true);
             $conManager->setConnection($connection);
         } catch (Throwable $e) {
-            throw new AMQPException(
-                sprintf('Pool error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
-            );
+            throw new AMQPException(sprintf('Pool error is %s file=%s line=%d', $e->getMessage(), $e->getFile(),
+                    $e->getLine()));
         }
 
         // Not instanceof Connection
         if (!$connection instanceof Connection) {
-            throw new AMQPException(
-                sprintf('%s is not instanceof %s', get_class($connection), Connection::class)
-            );
+            throw new AMQPException(sprintf('%s is not instanceof %s', get_class($connection), Connection::class));
         }
 
         return $connection;

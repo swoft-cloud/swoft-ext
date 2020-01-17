@@ -98,7 +98,7 @@ class Crontab
 
         if (!method_exists($object, $methodName)) {
             throw new CrontabException(sprintf('Crontab(name=%s method=%s) method is not exist!', $beanName,
-                    $methodName));
+                $methodName));
         }
 
         // TODO $object->$methodName();

@@ -19,6 +19,6 @@ class SwooleTrackerTest extends TestCase
     {
         /** @var SwooleTracker $swooleTracker */
         $swooleTracker = bean(SwooleTracker::class);
-        var_dump($swooleTracker,bean(SwooleTrackerMiddleware::class));
+        var_dump($swooleTracker, bean(SwooleTrackerMiddleware::class));
     }
 }

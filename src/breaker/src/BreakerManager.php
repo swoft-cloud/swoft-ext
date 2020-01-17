@@ -60,9 +60,7 @@ class BreakerManager
     {
         $breaker = $this->breakers[$className][$methodName] ?? null;
         if (empty($breaker)) {
-            throw new BreakerException(
-                sprintf('Breaker(%s->%s) is not exist!', $className, $methodName)
-            );
+            throw new BreakerException(sprintf('Breaker(%s->%s) is not exist!', $className, $methodName));
         }
 
         return $breaker;

@@ -76,7 +76,7 @@ class KVTest extends TestCase
     public function testSetGetWithFlagsOption()
     {
         $flags = mt_rand();
-        $this->kv->put('/test/my/key', 'hello', array('flags' => $flags));
+        $this->kv->put('/test/my/key', 'hello', ['flags' => $flags]);
 
         $response = $this->kv->get('/test/my/key');
         $this->assertInstanceOf(Response::class, $response);
@@ -100,7 +100,7 @@ class KVTest extends TestCase
 
         $json = $response->getResult();
 
-        $this->assertSame(array('test/my/key1', 'test/my/key2', 'test/my/key3'), $json);
+        $this->assertSame(['test/my/key1', 'test/my/key2', 'test/my/key3'], $json);
     }
 
     /**
