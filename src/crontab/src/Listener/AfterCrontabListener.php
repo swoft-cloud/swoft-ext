@@ -1,14 +1,13 @@
 <?php declare(strict_types=1);
 
-
 namespace Swoft\Crontab\Listener;
 
 use Swoft;
+use Swoft\Crontab\CrontabEvent;
 use Swoft\Event\Annotation\Mapping\Listener;
 use Swoft\Event\EventHandlerInterface;
 use Swoft\Event\EventInterface;
 use Swoft\SwoftEvent;
-use Swoft\Crontab\CrontabEvent;
 
 /**
  * Class AfterCrontabListener

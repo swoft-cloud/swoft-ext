@@ -4,9 +4,9 @@ namespace Swoft\Crontab\Annotaion\Parser;
 
 use Swoft\Annotation\Annotation\Mapping\AnnotationParser;
 use Swoft\Annotation\Annotation\Parser\Parser;
+use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Crontab\Annotaion\Mapping\Scheduled;
 use Swoft\Crontab\CrontabRegister;
-use Swoft\Bean\Annotation\Mapping\Bean;
 
 
 /**
@@ -19,7 +19,7 @@ use Swoft\Bean\Annotation\Mapping\Bean;
 class ScheduledParser extends Parser
 {
     /**
-     * @param int    $type
+     * @param int       $type
      * @param Scheduled $annotationObject
      *
      * @return array

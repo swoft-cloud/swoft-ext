@@ -18,7 +18,7 @@ use Swoft\Crontab\Exception\CrontabException;
 class CronParser extends Parser
 {
     /**
-     * @param int $type
+     * @param int  $type
      * @param Cron $annotation
      *
      * @return array

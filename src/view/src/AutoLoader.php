@@ -4,6 +4,7 @@ namespace Swoft\View;
 
 use Swoft\Helper\ComposerJSON;
 use Swoft\SwoftComponent;
+use function dirname;
 
 /**
  * Class AutoLoader
@@ -33,7 +34,7 @@ class AutoLoader extends SwoftComponent
      */
     public function metadata(): array
     {
-        $jsonFile = \dirname(__DIR__) . '/composer.json';
+        $jsonFile = dirname(__DIR__) . '/composer.json';
 
         return ComposerJSON::open($jsonFile)->getMetadata();
     }

@@ -2,14 +2,16 @@
 
 namespace Swoft\Crontab;
 
+use Swoft;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\BeanFactory;
 use Swoft\Crontab\Exception\CrontabException;
-use Swoft\Exception\SwoftException;
 use Swoft\Stdlib\Helper\PhpHelper;
 use Swoft\Timer;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
+use function method_exists;
+use function sprintf;
 
 /**
  * Class Crontab
@@ -47,8 +49,6 @@ class Crontab
 
     /**
      * Tick task
-     *
-     * @throws SwoftException
      */
     public function tick(): void
     {
@@ -74,14 +74,14 @@ class Crontab
             Coroutine::create(function () use ($task) {
                 [$beanName, $methodName] = $task;
 
-                //Before
-                \Swoft::trigger(CrontabEvent::BEFORE_CRONTAB, $this, $beanName, $methodName);
+                // Before
+                Swoft::trigger(CrontabEvent::BEFORE_CRONTAB, $this, $beanName, $methodName);
 
                 // Execute task
                 $this->execute($beanName, $methodName);
 
-                //Before
-                \Swoft::trigger(CrontabEvent::AFTER_CRONTAB, $this, $beanName, $methodName);
+                // After
+                Swoft::trigger(CrontabEvent::AFTER_CRONTAB, $this, $beanName, $methodName);
             });
         }
     }
@@ -97,12 +97,11 @@ class Crontab
         $object = BeanFactory::getBean($beanName);
 
         if (!method_exists($object, $methodName)) {
-            throw new CrontabException(
-                sprintf('Crontab(name=%s method=%s) method is not exist!', $beanName, $methodName)
-            );
+            throw new CrontabException(sprintf('Crontab(name=%s method=%s) method is not exist!', $beanName,
+                    $methodName));
         }
 
-
+        // TODO $object->$methodName();
         PhpHelper::call([$object, $methodName]);
     }
 }

@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 namespace Swoft\Crontab\Process;
 
 use Swoft\Bean\Annotation\Mapping\Bean;
@@ -26,11 +25,8 @@ class CrontabProcess extends UserProcess
      */
     private $crontab;
 
-
     /**
      * @param Process $process
-     *
-     * @throws SwoftException
      */
     public function run(Process $process): void
     {

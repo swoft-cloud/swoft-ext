@@ -49,16 +49,13 @@ class CrontabRegister
     public static function registerCron(string $className, string $methodName, $objAnnotation): void
     {
         if (!isset(self::$scheduledClasses[$className])) {
-            throw new CrontabException(
-                sprintf('%s must be define class `@Scheduled()`', get_class($objAnnotation))
-            );
+            throw new CrontabException(sprintf('%s must be define class `@Scheduled()`', get_class($objAnnotation)));
         }
 
         $cronExpression = $objAnnotation->getValue();
         if (!CrontabExpression::parse($cronExpression)) {
-            throw new CrontabException(
-                sprintf('`%s::%s()` `@Cron()` expression format is error', $className, $methodName)
-            );
+            throw new CrontabException(sprintf('`%s::%s()` `@Cron()` expression format is error', $className,
+                    $methodName));
         }
 
 
