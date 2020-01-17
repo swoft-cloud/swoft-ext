@@ -179,14 +179,8 @@ class Consul
             Log::profileEnd($uri);
 
             if ($statusCode == -1 || $statusCode == -2 || $statusCode == -3) {
-                throw new ConsulException(
-                    sprintf(
-                        'Request timeout!(host=%s, port=%d timeout=%d)',
-                        $this->host,
-                        $this->port,
-                        $this->timeout
-                    )
-                );
+                throw new ConsulException(sprintf('Request timeout!(host=%s, port=%d timeout=%d)', $this->host,
+                        $this->port, $this->timeout));
             }
 
         } catch (Throwable $e) {

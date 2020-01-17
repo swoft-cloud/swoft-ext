@@ -4,10 +4,10 @@ namespace Swoft\Amqp;
 
 use Swoft\Amqp\Connection\Connection;
 use Swoft\Amqp\Connection\ConnectionManager;
-use Swoft\Connection\Pool\Contract\ConnectionInterface;
 use Swoft\Amqp\Exception\AMQPException;
 use Swoft\Bean\BeanFactory;
 use Swoft\Connection\Pool\AbstractPool;
+use Swoft\Connection\Pool\Contract\ConnectionInterface;
 use Throwable;
 
 class Pool extends AbstractPool
@@ -51,16 +51,13 @@ class Pool extends AbstractPool
             $connection->setRelease(true);
             $conManager->setConnection($connection);
         } catch (Throwable $e) {
-            throw new AMQPException(
-                sprintf('Pool error is %s file=%s line=%d', $e->getMessage(), $e->getFile(), $e->getLine())
-            );
+            throw new AMQPException(sprintf('Pool error is %s file=%s line=%d', $e->getMessage(), $e->getFile(),
+                    $e->getLine()));
         }
 
         // Not instanceof Connection
         if (!$connection instanceof Connection) {
-            throw new RedisException(
-                sprintf('%s is not instanceof %s', get_class($connection), Connection::class)
-            );
+            throw new RedisException(sprintf('%s is not instanceof %s', get_class($connection), Connection::class));
         }
 
         return $connection->{$name}(...$arguments);

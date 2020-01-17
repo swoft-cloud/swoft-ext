@@ -83,9 +83,9 @@ class Agent implements AgentInterface
      */
     public function join(string $address, array $options = []): Response
     {
-        $params = array(
+        $params = [
             'query' => OptionsResolver::resolve($options, ['wan']),
-        );
+        ];
 
         return $this->consul->get('/v1/agent/join/' . $address, $params);
     }

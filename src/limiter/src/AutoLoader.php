@@ -1,9 +1,8 @@
 <?php declare(strict_types=1);
 
-
 namespace Swoft\Limiter;
 
-
+use Swoft\Helper\ComposerJSON;
 use Swoft\SwoftComponent;
 
 /**
@@ -30,7 +29,9 @@ class AutoLoader extends SwoftComponent
      */
     public function metadata(): array
     {
-        return [];
+        $jsonFile = dirname(__DIR__) . '/composer.json';
+
+        return ComposerJSON::open($jsonFile)->getMetadata();
     }
 
     /**

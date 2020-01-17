@@ -4,10 +4,10 @@
 namespace Swoft\Swoole\Tracker;
 
 
-use SwooleTracker\Stats;
-use SwooleTracker\Tick;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Log\Helper\CLog;
+use SwooleTracker\Stats;
+use SwooleTracker\Tick;
 use Throwable;
 
 /**

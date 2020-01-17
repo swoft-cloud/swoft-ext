@@ -101,9 +101,7 @@ class RateLimter
             return PhpHelper::call([$target, $fallback], ...$params);
         }
 
-        throw new RateLImiterException(
-            sprintf('Rate(%s->%s) to Limit!', $className, $method)
-        );
+        throw new RateLImiterException(sprintf('Rate(%s->%s) to Limit!', $className, $method));
     }
 
     /**

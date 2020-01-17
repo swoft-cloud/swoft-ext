@@ -37,9 +37,9 @@ class Health implements HealthInterface
      */
     public function node(string $node, array $options = []): Response
     {
-        $params = array(
+        $params = [
             'query' => OptionsResolver::resolve($options, ['dc']),
-        );
+        ];
 
         return $this->consul->get('/v1/health/node/' . $node, $params);
     }

@@ -34,12 +34,8 @@ class ViewParser extends Parser
             throw new AnnotationException('`@View` must be defined on class method!');
         }
 
-        ViewRegister::bindView(
-            $this->className,
-            $this->methodName,
-            $annotation->getTemplate(),
-            $annotation->getLayout()
-        );
+        ViewRegister::bindView($this->className, $this->methodName, $annotation->getTemplate(),
+            $annotation->getLayout());
 
         return [];
     }

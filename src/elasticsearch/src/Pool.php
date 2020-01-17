@@ -2,9 +2,9 @@
 
 namespace Swoft\Elasticsearch;
 
-use Swoft\Elasticsearch\Connection\Connection;
 use Swoft\Connection\Pool\AbstractPool;
 use Swoft\Connection\Pool\Contract\ConnectionInterface;
+use Swoft\Elasticsearch\Connection\Connection;
 
 /**
  * Class Pool

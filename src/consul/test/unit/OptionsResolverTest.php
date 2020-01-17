@@ -16,39 +16,39 @@ class OptionsResolverTest extends TestCase
 {
     public function testResolve()
     {
-        $options = array(
+        $options = [
             'foo'   => 'bar',
             'hello' => 'world',
             'baz'   => 'inga',
-        );
+        ];
 
-        $availableOptions = array(
+        $availableOptions = [
             'foo',
             'baz',
-        );
+        ];
 
         $result = OptionsResolver::resolve($options, $availableOptions);
 
-        $expected = array(
+        $expected = [
             'foo' => 'bar',
             'baz' => 'inga',
-        );
+        ];
 
         $this->assertSame($expected, $result);
     }
 
     public function testResolveWithoutMatchingOptions()
     {
-        $options = array(
+        $options = [
             'hello' => 'world',
-        );
+        ];
 
-        $availableOptions = array(
+        $availableOptions = [
             'foo',
             'baz',
-        );
+        ];
 
         $result = OptionsResolver::resolve($options, $availableOptions);
-        $this->assertSame(array(), $result);
+        $this->assertSame([], $result);
     }
 }

@@ -217,8 +217,7 @@ class Model implements Arrayable
      */
     public function delete(): bool
     {
-        return self::query()
-            ->delete($this->_id);
+        return self::query()->delete($this->_id);
     }
 
     /**

@@ -85,35 +85,27 @@ class SwooleTrackerMiddleware implements MiddlewareInterface
 
     /**
      * @param Tick|null $tick
-     * @param int         $responseCode
+     * @param int       $responseCode
      *
      * @return void
      */
     private function endNormalAnalysis($tick, int $responseCode): void
     {
         if (isset($tick)) {
-            $this->swooleTracker->endRpcAnalysis(
-                $tick,
-                $responseCode === 200,
-                $responseCode
-            );
+            $this->swooleTracker->endRpcAnalysis($tick, $responseCode === 200, $responseCode);
         }
     }
 
     /**
      * @param Tick|null $tick
-     * @param int         $errno
+     * @param int       $errno
      *
      * @return void
      */
     private function endExceptionAnalysis($tick, int $errno): void
     {
         if (isset($tick)) {
-            $this->swooleTracker->endRpcAnalysis(
-                $tick,
-                false,
-                $errno
-            );
+            $this->swooleTracker->endRpcAnalysis($tick, false, $errno);
         }
     }
 }

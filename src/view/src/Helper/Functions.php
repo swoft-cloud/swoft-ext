@@ -23,8 +23,6 @@ if (!function_exists('view')) {
         $response = Context::mustGet()->getResponse();
         $content  = $renderer->render(Swoft::getAlias($template), $data, $layout);
 
-        return $response
-            ->withContent($content)
-            ->withHeader('Content-Type', 'text/html');
+        return $response->withContent($content)->withHeader('Content-Type', 'text/html');
     }
 }

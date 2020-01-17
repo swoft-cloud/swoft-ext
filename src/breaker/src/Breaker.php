@@ -250,9 +250,7 @@ class Breaker
 
             $data = $channel->pop($this->timeout);
             if ($data === false) {
-                throw new BreakerException(
-                    sprintf('Breaker call timeout(%f)', $this->timeout)
-                );
+                throw new BreakerException(sprintf('Breaker call timeout(%f)', $this->timeout));
             }
 
             [$status, $result] = $data;
@@ -263,13 +261,8 @@ class Breaker
             $this->state->success();
             return $result;
         } catch (Throwable $e) {
-            $message = sprintf(
-                'Breaker(%s->%s %s) call fail!(%s)',
-                $className,
-                $method,
-                json_encode($params),
-                $e->getMessage()
-            );
+            $message = sprintf('Breaker(%s->%s %s) call fail!(%s)', $className, $method, json_encode($params),
+                $e->getMessage());
 
             Log::error($message);
             $this->state->exception();

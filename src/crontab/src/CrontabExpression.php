@@ -34,7 +34,7 @@ class CrontabExpression
     }
 
     /**
-     * @param int $key
+     * @param int    $key
      * @param string $value
      *
      * @return bool
@@ -77,8 +77,8 @@ class CrontabExpression
     /**
      * @param string $value
      *
-     * @param int $rangeStart
-     * @param int $rangeEnd
+     * @param int    $rangeStart
+     * @param int    $rangeEnd
      *
      * @return bool
      */
@@ -131,8 +131,8 @@ class CrontabExpression
     public static function parseCronItem(string $cronExpress): array
     {
         $cronItems = preg_split('/\s/', $cronExpress, -1, PREG_SPLIT_NO_EMPTY);
-        $times = array();
-        $maxLimit=[59,59,23,31,12,6];
+        $times     = [];
+        $maxLimit  = [59, 59, 23, 31, 12, 6];
         foreach ($cronItems as $k => $item) {
             if ('*' === $item || '?' === $item) {
                 $times [$k] = $item;
@@ -142,7 +142,7 @@ class CrontabExpression
                 list($start, $end) = explode('/', $item);
                 while ($start <= $maxLimit[$k]) {
                     $times [$k][] = $start;
-                    $start += $end;
+                    $start        += $end;
                 }
             }
             if (strpos($item, '-') !== false) {
@@ -161,7 +161,7 @@ class CrontabExpression
 
     /**
      * @param string $cron
-     * @param int $time
+     * @param int    $time
      *
      * @return bool
      */
@@ -169,12 +169,12 @@ class CrontabExpression
     {
         $startTime = $time ?? time();
 
-        $date[] = (int)date('s', $startTime);
-        $date[] = (int)date('i', $startTime);
-        $date[] = (int)date('H', $startTime);
-        $date[] = (int)date('d', $startTime);
-        $date[] = (int)date('m', $startTime);
-        $date[] = (int)date('w', $startTime);
+        $date[]     = (int)date('s', $startTime);
+        $date[]     = (int)date('i', $startTime);
+        $date[]     = (int)date('H', $startTime);
+        $date[]     = (int)date('d', $startTime);
+        $date[]     = (int)date('m', $startTime);
+        $date[]     = (int)date('w', $startTime);
         $parsedDate = self::parseCronItem($cron);
 
         foreach ($parsedDate as $k => $cronItem) {

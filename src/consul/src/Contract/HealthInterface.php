@@ -18,7 +18,7 @@ interface HealthInterface
      *
      * @return Response
      */
-    public function node(string $node, array $options = array()): Response;
+    public function node(string $node, array $options = []): Response;
 
     /**
      * @param string $service
@@ -26,7 +26,7 @@ interface HealthInterface
      *
      * @return Response
      */
-    public function checks(string $service, array $options = array()): Response;
+    public function checks(string $service, array $options = []): Response;
 
     /**
      * @param string $service
@@ -34,7 +34,7 @@ interface HealthInterface
      *
      * @return Response
      */
-    public function service(string $service, array $options = array()): Response;
+    public function service(string $service, array $options = []): Response;
 
     /**
      * @param string $state
@@ -42,5 +42,5 @@ interface HealthInterface
      *
      * @return Response
      */
-    public function state(string $state, array $options = array()): Response;
+    public function state(string $state, array $options = []): Response;
 }

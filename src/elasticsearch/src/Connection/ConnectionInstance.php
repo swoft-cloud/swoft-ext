@@ -17,7 +17,7 @@ use Swoft\Elasticsearch\Exception\ElasticsearchException;
 /**
  * Class ConnectionInstance
  *
- * @since 2.8
+ * @since   2.8
  *
  * @Bean()
  * @method bool ping(array $params)
@@ -330,11 +330,9 @@ class ConnectionInstance
             $this->connection->release();
 
             $message   = $e->getMessage();
-            $exception = new ElasticsearchException(
-                sprintf('ElasticSearch command error(%s)', $message)
-            );
+            $exception = new ElasticsearchException(sprintf('ElasticSearch command error(%s)', $message));
 
-            $error     = json_decode($message, true);
+            $error = json_decode($message, true);
 
             if (isset($error['error']['reason'])) {
                 $exception->setResponse($error);
