@@ -85,7 +85,7 @@ class Connection extends AbstractConnection implements ConnectionInterface
 
         try {
             $this->connection = $this->connect([$auth], $setting['connect'] ?? []);
-            $this->connection = $this->client->getConnector()->connect();
+            // $this->connection = $this->client->getConnector()->connect(); TODO connect() method body is emtpy ???
         } catch (Exception $e) {
             throw new AMQPException(sprintf('RabbitMQ connect error is %s file=%s line=%d', $e->getMessage(),
                     $e->getFile(), $e->getLine()));
