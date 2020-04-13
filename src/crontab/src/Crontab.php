@@ -6,12 +6,12 @@ use Swoft;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\BeanFactory;
 use Swoft\Crontab\Exception\CrontabException;
-use Swoft\Stdlib\Helper\PhpHelper;
 use Swoft\Timer;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use function method_exists;
 use function sprintf;
+use function time;
 
 /**
  * Class Crontab
@@ -88,20 +88,18 @@ class Crontab
 
     /**
      * @param string $beanName
-     * @param string $methodName
+     * @param string $method
      *
      * @throws CrontabException
      */
-    public function execute(string $beanName, string $methodName): void
+    public function execute(string $beanName, string $method): void
     {
         $object = BeanFactory::getBean($beanName);
 
-        if (!method_exists($object, $methodName)) {
-            throw new CrontabException(sprintf('Crontab(name=%s method=%s) method is not exist!', $beanName,
-                $methodName));
+        if (!method_exists($object, $method)) {
+            throw new CrontabException(sprintf('Crontab(name=%s method=%s) method is not exist!', $beanName, $method));
         }
 
-        // TODO $object->$methodName();
-        PhpHelper::call([$object, $methodName]);
+        $object->$method();
     }
 }
