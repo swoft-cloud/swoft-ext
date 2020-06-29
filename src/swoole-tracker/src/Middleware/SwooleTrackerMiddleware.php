@@ -1,5 +1,12 @@
 <?php declare(strict_types=1);
-
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Swoole\Tracker\Middleware;
 
@@ -54,7 +61,6 @@ class SwooleTrackerMiddleware implements MiddlewareInterface
 
             $this->endNormalAnalysis($tick, $response->getStatusCode());
         } catch (Throwable $e) {
-
             $this->endExceptionAnalysis($tick, $e->getCode());
 
             throw $e;

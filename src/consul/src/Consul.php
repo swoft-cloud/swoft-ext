@@ -1,5 +1,12 @@
 <?php declare(strict_types=1);
-
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Consul;
 
@@ -179,10 +186,13 @@ class Consul
             Log::profileEnd($uri);
 
             if ($statusCode == -1 || $statusCode == -2 || $statusCode == -3) {
-                throw new ConsulException(sprintf('Request timeout!(host=%s, port=%d timeout=%d)', $this->host,
-                        $this->port, $this->timeout));
+                throw new ConsulException(sprintf(
+                    'Request timeout!(host=%s, port=%d timeout=%d)',
+                    $this->host,
+                    $this->port,
+                    $this->timeout
+                ));
             }
-
         } catch (Throwable $e) {
             $message = sprintf('Consul is fail! (uri=%s status=%s body=%s).', $uri, $e->getMessage(), $body);
             Log::error($message);

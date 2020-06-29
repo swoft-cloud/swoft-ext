@@ -1,5 +1,12 @@
 <?php declare(strict_types=1);
-
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Breaker;
 
@@ -34,7 +41,7 @@ class BreakerRegister
      *
      * @throws BreakerException
      */
-    public static function registerBreaker(string $className, string $method, BreakerAnnotation $breaker)
+    public static function registerBreaker(string $className, string $method, BreakerAnnotation $breaker): void
     {
         if (isset(self::$breakers[$className][$method])) {
             throw new BreakerException(sprintf('`@Breaker` must be only one on method(%s->%s)!', $className, $method));

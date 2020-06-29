@@ -1,4 +1,12 @@
 <?php declare(strict_types=1);
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Amqp;
 
@@ -51,8 +59,12 @@ class Pool extends AbstractPool
             $connection->setRelease(true);
             $conManager->setConnection($connection);
         } catch (Throwable $e) {
-            throw new AMQPException(sprintf('Pool error is %s file=%s line=%d', $e->getMessage(), $e->getFile(),
-                    $e->getLine()));
+            throw new AMQPException(sprintf(
+                'Pool error is %s file=%s line=%d',
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine()
+            ));
         }
 
         // Not instanceof Connection

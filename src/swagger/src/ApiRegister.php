@@ -1,15 +1,20 @@
 <?php declare(strict_types=1);
-
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Swagger;
-
 
 use PhpDocReader\AnnotationException;
 use PhpDocReader\PhpDocReader;
 use ReflectionException;
 use ReflectionProperty;
 use Swoft\Stdlib\Helper\DocBlock;
-use Swoft\Stdlib\Helper\ObjectHelper;
 use Swoft\Swagger\Annotation\Mapping\ApiContact;
 use Swoft\Swagger\Annotation\Mapping\ApiInfo;
 use Swoft\Swagger\Annotation\Mapping\ApiLicense;
@@ -94,7 +99,6 @@ class ApiRegister
      */
     private static $paths = [];
 
-
     /**
      * @param ApiContact $contact
      *
@@ -141,7 +145,7 @@ class ApiRegister
      *
      * @throws SwaggerException
      */
-    public static function registerLicense(ApiLicense $license)
+    public static function registerLicense(ApiLicense $license): void
     {
         if (!empty(self::$license)) {
             throw new SwaggerException('`@ApiLicense` annotation must be only one!');
@@ -412,7 +416,6 @@ class ApiRegister
 
     public static function checkPaths(): void
     {
-
     }
 
     /**

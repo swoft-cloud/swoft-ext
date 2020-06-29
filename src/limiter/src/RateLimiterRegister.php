@@ -1,8 +1,14 @@
 <?php declare(strict_types=1);
-
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Limiter;
-
 
 use Swoft\Limiter\Annotation\Mapping\RateLimiter;
 use Swoft\Limiter\Exception\RateLImiterException;
@@ -35,8 +41,11 @@ class RateLimiterRegister
     public static function registerRateLimiter(string $className, string $method, RateLimiter $rateLimiter): void
     {
         if (isset(self::$rateLimiters[$className][$method])) {
-            throw new RateLImiterException(sprintf('`@RateLImiter` must be only one on method(%s->%s)!', $className,
-                    $method));
+            throw new RateLImiterException(sprintf(
+                '`@RateLImiter` must be only one on method(%s->%s)!',
+                $className,
+                $method
+            ));
         }
 
         $rlConfig = [];
