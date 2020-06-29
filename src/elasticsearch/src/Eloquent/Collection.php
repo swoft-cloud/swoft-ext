@@ -1,4 +1,12 @@
 <?php declare(strict_types=1);
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Elasticsearch\Eloquent;
 
@@ -11,7 +19,6 @@ use Swoft\Stdlib\Collection as SwoftCollection;
  */
 class Collection extends SwoftCollection
 {
-
     /**
      * update
      *
@@ -43,5 +50,4 @@ class Collection extends SwoftCollection
 
         return $bool;
     }
-
 }

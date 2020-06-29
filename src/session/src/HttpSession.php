@@ -1,4 +1,12 @@
 <?php declare(strict_types=1);
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Http\Session;
 
@@ -39,7 +47,9 @@ class HttpSession implements ArrayAccess, SessionInterface, IteratorAggregate
      * Flash data key name
      */
     public const FLASH_KEY = '__FLASH';
+
     public const FLASH_OLD = '__FLASH_OLD';
+
     public const FLASH_NEW = '__FLASH_NEW';
 
     /**

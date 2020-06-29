@@ -1,4 +1,12 @@
 <?php declare(strict_types=1);
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Http\Session\Handler;
 
@@ -16,6 +24,7 @@ use function time;
 class MemTableHandler extends AbstractHandler
 {
     public const TIME_FIELD = 't';
+
     public const DATA_FIELD = 'd';
 
     /**
@@ -114,7 +123,7 @@ class MemTableHandler extends AbstractHandler
     {
         $expireTime = time() - $maxLifetime;
 
-        $this->table->each(function (array $row) use ($expireTime) {
+        $this->table->each(function (array $row) use ($expireTime): void {
             $ctime = $row[self::TIME_FIELD];
 
             if ($ctime < $expireTime) {

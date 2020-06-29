@@ -1,8 +1,14 @@
 <?php declare(strict_types=1);
-
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Breaker\State;
-
 
 use Swoft\Bean\Concern\PrototypeTrait;
 use Swoft\Breaker\Breaker;
@@ -43,7 +49,6 @@ abstract class AbstractState implements StateInterface
      */
     public function check(): void
     {
-
     }
 
     /**

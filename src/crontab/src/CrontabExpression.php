@@ -1,4 +1,12 @@
 <?php declare(strict_types=1);
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Crontab;
 
@@ -89,7 +97,7 @@ class CrontabExpression
         }
         if (strpos($value, '/') !== false) {
             str_replace('*', '0', '$value');
-            list($start, $end) = explode('/', $value);
+            [$start, $end] = explode('/', $value);
             if (!ctype_digit($start) || !ctype_digit($end)) {
                 return false;
             }
@@ -98,7 +106,7 @@ class CrontabExpression
             }
         }
         if (strpos($value, '-') !== false) {
-            list($start, $end) = explode('-', $value);
+            [$start, $end] = explode('-', $value);
             if (!ctype_digit($start) || !ctype_digit($end)) {
                 return false;
             }
@@ -135,18 +143,18 @@ class CrontabExpression
         $maxLimit  = [59, 59, 23, 31, 12, 6];
         foreach ($cronItems as $k => $item) {
             if ('*' === $item || '?' === $item) {
-                $times [$k] = $item;
+                $times[$k] = $item;
             }
             if (strpos($item, '/') !== false) {
                 str_replace('*', '0', '$value');
-                list($start, $end) = explode('/', $item);
+                [$start, $end] = explode('/', $item);
                 while ($start <= $maxLimit[$k]) {
-                    $times [$k][] = $start;
+                    $times[$k][] = $start;
                     $start        += $end;
                 }
             }
             if (strpos($item, '-') !== false) {
-                list($start, $end) = explode('-', $item);
+                [$start, $end] = explode('-', $item);
                 $times[$k] = range($start, $end);
             }
             if (strpos($item, ',') !== false) {

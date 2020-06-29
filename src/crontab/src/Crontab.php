@@ -1,4 +1,12 @@
 <?php declare(strict_types=1);
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Crontab;
 
@@ -52,7 +60,7 @@ class Crontab
      */
     public function tick(): void
     {
-        Timer::tick($this->tickTime * 1000, function () {
+        Timer::tick($this->tickTime * 1000, function (): void {
             // All task
             $tasks = CrontabRegister::getCronTasks(time());
 
@@ -71,7 +79,7 @@ class Crontab
         while (true) {
             $task = $this->channel->pop();
 
-            Coroutine::create(function () use ($task) {
+            Coroutine::create(function () use ($task): void {
                 [$beanName, $methodName] = $task;
 
                 // Before
