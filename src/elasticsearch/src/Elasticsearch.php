@@ -1,4 +1,12 @@
 <?php declare(strict_types=1);
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Elasticsearch;
 
@@ -172,8 +180,12 @@ class Elasticsearch
             $connection->setRelease(true);
             $manager->setConnection($connection);
         } catch (Exception $e) {
-            throw new ElasticsearchException(sprintf('Pool error is %s file=%s line=%d', $e->getMessage(),
-                    $e->getFile(), $e->getLine()));
+            throw new ElasticsearchException(sprintf(
+                'Pool error is %s file=%s line=%d',
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine()
+            ));
         }
         return $connection->getInstance();
     }

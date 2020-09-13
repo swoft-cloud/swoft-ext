@@ -1,4 +1,12 @@
 <?php declare(strict_types=1);
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Crontab;
 
@@ -6,12 +14,12 @@ use Swoft;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\BeanFactory;
 use Swoft\Crontab\Exception\CrontabException;
-use Swoft\Stdlib\Helper\PhpHelper;
 use Swoft\Timer;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use function method_exists;
 use function sprintf;
+use function time;
 
 /**
  * Class Crontab
@@ -52,7 +60,7 @@ class Crontab
      */
     public function tick(): void
     {
-        Timer::tick($this->tickTime * 1000, function () {
+        Timer::tick($this->tickTime * 1000, function (): void {
             // All task
             $tasks = CrontabRegister::getCronTasks(time());
 
@@ -71,7 +79,7 @@ class Crontab
         while (true) {
             $task = $this->channel->pop();
 
-            Coroutine::create(function () use ($task) {
+            Coroutine::create(function () use ($task): void {
                 [$beanName, $methodName] = $task;
 
                 // Before
@@ -88,20 +96,18 @@ class Crontab
 
     /**
      * @param string $beanName
-     * @param string $methodName
+     * @param string $method
      *
      * @throws CrontabException
      */
-    public function execute(string $beanName, string $methodName): void
+    public function execute(string $beanName, string $method): void
     {
         $object = BeanFactory::getBean($beanName);
 
-        if (!method_exists($object, $methodName)) {
-            throw new CrontabException(sprintf('Crontab(name=%s method=%s) method is not exist!', $beanName,
-                $methodName));
+        if (!method_exists($object, $method)) {
+            throw new CrontabException(sprintf('Crontab(name=%s method=%s) method is not exist!', $beanName, $method));
         }
 
-        // TODO $object->$methodName();
-        PhpHelper::call([$object, $methodName]);
+        $object->$method();
     }
 }

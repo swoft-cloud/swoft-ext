@@ -1,4 +1,12 @@
 <?php declare(strict_types=1);
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Apollo;
 
@@ -104,8 +112,12 @@ class Apollo
             }
 
             if ($status === -1 || $status === -2 || $status === -3) {
-                throw new ApolloException(sprintf('Request timeout!(host=%s, port=%d timeout=%d)', $this->host,
-                        $this->port, $this->timeout));
+                throw new ApolloException(sprintf(
+                    'Request timeout!(host=%s, port=%d timeout=%d)',
+                    $this->host,
+                    $this->port,
+                    $this->timeout
+                ));
             }
 
             if ($status != self::SUCCESS && $status != self::NOT_MODIFIED) {

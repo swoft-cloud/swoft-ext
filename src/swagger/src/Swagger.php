@@ -1,5 +1,12 @@
 <?php declare(strict_types=1);
-
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://swoft.org/docs
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Swagger;
 
@@ -154,7 +161,6 @@ class Swagger
         $schemas = [];
         $columns = EntityRegister::getColumns();
         foreach ($columns as $className => $propColumns) {
-
             $propNodes   = [];
             $propMapping = $propColumns['mapping'] ?? [];
             foreach ($propMapping as $propName => $prop) {
@@ -513,7 +519,9 @@ class Swagger
                 $pathHandler = sprintf('%s@%s', $className, $methodName);
                 if (!isset($handlerRoutes[$pathHandler])) {
                     throw new SwaggerException(sprintf(
-                        'The %s of %s must be define `@RequestMapping`', $className, $methodName
+                        'The %s of %s must be define `@RequestMapping`',
+                        $className,
+                        $methodName
                     ));
                 }
 
