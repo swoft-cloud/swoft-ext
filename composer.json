@@ -95,6 +95,7 @@
     }
   },
   "scripts": {
+    "test": "echo hello",
     "breaker": "php run.php -c src/breaker/phpunit.xml",
     "consul": "php run.php -c src/consul/phpunit.xml",
     "limiter": "php run.php -c src/limiter/phpunit.xml"
