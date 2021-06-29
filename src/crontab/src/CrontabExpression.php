@@ -96,7 +96,7 @@ class CrontabExpression
             return true;
         }
         if (strpos($value, '/') !== false) {
-            str_replace('*', '0', '$value');
+            $value=str_replace('*', '0', $value);
             [$start, $end] = explode('/', $value);
             if (!ctype_digit($start) || !ctype_digit($end)) {
                 return false;
@@ -146,7 +146,7 @@ class CrontabExpression
                 $times[$k] = $item;
             }
             if (strpos($item, '/') !== false) {
-                str_replace('*', '0', '$value');
+                $item=str_replace('*', '0', $item);
                 [$start, $end] = explode('/', $item);
                 while ($start <= $maxLimit[$k]) {
                     $times[$k][] = $start;

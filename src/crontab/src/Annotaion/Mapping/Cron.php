@@ -36,7 +36,7 @@ class Cron
     public function __construct(array $values)
     {
         if (isset($values['value'])) {
-            $this->value = $values['value'];
+            $this->value = str_replace('\\', "", $values['value']);
         }
     }
 
